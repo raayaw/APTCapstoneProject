@@ -1,6 +1,11 @@
 #Capstobne Project
 #Members: Aw Jin Le Ray, Kim Junghan, Lucas Sim
 import nmap
+import shodan
+
+#Shodan API KEY
+Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
+api = shodan.Shodan(Shodan_APIKEY)
 loop = True
 def project_menu():
     print("This is Automated Pentesting.")
@@ -48,6 +53,33 @@ def option_1():
 
 def option_2():
     print("This is option 2 function")
+    target = input("Enter an IP Address to scan: ")
+    #target = 'www.cloudfare.com'
+    #dnsResolve = 'https://api.shodan.io/dns/resolve?hostnames=' + target + '&key=' + Shodan_APIKEY
+    try:
+        ## First we need to resolve our targets domain to an IP
+        #resolved = requests.get(dnsResolve)
+        #hostIP = resolved.json()[target]
+        print(target)
+
+        # Then we need to do a Shodan search on that IP
+        host = api.host(target)
+        print("IP: %s" % host['ip_str'])
+        print("Organization: %s" % host.get('org', 'n/a'))
+        print("Operating System: %s" % host.get('os', 'n/a'))
+
+        # Print all banners
+        for item in host['data']:
+            print("Port: %s" % item['port'])
+            print("Banner: %s" % item['data'])
+
+    except:
+        'An error occured'
+
+    #ipinfo = api.host('104.16.133.229')
+    #print(ipinfo)
+
+
 
 def option_3():
     print("This is option 3 function")
