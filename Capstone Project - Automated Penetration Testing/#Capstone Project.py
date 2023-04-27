@@ -39,16 +39,16 @@ def option_1():
     port_range = input("Enter the range of ports to scan (eg. 1-1024): ")
     scanner = nmap.PortScanner()
     scanner.scan(target, port_range)
-    scanner.scan(target, arguments='-O')
-    if scanner[target]['osmatch']:
-        print('Operating System: ' + scanner[target]['osmatch'][0]['name'])
-    else:
-        print('Failed to determine operating system')
     for host in scanner.all_hosts():
-        print(f"Host: {host}")
-        for port in scanner[host]['tcp']:
-            state = scanner[host]['tcp'][port]['state']
-            print(f"Port {port} is {state}")
+         print('Host : %s (%s)' % (host, scanner[host].hostname()))
+         print('State : %s' % scanner[host].state())
+         for proto in scanner[host].all_protocols():
+             print('----------')
+             print('Protocol : %s' % proto)
+     
+             lport = scanner[host][proto].keys()
+             for port in lport:
+                 print ('port : %s\tstate : %s' % (port, scanner[host][proto][port]['state']))
 
 
 def option_2():
