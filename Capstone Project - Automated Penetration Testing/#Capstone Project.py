@@ -2,6 +2,7 @@
 #Members: Aw Jin Le Ray, Kim Junghan, Lucas Sim
 import nmap
 import shodan
+import sqlite3
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
