@@ -118,6 +118,7 @@ def sqlite():
         cur.executemany('''
                         INSERT INTO PortScanningTable (port_number, port_status) VALUES (?, ?)
                         ''', ports)
+        print("Successfully added to APTdatabase")
         conn.commit()
 
     except sqlite3.Error as error:
