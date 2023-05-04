@@ -14,7 +14,7 @@ def project_menu():
     print("1. Port scanning")
     print("Option 2")
     print("Option 3")
-    print("4. Quit")
+    print("4. OS Scan")
     menu_input = int()
     while menu_input == int():
         menu_input = int(input("Select option: "))
@@ -28,7 +28,6 @@ def project_menu():
             print("Option 3 Selected.")
             option_3()
         elif menu_input == 4:
-            print("Goodbye.")
             option_4()
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -94,6 +93,12 @@ def option_3():
         print(host + ' ' + status)
 
 def option_4():
-    exit()
+    target = input("Enter an IP Address to scan: ")
+    scanner = nmap.PortScanner()
+    scanner.scan(target, arguments='-O')
+    if scanner[target]['osmatch']:
+        print('Operating System: ' + scanner[target]['osmatch'][0]['name'])
+    else:
+        print('Failed to determine operating system')
 while loop == True:
     project_menu()
