@@ -1,5 +1,6 @@
 #Capstobne Project
 #Members: Aw Jin Le Ray, Kim Junghan, Lucas Sim
+import sys
 import nmap
 import shodan
 import sqlite3
@@ -8,6 +9,8 @@ from sqlite3 import Error
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
 api = shodan.Shodan(Shodan_APIKEY)
+conn = sqlite3.connect("APTdatabase.db")
+cur = conn.cursor()
 loop = True
 def project_menu():
     print("This is Automated Pentesting.")
@@ -16,6 +19,7 @@ def project_menu():
     print("Option 2")
     print("Option 3")
     print("4. OS Scan")
+    print("5. Exit")
     menu_input = int()
     while menu_input == int():
         menu_input = int(input("Select option: "))
@@ -30,6 +34,9 @@ def project_menu():
             option_3()
         elif menu_input == 4:
             option_4()
+        elif menu_input == 5:
+            print("Goodbye!")
+            sys.exit()
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
@@ -50,6 +57,7 @@ def option_1():
              lport = scanner[host][proto].keys()
              for port in lport:
                  print ('port : %s\tstate : %s' % (port, scanner[host][proto][port]['state']))
+
 
 
 def option_2():
@@ -102,34 +110,19 @@ def option_4():
     else:
         print('Failed to determine operating system')
 
-def sqlite():
-    try:
-        conn = sqlite3.connect("APTdatabase.db")
-        cur = conn.cursor()
-        print("Successfully Connected to APTdatabase")
+def sqlite_nmap():
+    port_status = list()
 
+    conn.execute('''CREATE TABLE IF NOT EXISTS PortScanningTable
+            (port_number TEXT, port_status TEXT)''')
+    
+    conn.commit()
 
-        conn.execute('''CREATE TABLE IF NOT EXISTS PortScanningTable
-                        (port_number TEXT, port_status TEXT)''')
-        
-        conn.commit()
-
-        ports = [("80", "open"), ("443", "closed"), ("", "")]
-        cur.executemany('''
-                        INSERT INTO PortScanningTable (port_number, port_status) VALUES (?, ?)
-                        ''', ports)
-        print("Successfully added to APTdatabase")
-        conn.commit()
-
-    except sqlite3.Error as error:
-        print("Failed to insert data into sqlite table", error)
-    finally:
-        if conn:
-            cur.close()
-            conn.close()
-            print("The SQLite connection is closed")
-
-sqlite()
+    ports = [("80", "open"), ("443", "closed"), ("", "")]
+    cur.executemany('''
+                    INSERT INTO PortScanningTable (port_number, port_status) VALUES (?, ?)
+                    ''', ports)
+    conn.commit()
 
 while loop == True:
     project_menu()
