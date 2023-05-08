@@ -5,6 +5,7 @@ import nmap
 import shodan
 import sqlite3
 from sqlite3 import Error
+import pyfiglet
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -13,40 +14,43 @@ conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
 loop = True
 def project_menu():
-    print("This is Automated Pentesting.")
+    ascii_hi = pyfiglet.figlet_format("Welcome to Automated Pentesting!")
+    print(ascii_hi)
     print("\nPlease Select an Option Below.")
     print("1. Port scanning")
     print("Option 2")
     print("Option 3")
     print("4. OS Scan")
-    print("5. Exit")
+    print("5. Exit\n")
     menu_input = int()
     while menu_input == int():
         menu_input = int(input("Select option: "))
         if menu_input == 1:
-            print("Option 1 Selected.")
             option_1()
         elif menu_input == 2:
-            print("Option 2 Selected.")
             option_2()
         elif menu_input == 3:
-            print("Option 3 Selected.")
             option_3()
         elif menu_input == 4:
             option_4()
         elif menu_input == 5:
-            print("Goodbye!")
+            ascii_bye = pyfiglet.figlet_format("Goodbye!")
+            print(ascii_bye)
             sys.exit()
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
 
 def option_1():
-    print("This is option 1 function")
+    ascii_nmap = pyfiglet.figlet_format("Welcome to Port Scanning!")
+    print(ascii_nmap)
     target = input("Enter an IP Address to scan: ")
     port_range = input("Enter the range of ports to scan (eg. 1-1024): ")
     scanner = nmap.PortScanner()
     scanner.scan(target, port_range)
+    conn.execute('''CREATE TABLE IF NOT EXISTS PortScanningTable
+        (port_number TEXT, port_status TEXT)''')
+    conn.commit()
     for host in scanner.all_hosts():
          print('Host : %s (%s)' % (host, scanner[host].hostname()))
          print('State : %s' % scanner[host].state())
@@ -56,10 +60,14 @@ def option_1():
      
              lport = scanner[host][proto].keys()
              for port in lport:
+                 plist = (str(port), str(scanner[host][proto][port]['state']))
+                 cur.execute('''
+                    INSERT INTO PortScanningTable (port_number, port_status) VALUES (?, ?)
+                    ''', plist)
+                 conn.commit()
                  print ('port : %s\tstate : %s' % (port, scanner[host][proto][port]['state']))
-
-
-
+                 plist = ()
+                
 def option_2():
     print("This is option 2 function")
     target = input("Enter an IP Address to scan: ")
@@ -109,20 +117,6 @@ def option_4():
         print('Operating System: ' + scanner[target]['osmatch'][0]['name'])
     else:
         print('Failed to determine operating system')
-
-def sqlite_nmap():
-    port_status = list()
-
-    conn.execute('''CREATE TABLE IF NOT EXISTS PortScanningTable
-            (port_number TEXT, port_status TEXT)''')
-    
-    conn.commit()
-
-    ports = [("80", "open"), ("443", "closed"), ("", "")]
-    cur.executemany('''
-                    INSERT INTO PortScanningTable (port_number, port_status) VALUES (?, ?)
-                    ''', ports)
-    conn.commit()
 
 while loop == True:
     project_menu()
