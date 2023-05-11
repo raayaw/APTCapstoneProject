@@ -34,6 +34,7 @@ def project_menu():
         elif menu_input == 4:
             option_4()
         elif menu_input == 5:
+            droptables()
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
             print(ascii_bye)
             sys.exit()
@@ -48,7 +49,7 @@ def option_1():
     port_range = input("Enter the range of ports to scan (eg. 1-1024): ")
     scanner = nmap.PortScanner()
     scanner.scan(target, port_range)
-    conn.execute('''CREATE TABLE IF NOT EXISTS PortScanningTable
+    conn.execute('''CREATE TABLE IF NOT EXISTS PortScanning
         (port_number TEXT, port_status TEXT)''')
     conn.commit()
     for host in scanner.all_hosts():
@@ -62,7 +63,7 @@ def option_1():
              for port in lport:
                  plist = (str(port), str(scanner[host][proto][port]['state']))
                  cur.execute('''
-                    INSERT INTO PortScanningTable (port_number, port_status) VALUES (?, ?)
+                    INSERT INTO PortScanning (port_number, port_status) VALUES (?, ?)
                     ''', plist)
                  conn.commit()
                  print ('port : %s\tstate : %s' % (port, scanner[host][proto][port]['state']))
@@ -117,6 +118,12 @@ def option_4():
         print('Operating System: ' + scanner[target]['osmatch'][0]['name'])
     else:
         print('Failed to determine operating system')
+
+def droptables():
+    conn.execute('''DELETE FROM PortScanning''')
+    conn.commit()
+    cur.close()
+    conn.close()
 
 while loop == True:
     project_menu()
