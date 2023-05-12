@@ -6,6 +6,9 @@ import shodan
 import sqlite3
 from sqlite3 import Error
 import pyfiglet
+import scrapy
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -18,14 +21,17 @@ def project_menu():
     print(ascii_hi)
     print("\nPlease Select an Option Below.")
     print("1. Port scanning")
-    print("Option 2")
+    print("Spider")
     print("Option 3")
     print("4. OS Scan")
-    print("5. Exit\n")
+    print("5. Spidering")
+    print("6. Exit\n")
     menu_input = int()
     while menu_input == int():
         menu_input = int(input("Select option: "))
         if menu_input == 1:
+            ascii_nmap = pyfiglet.figlet_format("Welcome to Port Scanning!")
+            print(ascii_nmap)
             option_1()
         elif menu_input == 2:
             option_2()
@@ -34,6 +40,10 @@ def project_menu():
         elif menu_input == 4:
             option_4()
         elif menu_input == 5:
+            ascii_spider = pyfiglet.figlet_format("Welcome to Spidering!")
+            print(ascii_spider)
+            spider()
+        elif menu_input == 6:
             droptables()
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
             print(ascii_bye)
@@ -43,8 +53,6 @@ def project_menu():
             continue
 
 def option_1():
-    ascii_nmap = pyfiglet.figlet_format("Welcome to Port Scanning!")
-    print(ascii_nmap)
     target = input("Enter an IP Address to scan: ")
     port_range = input("Enter the range of ports to scan (eg. 1-1024): ")
     scanner = nmap.PortScanner()
@@ -124,6 +132,17 @@ def droptables():
     conn.commit()
     cur.close()
     conn.close()
+
+def spider():
+    class CrawlingSpider(CrawlSpider):
+        name = "Spider"
+        # Spider_URL = str(input("Enter URL to Spider here: "))
+        allowed_domains = ["toscrape.com"]
+        start_urls = ["http://books.toscrape.com/"]
+
+        rules = (
+            Rule(LinkExtractor(allow="catalogue/category")),
+        )
 
 while loop == True:
     project_menu()
