@@ -144,5 +144,7 @@ def spider():
             Rule(LinkExtractor(allow="catalogue/category")),
         )
 
+
+
 while loop == True:
     project_menu()
