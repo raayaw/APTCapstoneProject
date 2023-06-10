@@ -6,6 +6,7 @@ import shodan
 import sqlite3
 from sqlite3 import Error
 import pyfiglet
+import os
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
@@ -43,7 +44,8 @@ def project_menu():
         elif menu_input == 5:
             ascii_spider = pyfiglet.figlet_format("Welcome to Spidering!")
             print(ascii_spider)
-            spider()
+            cmd = os.system('cmd /c "scrapy runspider spider.py"')
+            print(cmd)
         elif menu_input == 6:
             droptables()
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
@@ -133,17 +135,6 @@ def droptables():
     conn.commit()
     cur.close()
     conn.close()
-
-def spider():
-    class CrawlingSpider(CrawlSpider):
-        name = "Spider"
-        # Spider_URL = str(input("Enter URL to Spider here: "))
-        allowed_domains = ["toscrape.com"]
-        start_urls = ["http://CEH.com"]
-
-        # rules = (
-        #     Rule(LinkExtractor(allow="catalogue/category")),
-        # )
 
 while loop == True:
     project_menu()
