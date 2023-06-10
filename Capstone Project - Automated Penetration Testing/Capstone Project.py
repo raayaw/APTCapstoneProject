@@ -32,6 +32,7 @@ def project_menu():
         if menu_input == 1:
             ascii_nmap = pyfiglet.figlet_format("Welcome to Port Scanning!")
             print(ascii_nmap)
+            html()
             option_1()
         elif menu_input == 2:
             option_2()
@@ -138,13 +139,11 @@ def spider():
         name = "Spider"
         # Spider_URL = str(input("Enter URL to Spider here: "))
         allowed_domains = ["toscrape.com"]
-        start_urls = ["http://books.toscrape.com/"]
+        start_urls = ["http://CEH.com"]
 
-        rules = (
-            Rule(LinkExtractor(allow="catalogue/category")),
-        )
-
-
+        # rules = (
+        #     Rule(LinkExtractor(allow="catalogue/category")),
+        # )
 
 while loop == True:
     project_menu()
