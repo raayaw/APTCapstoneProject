@@ -44,7 +44,7 @@ def project_menu():
         elif menu_input == 5:
             ascii_spider = pyfiglet.figlet_format("Welcome to Spidering!")
             print(ascii_spider)
-            cmd = os.system('cmd /c "scrapy runspider spider.py"')
+            cmd = os.system('cmd /k "scrapy runspider spider.py"')
             print(cmd)
         elif menu_input == 6:
             droptables()
