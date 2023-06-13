@@ -135,6 +135,138 @@ def droptables():
     conn.commit()
     cur.close()
     conn.close()
+ 
+#SNMP OS Enumuration
+def snmpOS():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 161')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    snmp = nmap.PortScanner()
+                    snmp.scan(host, arguments='-sU -p 161 --script snmp-sysdescr')
+                    print(snmp[host][proto][port]['script']['snmp-sysdescr'])
+                else:
+                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
+#SNMP Processes Enumuration
+def snmpProcesses():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 161')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    snmp = nmap.PortScanner()
+                    snmp.scan(host, arguments='-sU -p 161 --script snmp-processes')
+                    print(snmp[host][proto][port]['script']['snmp-processes'])
+                else:
+                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
+#SNMP Software Enumuration
+def snmpSoftware():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 161')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    snmp = nmap.PortScanner()
+                    snmp.scan(host, arguments='-sU -p 161 --script snmp-win32-software')
+                    print(snmp[host][proto][port]['script']['snmp-win32-software'])
+                else:
+                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
+
+#SNMP Interface Enumuration
+def snmpInterface():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 161')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    snmp = nmap.PortScanner()
+                    snmp.scan(host, arguments='-sU -p 161 --script snmp-interfaces')
+                    print(snmp[host][proto][port]['script']['snmp-interfaces'])
+                else:
+                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
+
+
+#SMTP Users Enumuration
+def smtpUsers():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-p 25')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+ 
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    smtp = nmap.PortScanner()
+                    smtp.scan(host, arguments='-p 25 --script smtp-enum-users')
+                    print(smtp[host][proto][port]['script']['smtp-enum-users'])
+            else:
+                print("Port 25 (SMTP) not opened, can't perform SMTP Enumuration")
+
+#NFS Share Enumuration
+def nfsShare():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-p 2049')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    smtp = nmap.PortScanner()
+                    smtp.scan(host, arguments='-sV -p 2049 --script nfs-showmount')
+                    print("\nnfs-showmount:")
+                    print(smtp[host][proto][port]['script']['nfs-showmount'])
+            else:
+                print("Port 2049 (NFS) not opened, can't perform NFS Enumuration")
 
 while loop == True:
     project_menu()
