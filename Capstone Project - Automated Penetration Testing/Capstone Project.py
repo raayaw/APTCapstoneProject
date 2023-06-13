@@ -10,6 +10,7 @@ import os
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
+from googlesearch import search #pip install beautifulsoup4 and google
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -267,6 +268,12 @@ def nfsShare():
                     print(smtp[host][proto][port]['script']['nfs-showmount'])
             else:
                 print("Port 2049 (NFS) not opened, can't perform NFS Enumuration")
+
+def googleShare():
+    toSearch = input("What do you want to search? ")
+    print("\nResults:")
+    for searchItem in search(toSearch, num=10, stop=10):
+        print(searchItem)
 
 while loop == True:
     project_menu()
