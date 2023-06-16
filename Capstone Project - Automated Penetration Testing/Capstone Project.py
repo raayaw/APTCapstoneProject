@@ -7,10 +7,14 @@ import sqlite3
 from sqlite3 import Error
 import pyfiglet
 import os
-import scrapy
+import scrapy #pip install scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from googlesearch import search #pip install beautifulsoup4 and google
+import requests #pip install requests
+from urllib.parse import urlparse, urljoin
+from bs4 import BeautifulSoup #pip install bs4
+import colorama #pip install colorama
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -23,8 +27,8 @@ def project_menu():
     print(ascii_hi)
     print("\nPlease Select an Option Below.")
     print("1. Port scanning")
-    print("Spider")
-    print("Option 3")
+    print("2. ???")
+    print("3. ???")
     print("4. OS Scan")
     print("5. Spidering")
     print("6. Exit\n")
@@ -45,8 +49,9 @@ def project_menu():
         elif menu_input == 5:
             ascii_spider = pyfiglet.figlet_format("Welcome to Spidering!")
             print(ascii_spider)
-            cmd = os.system('cmd /k "scrapy runspider spider.py"')
-            print(cmd)
+            spidering()
+            # cmd = os.system('cmd /k "scrapy runspider spider.py"')
+            # print(cmd)
         elif menu_input == 6:
             droptables()
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
@@ -58,7 +63,7 @@ def project_menu():
 
 def option_1():
     target = input("Enter an IP Address to scan: ")
-    port_range = input("Enter the range of ports to scan (eg. 1-1024): ")
+    port_range = input("Enter the range of ports to scan (e.g. 1-1024): ")
     scanner = nmap.PortScanner()
     scanner.scan(target, port_range)
     conn.execute('''CREATE TABLE IF NOT EXISTS PortScanning
@@ -274,6 +279,70 @@ def googleShare():
     print("\nResults:")
     for searchItem in search(toSearch, num=10, stop=10):
         print(searchItem)
+
+#Spidering / Crawling Domains
+def spidering():
+    url = str(input("Enter website to crawl here (e.g. https://www.np.edu.sg): "))
+    
+    colorama.init()
+    GREEN = colorama.Fore.GREEN
+    GRAY = colorama.Fore.LIGHTBLACK_EX
+    RESET = colorama.Fore.RESET
+    YELLOW = colorama.Fore.YELLOW
+
+    internal_urls = set()
+    external_urls = set()
+
+    def is_valid(url):
+        parsed = urlparse(url)
+        return bool(parsed.netloc) and bool(parsed.scheme)
+
+    def get_all_website_links(url):
+        urls = set()
+        domain_name = urlparse(url).netloc
+        soup = BeautifulSoup(requests.get(url).content, "html.parser")
+
+        for a_tag in soup.findAll("a"):
+            href = a_tag.attrs.get("href")
+            if href == "" or href is None:
+                # href empty tag
+                continue
+
+            href = urljoin(url, href)
+            parsed_href = urlparse(href)
+            href = parsed_href.scheme + "://" + parsed_href.netloc + parsed_href.path
+
+            if not is_valid(href):
+                continue
+            if href in internal_urls:
+                continue
+            if domain_name not in href:
+                if href not in external_urls:
+                    print(f"{GRAY}[!] External link: {href}{RESET}")
+                    external_urls.add(href)
+                continue
+            print(f"{GREEN}[*] Internal link: {href}{RESET}")
+            urls.add(href)
+            internal_urls.add(href)
+        return urls
+
+    total_urls_visited = 0
+
+    def crawl(url, max_urls=100):
+        global total_urls_visited
+        total_urls_visited += 1
+        print(f"{YELLOW}[*] Crawling: {url}{RESET}")
+        links = get_all_website_links(url)
+        for link in links:
+            if total_urls_visited > max_urls:
+                break
+            crawl(link, max_urls=max_urls)
+
+    if __name__ == "__main__":
+        crawl(url)
+        print("[+] Total Internal links:", len(internal_urls))
+        print("[+] Total External links:", len(external_urls))
+        print("[+] Total URLs:", len(external_urls) + len(internal_urls))
 
 while loop == True:
     project_menu()
