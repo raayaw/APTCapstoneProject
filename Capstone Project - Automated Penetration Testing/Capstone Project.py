@@ -19,8 +19,27 @@ import colorama #pip install colorama
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
 api = shodan.Shodan(Shodan_APIKEY)
+#Spidering Global Variables
+total_urls_visited = 0
+#Setting Up Database
 conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
+def createtables():
+    conn.execute('''CREATE TABLE IF NOT EXISTS Spidering
+    (Internal_URLs TEXT, External_URLs TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS PortScanning
+    (Port_Number TEXT, Port_Status TEXT)''')
+    conn.commit()
+
+def droptables():
+    conn.execute('''DELETE FROM PortScanning''')
+    conn.commit()
+    conn.execute('''DELETE FROM Spidering''')
+    conn.commit()
+    cur.close()
+    conn.close()
+createtables()
 loop = True
 def project_menu():
     ascii_hi = pyfiglet.figlet_format("Welcome to Automated Pentesting!")
@@ -31,15 +50,15 @@ def project_menu():
     print("3. ???")
     print("4. OS Scan")
     print("5. Spidering")
-    print("6. Exit\n")
+    print("6. Exit")
     menu_input = int()
     while menu_input == int():
-        menu_input = int(input("Select option: "))
+        menu_input = int(input("\nSelect option: "))
         if menu_input == 1:
             ascii_nmap = pyfiglet.figlet_format("Welcome to Port Scanning!")
             print(ascii_nmap)
             html()
-            option_1()
+            portscanning()
         elif menu_input == 2:
             option_2()
         elif menu_input == 3:
@@ -61,14 +80,11 @@ def project_menu():
             print("Invalid Input!\nPlease Try Again!")
             continue
 
-def option_1():
+def portscanning():
     target = input("Enter an IP Address to scan: ")
     port_range = input("Enter the range of ports to scan (e.g. 1-1024): ")
     scanner = nmap.PortScanner()
     scanner.scan(target, port_range)
-    conn.execute('''CREATE TABLE IF NOT EXISTS PortScanning
-        (port_number TEXT, port_status TEXT)''')
-    conn.commit()
     for host in scanner.all_hosts():
          print('Host : %s (%s)' % (host, scanner[host].hostname()))
          print('State : %s' % scanner[host].state())
@@ -80,7 +96,7 @@ def option_1():
              for port in lport:
                  plist = (str(port), str(scanner[host][proto][port]['state']))
                  cur.execute('''
-                    INSERT INTO PortScanning (port_number, port_status) VALUES (?, ?)
+                    INSERT INTO PortScanning (Port_Number, Port_Status) VALUES (?, ?)
                     ''', plist)
                  conn.commit()
                  print ('port : %s\tstate : %s' % (port, scanner[host][proto][port]['state']))
@@ -135,12 +151,6 @@ def option_4():
         print('Operating System: ' + scanner[target]['osmatch'][0]['name'])
     else:
         print('Failed to determine operating system')
-
-def droptables():
-    conn.execute('''DELETE FROM PortScanning''')
-    conn.commit()
-    cur.close()
-    conn.close()
  
 #SNMP OS Enumuration
 def snmpOS():
@@ -283,7 +293,8 @@ def googleShare():
 #Spidering / Crawling Domains
 def spidering():
     url = str(input("Enter website to crawl here (e.g. https://www.np.edu.sg): "))
-    
+    max_urls = int(input("Enter maximum number of sub-domains to crawl here (Rec. 5): "))
+
     colorama.init()
     GREEN = colorama.Fore.GREEN
     GRAY = colorama.Fore.LIGHTBLACK_EX
@@ -291,7 +302,9 @@ def spidering():
     YELLOW = colorama.Fore.YELLOW
 
     internal_urls = set()
+    in_list = []
     external_urls = set()
+    ex_list = []
 
     def is_valid(url):
         parsed = urlparse(url)
@@ -305,7 +318,6 @@ def spidering():
         for a_tag in soup.findAll("a"):
             href = a_tag.attrs.get("href")
             if href == "" or href is None:
-                # href empty tag
                 continue
 
             href = urljoin(url, href)
@@ -318,17 +330,17 @@ def spidering():
                 continue
             if domain_name not in href:
                 if href not in external_urls:
+                    ex_list.append(href)
                     print(f"{GRAY}[!] External link: {href}{RESET}")
                     external_urls.add(href)
                 continue
+            in_list.append(href)
             print(f"{GREEN}[*] Internal link: {href}{RESET}")
             urls.add(href)
             internal_urls.add(href)
         return urls
 
-    total_urls_visited = 0
-
-    def crawl(url, max_urls=100):
+    def crawl(url, max_urls):
         global total_urls_visited
         total_urls_visited += 1
         print(f"{YELLOW}[*] Crawling: {url}{RESET}")
@@ -339,7 +351,19 @@ def spidering():
             crawl(link, max_urls=max_urls)
 
     if __name__ == "__main__":
-        crawl(url)
+        crawl(url,max_urls)
+        pos = 0
+        while len(in_list) > len(ex_list):
+            ex_list.append("NULL")
+            continue
+        for i in in_list:
+            list = [in_list[pos],ex_list[pos]]
+            cur.execute('''
+            INSERT INTO Spidering (Internal_URLs, External_URLs) VALUES (?,?)
+            ''', list)
+            conn.commit()
+            pos += 1
+            continue
         print("[+] Total Internal links:", len(internal_urls))
         print("[+] Total External links:", len(external_urls))
         print("[+] Total URLs:", len(external_urls) + len(internal_urls))
