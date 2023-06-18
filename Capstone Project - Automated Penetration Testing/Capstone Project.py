@@ -51,23 +51,21 @@ def project_menu():
         print("2. Vulnerability Scanning")
         print("3. Exploitation & Post Exploitation")
         print("4. Exit")
-        menu_input = int()
-        while menu_input == int():
-            menu_input = int(input("Select option: "))
-            if menu_input == 1:
-                reconMenu()
-            elif menu_input == 2:
-                vulnScanningMenu()
-            elif menu_input == 3:
-                exploitationMenu()
-            elif menu_input == 4:
-                #droptables()
-                ascii_bye = pyfiglet.figlet_format("Goodbye!")
-                print(ascii_bye)
-                loop = False
-            else:
-                print("Invalid Input!\nPlease Try Again!")
-                continue
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            reconMenu()
+        elif menu_input == "2":
+            vulnScanningMenu()
+        elif menu_input == "3":
+            exploitationMenu()
+        elif menu_input == "4":
+            droptables()
+            ascii_bye = pyfiglet.figlet_format("Goodbye!")
+            print(ascii_bye)
+            loop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
 
 
 
@@ -83,20 +81,20 @@ def reconMenu():
         print("3. Enumuration")
         print("4. Exit")
     
-        menu_input = int(input("Select option: "))
-        if menu_input == 1:
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
             ascii_footprinting = pyfiglet.figlet_format("Footprinting")
             print(ascii_footprinting)
             footprintingMenu()
-        elif menu_input == 2:
+        elif menu_input == "2":
             ascii_scanning = pyfiglet.figlet_format("Scanning")
             print(ascii_scanning)
             scanningMenu()
-        elif menu_input == 3:
+        elif menu_input == "3":
             ascii_enum = pyfiglet.figlet_format("Enumuration")
             print(ascii_enum)
             enumMenu()
-        elif menu_input == 4:
+        elif menu_input == "4":
             reconLoop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
@@ -110,14 +108,15 @@ def footprintingMenu():
         print("2. Whois Lookup")
         print("3. Exit")
 
-        menu_input = int(input("Select option: "))
-        if menu_input == 1:
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
             ascii_google = pyfiglet.figlet_format("Google Search")
             print(ascii_google)
-        elif menu_input == 2:
+            googleSearch()
+        elif menu_input == "2":
             ascii_whois = pyfiglet.figlet_format("Whois Lookup")
             print(ascii_whois)
-        elif menu_input == 3:
+        elif menu_input == "3":
             footprintingLoop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
@@ -134,20 +133,20 @@ def scanningMenu():
         print("2. Port and Service Discovery")
         print("3. OS Discovery")
         print("4. Exit")
-        menu_input = int(input("Select option: "))
-        if menu_input == 1:
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Host Discovery")
             print(ascii_1)
             hostDiscovery()
-        elif menu_input == 2:
+        elif menu_input == "2":
             ascii_2 = pyfiglet.figlet_format("Port and Service Discovery")
             print(ascii_2)
             portDiscovery()
-        elif menu_input == 3:
+        elif menu_input == "3":
             ascii_3 = pyfiglet.figlet_format("OS Discovery")
             print(ascii_3)
             osDiscovery()
-        elif menu_input == 4:
+        elif menu_input == "4":
             scanningLoop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -163,14 +162,14 @@ def enumMenu():
         print("1. Option 1")
         print("2. Option 2")
         print("3. Exit")
-        menu_input = int(input("Select option: "))
-        if menu_input == 1:
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Option 1")
             print(ascii_1)
-        elif menu_input == 2:
+        elif menu_input == "2":
             ascii_2 = pyfiglet.figlet_format("Option 2")
             print(ascii_2)
-        elif menu_input == 3:
+        elif menu_input == "3":
             enumLoop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
@@ -476,5 +475,4 @@ def spidering():
         print("[+] Total External links:", len(external_urls))
         print("[+] Total URLs:", len(external_urls) + len(internal_urls))
 
-while loop == True:
-    project_menu()
+project_menu()
