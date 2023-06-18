@@ -391,6 +391,54 @@ def nfsShare():
             else:
                 print("Port 2049 (NFS) not opened, can't perform NFS Enumuration")
 
+#LDAP Information Enumuration
+def ldapInfo():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 389')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    server = ldap3.Server(target, get_info=ldap3.ALL, port=389)
+                    connection = ldap3.Connection(server)
+                    connection.bind()
+                    print(server.info)
+                else:
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
+#LDAP Users Enumuration
+def ldapUsers():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 389')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    server = ldap3.Server(target, get_info=ldap3.ALL, port=389)
+                    connection = ldap3.Connection(server)
+                    connection.bind()
+                    connection.search(search_base='DC=CEH,DC=com', 
+                                      search_filter='(&(objectclass=person))')
+                    print(connection.entries)
+                else:
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
+
+
 def googleSearch():
     toSearch = input("What do you want to search? ")
     print("\nResults:")
