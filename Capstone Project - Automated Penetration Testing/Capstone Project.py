@@ -438,6 +438,35 @@ def ldapUsers():
                 else:
                     print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
 
+#LDAP Username Enumuration using LDAP Brute
+def ldapBrute():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-p 389')
+    dn = input("Enter Domain Name: ")
+    tld = input("Enter Top Level Domain(eg. com, org): ")
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    ldap = nmap.PortScanner()
+                    ldapBase = 'cn=users, dc=' + dn + ', dc=' + tld
+                    print(ldapBase)
+
+                    arguments = "-p 389 --script ldap-brute --script-args ldap.base=\'\"" + ldapBase +"\"\'"
+                    ldap.scan(host, arguments=arguments)
+                    ldap.scan("10.10.1.22", arguments='-p 389 --script ldap-brute --script-args ldap.base=\'"cn=users, dc=CEH, dc=com"\'')
+                    print(ldap[host][proto][port]['script']['ldap-brute'])
+                else:
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
+
 
 def googleSearch():
     toSearch = input("What do you want to search? ")
