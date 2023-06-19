@@ -18,6 +18,7 @@ import colorama #pip install colorama
 import dns.resolver
 import whois
 import webb
+import builtwith
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -805,4 +806,18 @@ def dns_enum():
         print(f"{record_type} records for {target_domain}:")
         for rdata in answers:
             print(f" {rdata}")
+
+
+def builtWith():
+    website = builtwith.parse('https://juice-shop.herokuapp.com/#/')
+    for name in website:
+        print(name + ":" , website[name])
+
+def allowedMethods():
+    target = input("Enter target website: ") #https://juice-shop.herokuapp.com/#/
+    requestResponse = requests.options(target)
+    for item in requestResponse.headers:
+        print(item + ": " + requestResponse.headers[item])
+
+
 project_menu()
