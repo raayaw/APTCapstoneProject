@@ -25,11 +25,18 @@ total_urls_visited = 0
 conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
 def createtables():
+    conn.execute('''CREATE TABLE IF NOT EXISTS PortDiscovery
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
+    Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT''')
+    conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS Spidering
     (Internal_URLs TEXT, External_URLs TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS PortScanning
     (IP_Address TEXT, Port_Number TEXT, Port_Status TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS HostDiscovery
+    (IP_Address TEXT, Status TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_OS_Enummeration
     (IP_Address TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
@@ -51,9 +58,11 @@ def createtables():
     conn.commit()
 
 def droptables():
+    conn.execute('''DELETE FROM Spidering''')
+    conn.commit()
     conn.execute('''DELETE FROM PortScanning''')
     conn.commit()
-    conn.execute('''DELETE FROM Spidering''')
+    conn.execute('''DELETE FROM HostDiscovery''')
     conn.commit()
     conn.execute('''DELETE FROM SNMP_OS_Enummeration''')
     conn.commit()
@@ -223,10 +232,14 @@ def portDiscovery():
      
              lport = scanner[host][proto].keys()
              for port in lport:
-                 plist = (str(target), str(port), str(scanner[host][proto][port]['state']))
+                 PortDiscoveryList = [str(target), str(proto), str(port), str(scanner[host][proto][port]['state']), 
+                                      str(scanner[host][proto][port]['reason']), str(scanner[host][proto][port]['name']),
+                                      str(scanner[host][proto][port]['product']), str(scanner[host][proto][port]['version']),
+                                      str(scanner[host][proto][port]['extrainfo'])]
                  cur.execute('''
-                    INSERT INTO PortScanning (IP_Address, Port_Number, Port_Status) VALUES (?, ?, ?)
-                    ''', plist)
+                 INSERT INTO PortDiscovery (Host, Protocol, Port_Number, Port_Status, Reason, Name, 
+                 Product, Version, Extra_Info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 ''', PortDiscoveryList)
                  conn.commit()
                  print ('port : %s\tstate : %s\treason : %s\tservice : %s\t version : %s %s (%s)'
                           % (port, scanner[host][proto][port]['state'], 
@@ -235,7 +248,7 @@ def portDiscovery():
                              scanner[host][proto][port]['product'],
                              scanner[host][proto][port]['version'],
                              scanner[host][proto][port]['extrainfo']))
-                 plist = ()
+                 plist = []
                 
 def option_2():
     print("This is option 2 function")
@@ -272,7 +285,13 @@ def hostDiscovery():
     target = input("Enter an IP Address to scan: ")
     scanner.scan(target, arguments='-n -sP')
     for host in scanner.all_hosts():
+        hostDiscoveryList = [str(host), str(scanner[host]['status']['state'])]
+        cur.execute('''
+        INSERT INTO HostDiscovery (IP_Address, State) VALUES (?, ?)
+        ''', hostDiscoveryList)
+        conn.commit()
         print(host + " is " + scanner[host]['status']['state'])
+
 
 def osDiscovery():
     target = input("Enter an IP Address to scan: ")
@@ -501,6 +520,7 @@ def nfsShare():
 
 #LDAP Information Enumuration
 def ldapInfo():
+    ldapInfoList = []
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-sU -p 389')
