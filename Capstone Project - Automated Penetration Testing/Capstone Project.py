@@ -72,52 +72,148 @@ def droptables():
 createtables()
 loop = True
 def project_menu():
-    ascii_hi = pyfiglet.figlet_format("Welcome to Automated Pentesting!")
-    print(ascii_hi)
-    print("\nPlease Select an Option Below.")
-    print("1. Port scanning")
-    print("2. ???")
-    print("3. ???")
-    print("4. OS Scan")
-    print("5. Spidering")
-    print("6. Enummeration shiz")
-    print("7. Exit")
-    menu_input = int()
-    while menu_input == int():
-        menu_input = int(input("\nSelect option: "))
-        if menu_input == 1:
-            ascii_nmap = pyfiglet.figlet_format("Welcome to Port Scanning!")
-            print(ascii_nmap)
-            # html()
-            portscanning()
-        elif menu_input == 2:
-            option_2()
-        elif menu_input == 3:
-            option_3()
-        elif menu_input == 4:
-            option_4()
-        elif menu_input == 5:
-            ascii_spider = pyfiglet.figlet_format("Welcome to Spidering!")
-            print(ascii_spider)
-            spidering()
-            # cmd = os.system('cmd /k "scrapy runspider spider.py"')
-            # print(cmd)
-        elif menu_input == 6:
-            nfsShare()
-        elif menu_input == 7:
+    loop = True
+    while loop == True:
+        ascii_hi = pyfiglet.figlet_format("Welcome to Automated Pentesting!")
+        print(ascii_hi)
+        print("\nPlease Select an Option Below.")
+        print("1. Reconnaissance")
+        print("2. Vulnerability Scanning")
+        print("3. Exploitation & Post Exploitation")
+        print("4. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            reconMenu()
+        elif menu_input == "2":
+            vulnScanningMenu()
+        elif menu_input == "3":
+            exploitationMenu()
+        elif menu_input == "4":
             droptables()
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
             print(ascii_bye)
-            sys.exit()
+            loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
 
-def portscanning():
+
+
+def reconMenu():
+
+    reconLoop = True
+    while reconLoop == True:
+        ascii_recon = pyfiglet.figlet_format("Reconnaissance")
+        print(ascii_recon)
+        print("\nPlease Select an Option Below.")
+        print("1. Footprinting")
+        print("2. Scanning")
+        print("3. Enumuration")
+        print("4. Exit")
+    
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_footprinting = pyfiglet.figlet_format("Footprinting")
+            print(ascii_footprinting)
+            footprintingMenu()
+        elif menu_input == "2":
+            ascii_scanning = pyfiglet.figlet_format("Scanning")
+            print(ascii_scanning)
+            scanningMenu()
+        elif menu_input == "3":
+            ascii_enum = pyfiglet.figlet_format("Enumuration")
+            print(ascii_enum)
+            enumMenu()
+        elif menu_input == "4":
+            reconLoop = False
+        else:
+                print("Invalid Input!\nPlease Try Again!")
+                continue
+
+def footprintingMenu():
+    footprintingLoop = True
+    while footprintingLoop == True:
+        print("\nPlease Select an Option Below.")
+        print("1. Google Search")
+        print("2. Whois Lookup")
+        print("3. Exit")
+
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_google = pyfiglet.figlet_format("Google Search")
+            print(ascii_google)
+            googleSearch()
+        elif menu_input == "2":
+            ascii_whois = pyfiglet.figlet_format("Whois Lookup")
+            print(ascii_whois)
+        elif menu_input == "3":
+            footprintingLoop = False
+        else:
+                print("Invalid Input!\nPlease Try Again!")
+                continue
+
+
+
+def scanningMenu():
+    scanningLoop = True
+    while scanningLoop == True:
+        #Input Scanning Options
+        print("\nPlease Select an Option Below.")
+        print("1. Host Discovery")
+        print("2. Port and Service Discovery")
+        print("3. OS Discovery")
+        print("4. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("Host Discovery")
+            print(ascii_1)
+            hostDiscovery()
+        elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("Port and Service Discovery")
+            print(ascii_2)
+            portDiscovery()
+        elif menu_input == "3":
+            ascii_3 = pyfiglet.figlet_format("OS Discovery")
+            print(ascii_3)
+            osDiscovery()
+        elif menu_input == "4":
+            scanningLoop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
+
+
+
+def enumMenu():
+    enumLoop = True
+    while enumLoop == True:
+        #Input Scanning Options
+        print("\nPlease Select an Option Below.")
+        print("1. Spidering")
+        print("2. Option 2")
+        print("3. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("Spidering")
+            print(ascii_1)
+            spidering()
+        elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("Option 2")
+            print(ascii_2)
+        elif menu_input == "3":
+            enumLoop = False
+        else:
+                print("Invalid Input!\nPlease Try Again!")
+                continue
+
+def portDiscovery():
     target = input("Enter an IP Address to scan: ")
-    port_range = input("Enter the range of ports to scan (e.g. 1-1024): ")
+    port_range = input("Enter the range of ports to scan (eg. 1-1024, or enter nothing for no port range): ")
     scanner = nmap.PortScanner()
-    scanner.scan(target, port_range)
+    if port_range == "":
+        scanner.scan(target)
+    else:
+        scanner.scan(target, port_range)
     for host in scanner.all_hosts():
          print('Host : %s (%s)' % (host, scanner[host].hostname()))
          print('State : %s' % scanner[host].state())
@@ -132,7 +228,13 @@ def portscanning():
                     INSERT INTO PortScanning (IP_Address, Port_Number, Port_Status) VALUES (?, ?, ?)
                     ''', plist)
                  conn.commit()
-                 print ('port : %s\tstate : %s' % (port, scanner[host][proto][port]['state']))
+                 print ('port : %s\tstate : %s\treason : %s\tservice : %s\t version : %s %s (%s)'
+                          % (port, scanner[host][proto][port]['state'], 
+                             scanner[host][proto][port]['reason'], 
+                             scanner[host][proto][port]['name'],
+                             scanner[host][proto][port]['product'],
+                             scanner[host][proto][port]['version'],
+                             scanner[host][proto][port]['extrainfo']))
                  plist = ()
                 
 def option_2():
@@ -165,25 +267,28 @@ def option_2():
 
 
 
-def option_3():
-    print("This is option 3 function")
+def hostDiscovery():
+    scanner = nmap.PortScanner()
     target = input("Enter an IP Address to scan: ")
-    nm = nmap.PortScanner()
+    scanner.scan(target, arguments='-n -sP')
+    for host in scanner.all_hosts():
+        print(host + " is " + scanner[host]['status']['state'])
 
-    nm.scan(hosts=target, arguments='-n -sP')
-    hosts_list = [(x, nm[x]['status']['state']) for x in nm.all_hosts()]
-
-    for host, status in hosts_list:
-        print(host + ' ' + status)
-
-def option_4():
+def osDiscovery():
     target = input("Enter an IP Address to scan: ")
     scanner = nmap.PortScanner()
     scanner.scan(target, arguments='-O')
-    if scanner[target]['osmatch']:
-        print('Operating System: ' + scanner[target]['osmatch'][0]['name'])
-    else:
-        print('Failed to determine operating system')
+    for host in scanner.all_hosts():
+        print(host)
+        if scanner[host]['osmatch'][0]:
+            print('Device type: ' + (scanner[host]['osmatch'][0]['osclass'][0]['type']))
+            print("Operating System running: " + (scanner[host]['osmatch'][0]['osclass'][0]['vendor']) + ' ' +
+                                                  (scanner[host]['osmatch'][0]['osclass'][0]['osfamily']) + ' ' + 
+                                                  (scanner[host]['osmatch'][0]['osclass'][0]['osgen']))
+            print("OS CPE: " + (scanner[host]['osmatch'][0]['osclass'][0]['cpe'][0]))
+            print("OS Details: " + (scanner[host]['osmatch'][0]['name']))
+        else:
+            print('Failed to determine operating system')
  
 #SNMP OS Enumuration
 def snmpOS():
@@ -394,7 +499,84 @@ def nfsShare():
             else:
                 print("Port 2049 (NFS) not opened, can't perform NFS Enumuration")
 
-def googleShare():
+#LDAP Information Enumuration
+def ldapInfo():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 389')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    server = ldap3.Server(target, get_info=ldap3.ALL, port=389)
+                    connection = ldap3.Connection(server)
+                    connection.bind()
+                    print(server.info)
+                else:
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
+#LDAP Users Enumuration
+def ldapUsers():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 389')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    server = ldap3.Server(target, get_info=ldap3.ALL, port=389)
+                    connection = ldap3.Connection(server)
+                    connection.bind()
+                    connection.search(search_base='DC=CEH,DC=com', 
+                                      search_filter='(&(objectclass=person))')
+                    print(connection.entries)
+                else:
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
+
+#LDAP Username Enumuration using LDAP Brute
+def ldapBrute():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-p 389')
+    dn = input("Enter Domain Name: ")
+    tld = input("Enter Top Level Domain(eg. com, org): ")
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+     
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    ldap = nmap.PortScanner()
+                    ldapBase = 'cn=users, dc=' + dn + ', dc=' + tld
+                    print(ldapBase)
+
+                    arguments = "-p 389 --script ldap-brute --script-args ldap.base=\'\"" + ldapBase +"\"\'"
+                    ldap.scan(host, arguments=arguments)
+                    ldap.scan("10.10.1.22", arguments='-p 389 --script ldap-brute --script-args ldap.base=\'"cn=users, dc=CEH, dc=com"\'')
+                    print(ldap[host][proto][port]['script']['ldap-brute'])
+                else:
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
+
+
+def googleSearch():
     toSearch = input("What do you want to search? ")
     print("\nResults:")
     for searchItem in search(toSearch, num=10, stop=10):
@@ -478,5 +660,4 @@ def spidering():
         print("[+] Total External links:", len(external_urls))
         print("[+] Total URLs:", len(external_urls) + len(internal_urls))
 
-while loop == True:
-    project_menu()
+project_menu()
