@@ -15,6 +15,10 @@ import requests #pip install requests
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup #pip install bs4
 import colorama #pip install colorama
+import dns.resolver
+import whois
+import webb
+import builtwith
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -711,5 +715,133 @@ def spidering():
         print("[+] Total Internal links:", len(internal_urls))
         print("[+] Total External links:", len(external_urls))
         print("[+] Total URLs:", len(external_urls) + len(internal_urls))
+
+def whois_enum():
+    def get_ip_address(domain):
+        try:
+            ip_address = socket.gethostbyname(domain)
+            return ip_address
+        except socket.gaierror:
+            print("Invalid domain or unable to resolve domain name.")
+            sys.exit(1)
+
+    def run_traceroute(ip_address):
+        try:
+            webb.traceroute("your-web-page-url")
+        except subprocess.CalledProcessError:
+            print("Failed to run traceroute.")
+
+    def get_whois_info(domain):
+        try:
+            whois_info = whois.whois(domain)
+            print(whois_info)
+        except whois.parser.PywhoisError:
+            print("Failed to retrieve WHOIS information.")
+
+    def main():
+        domain = input("Enter the domain name: ")
+
+        # Get IP address
+        ip_address = get_ip_address(domain)
+        print("IP address: " + ip_address)
+
+
+        # Get WHOIS information
+        print("WHOIS information:")
+        get_whois_info(domain)
+
+    if __name__ == "__main__":
+        main()
+
+def rpc_info():
+    target = input("Enter IP address: ")
+    nm = nmap.PortScanner()
+    nm.scan(target, arguments='-p 111 --script rpcinfo')
+    rpc_info = nm[target]['tcp'][111]['script']['rpcinfo']
+    # Process the RPC information as needed
+    print(rpc_info)
+
+def packet_sniffer():
+    def packet_callback(packet):
+        print(packet.show())
+
+    inteface = input("Enter network interface: ")
+
+    sniff(iface =interface, prn=packet_callback, timeout=10)
+
+def vulnerable_ports():
+    target = input("Enter an IP Address to scan: ")
+    port_range = input("Enter the range of ports to scan (eg. 1-1024, or enter nothing for no port range): ")
+    scanner = nmap.PortScanner()
+    if port_range == "":
+        scanner.scan(target)
+        for host in scanner.all_hosts():
+            print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+ 
+            lport = scanner[host][proto].keys()
+            print('Vulnerable Ports:')
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    new_port = (r'\b%s\b' % (str(port)))
+                    with open('TCP_List.txt', 'r') as file:
+                        contents = file.read()
+                        matches = re.findall(new_port, contents)
+                        if matches:
+                            print('Vulnerable Ports:')
+                            print ('port : %s\tstate : %s\tservice : %s'
+                                % (port, scanner[host][proto][port]['state'], scanner[host][proto][port]['name']))
+
+                                
+    else:
+        scanner.scan(target, port_range)
+        for host in scanner.all_hosts():
+            print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+ 
+            lport = scanner[host][proto].keys()
+            print('Vulnerable Ports:')
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    new_port = (r'\b%s\b' % (str(port)))
+                    with open('TCP_List.txt', 'r') as file:
+                        contents = file.read()
+                        matches = re.findall(new_port, contents)
+                        if matches:
+                            print ('port : %s\tstate : %s\tservice : %s'
+                                % (port, scanner[host][proto][port]['state'], scanner[host][proto][port]['name']))
+def dns_enum():
+    # Set the target domain and record type
+    target = input("Enter domain name: ")
+    record_types = ["A", "AAAA", "CNAME", "MX", "NS", "SOA", "TXT"]
+    # Create a DNS resolver
+    dnsResolver = dns.resolver.Resolver()
+    for record in record_types:
+        # Perform DNS lookup for the specified domain and record type
+        try:
+            answers = resolver.resolve(target, record)
+        except dns.resolver.NoAnswer:
+            continue
+        # Print the answers
+        print(f"{record_type} records for {target_domain}:")
+        for rdata in answers:
+            print(f" {rdata}")
+
+
+def builtWith():
+    website = builtwith.parse('https://juice-shop.herokuapp.com/#/')
+    for name in website:
+        print(name + ":" , website[name])
+
+def allowedMethods():
+    target = input("Enter target website: ") #https://juice-shop.herokuapp.com/#/
+    requestResponse = requests.options(target)
+    for item in requestResponse.headers:
+        print(item + ": " + requestResponse.headers[item])
+
 
 project_menu()
