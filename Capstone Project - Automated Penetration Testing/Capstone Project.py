@@ -29,14 +29,14 @@ def createtables():
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
     Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT''')
     conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS HostDiscovery
+    (Host TEXT, Status TEXT)''')
+    conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS Spidering
     (Internal_URLs TEXT, External_URLs TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS PortScanning
     (IP_Address TEXT, Port_Number TEXT, Port_Status TEXT)''')
-    conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS HostDiscovery
-    (IP_Address TEXT, Status TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_OS_Enummeration
     (IP_Address TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
@@ -248,7 +248,6 @@ def portDiscovery():
                              scanner[host][proto][port]['product'],
                              scanner[host][proto][port]['version'],
                              scanner[host][proto][port]['extrainfo']))
-                 plist = []
                 
 def option_2():
     print("This is option 2 function")
@@ -287,7 +286,7 @@ def hostDiscovery():
     for host in scanner.all_hosts():
         hostDiscoveryList = [str(host), str(scanner[host]['status']['state'])]
         cur.execute('''
-        INSERT INTO HostDiscovery (IP_Address, State) VALUES (?, ?)
+        INSERT INTO HostDiscovery (Host, State) VALUES (?, ?)
         ''', hostDiscoveryList)
         conn.commit()
         print(host + " is " + scanner[host]['status']['state'])
@@ -300,6 +299,15 @@ def osDiscovery():
     for host in scanner.all_hosts():
         print(host)
         if scanner[host]['osmatch'][0]:
+            OSDiscoveryList = [str(host), str(scanner[host]['osmatch'][0]['osclass'][0]['type']),
+                               str((scanner[host]['osmatch'][0]['osclass'][0]['vendor']) + ' ' +
+                                                  (scanner[host]['osmatch'][0]['osclass'][0]['osfamily']) + ' ' + 
+                                                  (scanner[host]['osmatch'][0]['osclass'][0]['osgen']))]
+            cur.execute('''
+            INSERT INTO PortDiscovery (Host, Protocol, Port_Number, Port_Status, Reason, Name, 
+            Product, Version, Extra_Info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', OSDiscoveryList)
+            conn.commit()
             print('Device type: ' + (scanner[host]['osmatch'][0]['osclass'][0]['type']))
             print("Operating System running: " + (scanner[host]['osmatch'][0]['osclass'][0]['vendor']) + ' ' +
                                                   (scanner[host]['osmatch'][0]['osclass'][0]['osfamily']) + ' ' + 
