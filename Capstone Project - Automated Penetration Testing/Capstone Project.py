@@ -15,7 +15,7 @@ import requests #pip install requests
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup #pip install bs4
 import colorama #pip install colorama
-import dns.resolver
+# import dns.resolver
 import whois
 import webb
 import builtwith
@@ -72,6 +72,24 @@ def createtables():
     conn.execute('''CREATE TABLE IF NOT EXISTS Spidering
     (Internal_URLs TEXT, External_URLs TEXT)''')
     conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS Whois_Enummeration
+    (Host TEXT, Domain TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS RPC
+    (Host TEXT, RPC_Info TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS Vulnerable_Ports
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS DNS_Enummeration
+    (Domain TEXT, Record_Type TEXT, Data TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS Built_With
+    (Domain TEXT, Name TEXT, Language TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS Allowed_Methods
+    (Domain TEXT, Item TEXT, Result TEXT)''')
+    conn.commit()
 
 def droptables():
     conn.execute('''DELETE FROM HostDiscovery''')
@@ -99,6 +117,18 @@ def droptables():
     conn.execute('''DELETE FROM Google_Search''')
     conn.commit()
     conn.execute('''DELETE FROM Spidering''')
+    conn.commit()
+    conn.execute('''DELETE FROM Whois_Enummeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RPC''')
+    conn.commit()
+    conn.execute('''DELETE FROM Vulnerable_Ports''')
+    conn.commit()
+    conn.execute('''DELETE FROM DNS_Enummeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM Built_With''')
+    conn.commit()
+    conn.execute('''DELETE FROM Allowed_Methods''')
     conn.commit()
     cur.close()
     conn.close()
@@ -233,6 +263,7 @@ def enumMenu():
         elif menu_input == "2":
             ascii_2 = pyfiglet.figlet_format("Option 2")
             print(ascii_2)
+            allowedMethods()
         elif menu_input == "3":
             enumLoop = False
         else:
@@ -326,7 +357,7 @@ def osDiscovery():
             OSDiscoveryList = [str(host), str(scanner[host]['osmatch'][0]['osclass'][0]['type']),
                                str((scanner[host]['osmatch'][0]['osclass'][0]['vendor']) + ' ' +
                                (scanner[host]['osmatch'][0]['osclass'][0]['osfamily']) + ' ' + 
-                               (scanner[host]['osmatch'][0]['osclass'][0]['osgen']))
+                               (scanner[host]['osmatch'][0]['osclass'][0]['osgen'])),
                                 str(scanner[host]['osmatch'][0]['osclass'][0]['cpe'][0]),
                                 str(scanner[host]['osmatch'][0]['name'])]
             cur.execute('''
@@ -705,10 +736,10 @@ def spidering():
             ex_list.append("NULL")
             continue
         for i in in_list:
-            list = [in_list[pos],ex_list[pos]]
+            SpideringList = [in_list[pos],ex_list[pos]]
             cur.execute('''
-            INSERT INTO Spidering (Internal_URLs, External_URLs) VALUES (?,?)
-            ''', list)
+            INSERT INTO Spidering (Internal_URLs, External_URLs) VALUES (?, ?)
+            ''', SpideringList)
             conn.commit()
             pos += 1
             continue
@@ -750,6 +781,12 @@ def whois_enum():
         print("WHOIS information:")
         get_whois_info(domain)
 
+        whoisEnumList = [str(ip_address), str(domain)]
+        cur.execute('''
+        INSERT INTO Whois_Enummeration (Host, Domain) VALUES (?,?)
+        ''', whoisEnumList)
+        conn.commit()
+
     if __name__ == "__main__":
         main()
 
@@ -760,6 +797,11 @@ def rpc_info():
     rpc_info = nm[target]['tcp'][111]['script']['rpcinfo']
     # Process the RPC information as needed
     print(rpc_info)
+    rpcList = [str(target), str(rpc_info)]
+    cur.execute('''
+    INSERT INTO RPC (Host, RPC_Info) VALUES (?,?)
+    ''', rpcList)
+    conn.commit()
 
 def packet_sniffer():
     def packet_callback(packet):
@@ -793,6 +835,12 @@ def vulnerable_ports():
                             print('Vulnerable Ports:')
                             print ('port : %s\tstate : %s\tservice : %s'
                                 % (port, scanner[host][proto][port]['state'], scanner[host][proto][port]['name']))
+                            VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
+                            str(scanner[host][proto][port]['name'])]
+                            cur.execute('''
+                            INSERT INTO Vulnerable_Ports (Host, Protocol, Port_Number, Port_Status, Vulnerability) VALUES (?, ?, ?, ?, ?)
+                            ''', VulnerablePortsList)
+                            conn.commit()
 
                                 
     else:
@@ -814,6 +862,12 @@ def vulnerable_ports():
                         if matches:
                             print ('port : %s\tstate : %s\tservice : %s'
                                 % (port, scanner[host][proto][port]['state'], scanner[host][proto][port]['name']))
+                            VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
+                            str(scanner[host][proto][port]['name'])]
+                            cur.execute('''
+                            INSERT INTO Vulnerable_Ports (Host, Protocol, Port_Number, Port_Status, Vulnerability) VALUES (?, ?, ?, ?, ?)
+                            ''', VulnerablePortsList)
+                            conn.commit()
 def dns_enum():
     # Set the target domain and record type
     target = input("Enter domain name: ")
@@ -830,18 +884,34 @@ def dns_enum():
         print(f"{record_type} records for {target_domain}:")
         for rdata in answers:
             print(f" {rdata}")
+            dnsEnummerationList = [str(target), str({record_type}), str({rdata})]
+            cur.execute('''
+            INSERT INTO DNS_Enummeration_Ports (Domain, Record_Type, , Data) VALUES (?, ?, ?)
+            ''', dnsEnummerationList)
+            conn.commit()
 
 
 def builtWith():
     website = builtwith.parse('https://juice-shop.herokuapp.com/#/')
     for name in website:
         print(name + ":" , website[name])
+        builtWithList = [str(website), str(name), str(website[name])]
+        cur.execute('''
+        INSERT INTO Built_With (Domain, Name, Language) VALUES (?, ?, ?)
+        ''', builtWithList)
+        conn.commit()
+
 
 def allowedMethods():
     target = input("Enter target website: ") #https://juice-shop.herokuapp.com/#/
     requestResponse = requests.options(target)
     for item in requestResponse.headers:
         print(item + ": " + requestResponse.headers[item])
+        allowedMethodsList = [str(target), str(item), str(requestResponse.headers[item])]
+        cur.execute('''
+        INSERT INTO Allowed_Methods (Domain, Item, Result) VALUES (?, ?, ?)
+        ''', allowedMethodsList)
+        conn.commit()
 
 
 project_menu()
