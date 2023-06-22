@@ -806,10 +806,35 @@ def rpc_info():
 def packet_sniffer():
     def packet_callback(packet):
         print(packet.show())
+    while True:
+        try:
+            interface = input("Enter network interface: ")
+            capture = sniff(iface = interface, timeout = 0)
+            break
+        except OSError:
+            print("Not a valid interface. Please try again.")
+            
+    while True:
+        try:
+            timeout = int(input("How long do you want to sniff for? (in seconds): "))
+            break
+        except:
+            print("Not a valid input. Please try again.")
+    
+    while True:
+        try:
+            toFilter = input("What do you want to filter? (eg. dst port ftp / icmp, or enter nothing for no filter): ")
+            capture = sniff(iface = interface, timeout = 0, filter = toFilter)
+            break
+        except:
+            print("Failed to compile filter expression " + toFilter + '. Please try again.')
 
-    inteface = input("Enter network interface: ")
 
-    sniff(iface =interface, prn=packet_callback, timeout=10)
+    
+    if filter == "":
+        capture = sniff(iface = interface, prn=packet_callback, timeout = timeout)
+    else: 
+        capture = sniff(iface = interface, prn=packet_callback, timeout = timeout, filter = toFilter)
 
 def vulnerable_ports():
     target = input("Enter an IP Address to scan: ")
