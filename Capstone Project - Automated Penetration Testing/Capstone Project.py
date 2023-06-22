@@ -877,11 +877,11 @@ def dns_enum():
     for record in record_types:
         # Perform DNS lookup for the specified domain and record type
         try:
-            answers = resolver.resolve(target, record)
+            answers = dnsResolver.resolve(target, record)
         except dns.resolver.NoAnswer:
             continue
         # Print the answers
-        print(f"{record_type} records for {target_domain}:")
+        print(f"{record} records for {target}:")
         for rdata in answers:
             print(f" {rdata}")
             dnsEnummerationList = [str(target), str({record_type}), str({rdata})]
