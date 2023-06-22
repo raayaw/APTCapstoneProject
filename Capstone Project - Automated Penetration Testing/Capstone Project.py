@@ -19,6 +19,7 @@ import colorama #pip install colorama
 import whois
 import webb
 import builtwith
+from scapy.all import *
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
