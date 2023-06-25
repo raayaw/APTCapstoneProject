@@ -35,7 +35,7 @@ def createtables():
     Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS HostDiscovery
-    (Host TEXT, Status TEXT)''')
+    (Host TEXT, State TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS OSDiscovery
     (Host TEXT, Device_Type TEXT, OS TEXT, OS_CPE TEXT, OS_Details TEXT)''')
