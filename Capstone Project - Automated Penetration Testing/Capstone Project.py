@@ -160,8 +160,6 @@ def project_menu():
             print("Invalid Input!\nPlease Try Again!")
             continue
 
-
-
 def reconMenu():
 
     reconLoop = True
