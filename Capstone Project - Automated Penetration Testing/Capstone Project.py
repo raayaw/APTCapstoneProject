@@ -208,6 +208,7 @@ def footprintingMenu():
         elif menu_input == "2":
             ascii_whois = pyfiglet.figlet_format("Whois Lookup")
             print(ascii_whois)
+            whois_enum()
         elif menu_input == "3":
             footprintingLoop = False
         else:
@@ -664,7 +665,7 @@ def googleSearch():
         print(searchItem)
         googleSearchList = [str(toSearch), str(searchItem)]
         cur.execute('''
-        INSERT INTO NFS_Share_Enummeration (Search, Results) VALUES (?, ?)
+        INSERT INTO Google_Search (Search, Results) VALUES (?, ?)
         ''', googleSearchList)
         conn.commit()
 
