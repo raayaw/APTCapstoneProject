@@ -5,11 +5,11 @@ import nmap
 import shodan
 import sqlite3
 from sqlite3 import Error
-import pyfiglet
+import pyfiglet #pip install pyfiglet
 import os
-import scrapy #pip install scrapy
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
+#import scrapy #pip install scrapy
+#from scrapy.spiders import CrawlSpider, Rule
+#from scrapy.linkextractors import LinkExtractor
 from googlesearch import search #pip install beautifulsoup4 and google
 import requests #pip install requests
 from urllib.parse import urlparse, urljoin
@@ -17,9 +17,21 @@ from bs4 import BeautifulSoup #pip install bs4
 import colorama #pip install colorama
 # import dns.resolver
 import whois
-import webb
-import builtwith
+import webb #pip install webb
+import builtwith #pip install builtwith
 from scapy.all import *
+
+#FOR OPENVAS
+import subprocess
+import re
+
+import xmltodict
+import lxml.etree as ET
+from gvm.connections import UnixSocketConnection
+from gvm.protocols.latest import Gmp
+from gvm.transforms import EtreeTransform
+from gvm.xml import pretty_print
+from terminaltables import SingleTable, DoubleTable
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -147,11 +159,11 @@ def project_menu():
         print("4. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
-            reconMenu()
+            recon_menu()
         elif menu_input == "2":
-            vulnScanningMenu()
+            vulnscanning_menu()
         elif menu_input == "3":
-            exploitationMenu()
+            exploitation_menu()
         elif menu_input == "4":
             droptables()
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
@@ -161,10 +173,10 @@ def project_menu():
             print("Invalid Input!\nPlease Try Again!")
             continue
 
-def reconMenu():
+def recon_menu():
 
-    reconLoop = True
-    while reconLoop == True:
+    recon_loop = True
+    while recon_loop == True:
         ascii_recon = pyfiglet.figlet_format("Reconnaissance")
         print(ascii_recon)
         print("\nPlease Select an Option Below.")
@@ -177,23 +189,23 @@ def reconMenu():
         if menu_input == "1":
             ascii_footprinting = pyfiglet.figlet_format("Footprinting")
             print(ascii_footprinting)
-            footprintingMenu()
+            footprinting_menu()
         elif menu_input == "2":
             ascii_scanning = pyfiglet.figlet_format("Scanning")
             print(ascii_scanning)
-            scanningMenu()
+            scanning_menu()
         elif menu_input == "3":
             ascii_enum = pyfiglet.figlet_format("Enumuration")
             print(ascii_enum)
-            enumMenu()
+            enum_menu()
         elif menu_input == "4":
-            reconLoop = False
+            recon_loop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
                 continue
 
-def footprintingMenu():
-    footprintingLoop = True
+def footprinting_menu():
+    footprinting_loop = True
     while footprintingLoop == True:
         print("\nPlease Select an Option Below.")
         print("1. Google Search")
@@ -210,16 +222,16 @@ def footprintingMenu():
             print(ascii_whois)
             whois_enum()
         elif menu_input == "3":
-            footprintingLoop = False
+            footprinting_loop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
                 continue
 
 
 
-def scanningMenu():
-    scanningLoop = True
-    while scanningLoop == True:
+def scanning_menu():
+    scanning_loop = True
+    while scanning_loop == True:
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. Host Discovery")
@@ -240,35 +252,152 @@ def scanningMenu():
             print(ascii_3)
             osDiscovery()
         elif menu_input == "4":
-            scanningLoop = False
+            scanning_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
 
 
 
-def enumMenu():
-    enumLoop = True
-    while enumLoop == True:
+def enum_menu():
+    enum_loop = True
+    while enum_loop == True:
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. Spidering")
-        print("2. Option 2")
-        print("3. Exit")
+        print("2. SNMP OS Enumuration")
+        print("3. SNMP Processes Enumuration")
+        print("4. SNMP Software Enumuration")
+        print("5. SNMP Interface Enumuration")
+        print("6. SMTP Users Enumuration")
+        print("7. NFS Share Enumuration")
+        print("8. LDAP Information Enumuration")
+        print("9. LDAP Users Enumuration")
+        print("10. LDAP Username Enumuration using LDAP Brute")
+        print("11. RPC Information Enumuration")
+        print("12. DNS Enumuration")
+        print("13. Website Allowed Methods")
+        print("14. Website Built With")
+        print("15. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Spidering")
             print(ascii_1)
             spidering()
         elif menu_input == "2":
-            ascii_2 = pyfiglet.figlet_format("Option 2")
+            ascii_2 = pyfiglet.figlet_format("SNMP OS Enumeration")
             print(ascii_2)
-            allowedMethods()
+            snmp_os()
         elif menu_input == "3":
-            enumLoop = False
+            ascii_3 = pyfiglet.figlet_format("SNMP Processes Enumeration")
+            print(ascii_3)
+            snmp_processes()
+        elif menu_input == "4":
+            ascii_4 = pyfiglet.figlet_format("SNMP Software Enumeration")
+            print(ascii_4)
+            snmp_software()
+        elif menu_input == "5":
+            ascii_5 = pyfiglet.figlet_format("SNMP Interface Enumeration")
+            print(ascii_5)
+            snmp_interface()
+        elif menu_input == "6":
+            ascii_6 = pyfiglet.figlet_format("SMTP Users Enumeration")
+            print(ascii_6)
+            smtp_users()
+        elif menu_input == "7":
+            ascii_7 = pyfiglet.figlet_format("NFS Share Enumuration")
+            print(ascii_7)
+            nfs_share()
+        elif menu_input == "8":
+            ascii_8 = pyfiglet.figlet_format("LDAP Information Enumuration")
+            print(ascii_8)
+            ldap_info()
+        elif menu_input == "9":
+            ascii_9 = pyfiglet.figlet_format("LDAP Users Enumuration")
+            print(ascii_9)
+            ldap_users()
+        elif menu_input == "10":
+            ascii_10 = pyfiglet.figlet_format("LDAP Username Enumuration using LDAP Brute")
+            print(ascii_10)
+            ldap_brute()
+        elif menu_input == "11":
+            ascii_11 = pyfiglet.figlet_format("RPC Information Enumuration")
+            print(ascii_11)
+            rpc_info()
+        elif menu_input == "12":
+            ascii_12 = pyfiglet.figlet_format("DNS Enumuration")
+            print(ascii_12)
+            dns_enum()
+        elif menu_input == "13":
+            ascii_13 = pyfiglet.figlet_format("Website Allowed Methods")
+            print(ascii_13)
+            allowed_methods()
+        elif menu_input == "14":
+            ascii_14 = pyfiglet.figlet_format("Website Built With")
+            print(ascii_14)
+            built_with()
+        elif menu_input == "15":
+            enum_loop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
                 continue
+
+
+def vulnscanning_menu():
+    vulnscanning_loop = True
+    while vulnscanning_loop == True:
+        #Input Scanning Options
+        print("\nPlease Select an Option Below.")
+        print("1. OpenVAS")
+        print("2. Nikto")
+        print("3. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("OpenVAS")
+            print(ascii_1)
+            openvas_menu()
+        elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("Nikto")
+            print(ascii_2)
+            portDiscovery()
+        elif menu_input == "3":
+            vulnscanning_loop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
+
+def openvas_menu():
+    openvas_loop = True
+    while openvas_loop == True:
+        print("\nPlease Select an Option Below.")
+        print("1. Start OpenVAS")
+        print("2. Start a new OpenVAS Scan")
+        print("3. Download OpenVAS Report")
+        print("4. Stop OpenVAS")
+        print("5. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("Start OpenVAS")
+            print(ascii_1)
+            start_openvas()
+        elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("Start a new OpenVAS Scan")
+            print(ascii_2)
+            start_openvas_scan()
+        elif menu_input == "3":
+            ascii_3 = pyfiglet.figlet_format("Download OpenVAS Report")
+            print(ascii_3)
+            get_openvas_report()
+        elif menu_input == "4":
+            ascii_4 = pyfiglet.figlet_format("Stop OpenVAS")
+            print(ascii_4)
+            stop_openvas()
+        elif menu_input == "5":
+            openvas_loop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
+
 
 def portDiscovery():
     target = input("Enter an IP Address to scan: ")
@@ -374,7 +503,7 @@ def osDiscovery():
             print('Failed to determine operating system')
  
 #SNMP OS Enumuration
-def snmpOS():
+def snmp_os():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-sU -p 161')
@@ -411,7 +540,7 @@ def snmpOS():
                     print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
 
 #SNMP Processes Enumuration
-def snmpProcesses():
+def snmp_processes():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     snmpProcessesList.append(target)
@@ -450,7 +579,7 @@ def snmpProcesses():
                     print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
     
 #SNMP Software Enumuration
-def snmpSoftware():
+def snmp_software():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-sU -p 161')
@@ -478,7 +607,7 @@ def snmpSoftware():
                     print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
 
 #SNMP Interface Enumuration
-def snmpInterface():
+def snmp_interface():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-sU -p 161')
@@ -507,7 +636,7 @@ def snmpInterface():
 
 
 #SMTP Users Enumuration
-def smtpUsers():
+def smtp_users():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-p 25')
@@ -531,11 +660,11 @@ def smtpUsers():
                     INSERT INTO SMTP_User_Enummeration (Host, Protocol, Port_Number, Port_Status, Users) VALUES (?, ?, ?, ?, ?)
                     ''', smtpUsersList)
                     conn.commit()
-            else:
-                print("Port 25 (SMTP) not opened, can't perform SMTP Enumuration")
+                else:
+                    print("Port 25 (SMTP) not opened, can't perform SMTP Enumuration")
 
 #NFS Share Enumuration
-def nfsShare():
+def nfs_share():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-p 2049')
@@ -560,11 +689,11 @@ def nfsShare():
                     INSERT INTO NFS_Share_Enummeration (Host, Protocol, Port_Number, Port_Status, Shares) VALUES (?, ?, ?, ?, ?)
                     ''', nfsShareList)
                     conn.commit()
-            else:
-                print("Port 2049 (NFS) not opened, can't perform NFS Enumuration")
+                else:
+                    print("Port 2049 (NFS) not opened, can't perform NFS Enumuration")
 
 #LDAP Information Enumuration
-def ldapInfo():
+def ldap_info():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-sU -p 389')
@@ -592,7 +721,7 @@ def ldapInfo():
                 else:
                     print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
 #LDAP Users Enumuration
-def ldapUsers():
+def ldap_users():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-sU -p 389')
@@ -623,7 +752,7 @@ def ldapUsers():
                     print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
 
 #LDAP Username Enumuration using LDAP Brute
-def ldapBrute():
+def ldap_brute():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-p 389')
@@ -916,8 +1045,9 @@ def dns_enum():
             conn.commit()
 
 
-def builtWith():
-    website = builtwith.parse('https://juice-shop.herokuapp.com/#/')
+def built_with():
+    target = input("Enter target website: ")#https://juice-shop.herokuapp.com/#/
+    website = builtwith.parse(target)
     for name in website:
         print(name + ":" , website[name])
         builtWithList = [str(website), str(name), str(website[name])]
@@ -927,7 +1057,7 @@ def builtWith():
         conn.commit()
 
 
-def allowedMethods():
+def allowed_methods():
     target = input("Enter target website: ") #https://juice-shop.herokuapp.com/#/
     requestResponse = requests.options(target)
     for item in requestResponse.headers:
@@ -939,4 +1069,225 @@ def allowedMethods():
         conn.commit()
 
 
+def start_openvas():
+    print(subprocess.call('gvm-start', shell=True))
+
+def start_openvas_scan():
+    config = {
+        'PORT_LIST_ID': '33d0cd82-57c6-11e1-8ed1-406186ea4fc5',
+        'REPORT_FORMAT_ID': 'a994b278-1f62-11e1-96ac-406186ea4fc5',
+        'SCAN_CONFIG_ID': 'daba56c8-73ec-11df-a475-002264764cea',
+        'SCANNER_ID': '08b69003-5fc2-4037-a479-93b440211c73'
+    }
+
+
+    connection = UnixSocketConnection()
+    transform = EtreeTransform()
+    gmp = Gmp(connection, transform=transform)
+
+    try:
+        gmp.authenticate('admin', 'password')
+    except:
+        print("Not able to connect to OPENVAS")
+    
+    scan_name = input("Enter scan name: ")   
+    host_address = input("Enter target address: ")   
+    port_list_id = config['PORT_LIST_ID'] # For all IANA assigned TCP 
+    target_response = gmp.create_target(name=scan_name, hosts=[host_address], port_list_id=port_list_id)
+    target_id = target_response.get('id')
+
+    if not target_id:
+        print("Was unable to create target.", target_response.get('status_text'))
+        return False
+    else:
+        print("Target created.")
+    
+    scan_config_id = config['SCAN_CONFIG_ID']
+    scanner_id = config['SCANNER_ID']
+    report_format_id = config['REPORT_FORMAT_ID']
+
+    task_response = gmp.create_task(name=scan_name, config_id=scan_config_id, target_id=target_id, scanner_id=scanner_id)
+    task_id = task_response.get('id')
+
+    start_task_response = gmp.start_task(task_id)
+
+    report_id = start_task_response[0].text
+    print("Report created with Report ID: ", report_id)
+    
+def get_openvas_report():
+
+    def check_status(task_name):
+        report_filter = gmp.get_reports(filter_string=task_name)
+        report = report_filter.find('report')
+        report_id = report.get('id')
+        report = gmp.get_report(report_id=report_id, filter_string="<scan_run_status>")
+        file_name = task_name + "_status.xml"
+        with open(file_name, 'wb') as file:
+            file.write(ET.tostring(report, pretty_print=True))
+            
+        with open(file_name, 'r') as file:
+            content = file.read()
+            if str("<scan_run_status>Done</scan_run_status>") in content:
+                print("Scan Completed.")
+            else:
+                print("Scan Still In Progress.")
+
+    connection = UnixSocketConnection()
+    transform = EtreeTransform()
+    gmp = Gmp(connection, transform=transform)
+
+    try:
+        gmp.authenticate('admin', 'password')
+    except:
+        print("Not able to connect to OPENVAS")
+        return False
+    
+    # Retrieve and get names of tasks
+    tasks = gmp.get_tasks()
+    
+    task_names = tasks.xpath('task/name/text()')
+    task_list = []
+    for task in task_names:
+        task_list.append(task)
+    print("Tasks: ")
+    pretty_print(task_names)
+    
+    task_name = input("Enter the task name of the task that you want to retrieve the report for: ")
+    if task_name in task_list:
+        task_name = re.sub(" ", "_", task_name)
+        
+        check_status(task_name)
+        
+        filter_report = gmp.get_reports(filter_string = task_name)
+        report = filter_report.find('report')
+        report_id = report.get('id')
+        
+        scan_results={}
+        
+        report_response = gmp.get_report(report_id, filter_string='apply_overrides=0 levels=hml min_qod=70 sort-reverse=severity')
+        report_response_str = ET.tostring(report_response, encoding='unicode')
+        report_response_dict = xmltodict.parse(report_response_str)
+        
+        report_results = report_response_dict.get('get_reports_response', {}).get('report', {}).get('report', {}).get('results', {}).get('result', [])
+        try:
+            for vuln in report_results:
+                name = vuln.get('name')
+        except:
+            report_results = [report_results]
+        for vuln in report_results:
+            name = vuln.get('name')
+            #print('name: ', name)
+            if scan_results.get(name):
+                #print('--- Duplicate name: ', name)
+                continue
+            nvt = vuln.get('nvt', {})
+            scan_result = {}
+            scan_result['name'] = name
+            scan_result['severity'] = float(nvt.get('cvss_base', 0))
+            scan_result['risk'] = vuln.get('threat')
+            scan_result['description'] = vuln.get('description')
+            scan_result['solution'] = nvt.get('solution')
+     
+            vuln = str(vuln)
+            cve_codes = re.findall(r"CVE-\d{4}-\d+", vuln)
+            cve_list = []
+            for cve in cve_codes:
+                if cve not in cve_list:
+                    cve_list.append(cve)
+            if not cve_list:
+                cve_list.append("N/A")
+                
+            
+            scan_result['cve_id'] = cve_list
+            scan_results[name] = scan_result   
+            
+        def print_report(scan_results):
+
+            if not scan_results:
+                return False
+
+            results = list(scan_results.values())
+
+            scan_report = []
+            scan_display_report = []
+            scan_display_report.append([ '#', 'Vuln. Name', 'Risk', 'Severity', 'CVE ID' ])
+
+            count = 0
+            for vuln in sorted(results, key = lambda x: x['severity'], reverse=True):
+                count += 1
+
+                name =vuln['name']
+                risk = vuln['risk']
+                severity = vuln['severity']
+                cve_id = vuln.get('cve_id') or vuln.get('cveid', '')
+                description = vuln['description']
+                solution = vuln['solution']
+
+
+                scan_report.append([ count, name, risk, severity, "cve", description, solution ])
+                scan_display_report.append([ count, name, risk, severity, cve_id])
+                
+            with open('vulnerabilities.txt', 'w') as file:
+                report_task_name = ("Task Name: " + task_name + "\n")
+                file.write(report_task_name)
+                for item in scan_report:
+                    sn = ("#: "+ str(item[0]))
+                    file.write(sn)
+                    vuln_name = ("\nVulnerability Name: " + str(item[1]))
+                    file.write(vuln_name)
+                    risk = ("\nRisk: " + str(item[2]))  
+                    file.write(risk)
+                    severity = ("\nSeverity: " + str(item[3]))
+                    file.write(str(severity))
+                    cve = ("\nCVE ID: " + str(item[4]))
+                    file.write(cve)
+                    desc = ("\nDescription: " + str(item[5]))
+                    file.write(desc)
+                    for k,v in item[6].items():
+                        solution = ("\nSolution: " + v)
+                    file.write(solution)
+
+                    file.write("\n")
+                    file.write("\n")
+                    
+
+
+            scan_report_table = SingleTable(scan_display_report)
+            scan_report_table.title = 'Vuln. Alerts'
+            print(scan_report_table.table)
+            print("Detailed Report created at: vulnerabilities.txt")
+        
+        print_report(scan_results)
+    else:
+        print("Task not found")
+        
+def stop_openvas():
+    print(subprocess.call("gvm-stop", shell=True))
+
 project_menu()
+
+
+#MENU TEMPLATE FOR REPORT
+
+#def vulnscanning_menu():
+#    vulnscanning_loop = True
+#    while vulnscanning_loop == True:
+#        #Input Scanning Options
+#        print("\nPlease Select an Option Below.")
+#        print("1. Option 1")
+#        print("2. Option 2")
+#        print("3. Exit")
+#        menu_input = (input("Select option: "))
+#        if menu_input == "1":
+#            ascii_1 = pyfiglet.figlet_format("Option 1")
+#            print(ascii_1)
+#            hostDiscovery()
+#        elif menu_input == "2":
+#            ascii_2 = pyfiglet.figlet_format("Option 2")
+#            print(ascii_2)
+#            portDiscovery()
+#        elif menu_input == "3":
+#            vulnscanning_loop = False
+#        else:
+#            print("Invalid Input!\nPlease Try Again!")
+#            continue
