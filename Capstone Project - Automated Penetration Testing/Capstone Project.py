@@ -7,6 +7,7 @@ import sqlite3
 from sqlite3 import Error
 import pyfiglet #pip install pyfiglet
 import os
+import csv
 #import scrapy #pip install scrapy
 #from scrapy.spiders import CrawlSpider, Rule
 #from scrapy.linkextractors import LinkExtractor
@@ -15,7 +16,7 @@ import requests #pip install requests
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup #pip install bs4
 import colorama #pip install colorama
-import dns.resolver
+# import dns.resolver
 import whois
 import webb #pip install webb
 import builtwith #pip install builtwith
@@ -25,13 +26,13 @@ from scapy.all import *
 import subprocess
 import re
 
-import xmltodict
-import lxml.etree as ET
-from gvm.connections import UnixSocketConnection
-from gvm.protocols.latest import Gmp
-from gvm.transforms import EtreeTransform
-from gvm.xml import pretty_print
-from terminaltables import SingleTable, DoubleTable
+# import xmltodict
+# import lxml.etree as ET
+# from gvm.connections import UnixSocketConnection
+# from gvm.protocols.latest import Gmp
+# from gvm.transforms import EtreeTransform
+# from gvm.xml import pretty_print
+# from terminaltables import SingleTable, DoubleTable
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -41,7 +42,7 @@ total_urls_visited = 0
 #Setting Up Database
 conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
-def createtables():
+def createtables(conn):
     conn.execute('''CREATE TABLE IF NOT EXISTS PortDiscovery
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
     Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT)''')
@@ -82,9 +83,6 @@ def createtables():
     conn.execute('''CREATE TABLE IF NOT EXISTS Google_Search
     (Search TEXT, Results TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS Spidering
-    (Internal_URLs TEXT, External_URLs TEXT)''')
-    conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS Whois_Enummeration
     (Host TEXT, Domain TEXT)''')
     conn.commit()
@@ -104,7 +102,105 @@ def createtables():
     (Domain TEXT, Item TEXT, Result TEXT)''')
     conn.commit()
 
-def droptables():
+def newdatabase(conn):
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.PortDiscovery
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
+    Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.PortDiscovery')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.HostDiscovery
+    (Host TEXT, State TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.HostDiscovery')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.OSDiscovery
+    (Host TEXT, Device_Type TEXT, OS TEXT, OS_CPE TEXT, OS_Details TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.OSDiscovery')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_OS_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_OS_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Process_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Processes TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Process_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Software_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Softwares TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Software_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Interface_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Interfaces TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Interface_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SMTP_User_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Users TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SMTP_User_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.NFS_Share_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Shares TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.NFS_Share_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Information_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Server_Info TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Information_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Users_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Connection_Entries TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Users_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Brute_Enummeration
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, ldap_brute TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Brute_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Google_Search
+    (Search TEXT, Results TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Google_Search')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Whois_Enummeration
+    (Host TEXT, Domain TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Whois_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.RPC
+    (Host TEXT, RPC_Info TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.RPC')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Vulnerable_Ports
+    (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Vulnerable_Ports')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.DNS_Enummeration
+    (Domain TEXT, Record_Type TEXT, Data TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.DNS_Enummeration')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Built_With
+    (Domain TEXT, Name TEXT, Language TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Built_With')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Allowed_Methods
+    (Domain TEXT, Item TEXT, Result TEXT)''')
+    conn.commit()
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Allowed_Methods')
+    conn.commit()
+
+def droptables(conn):
     conn.execute('''DELETE FROM HostDiscovery''')
     conn.commit()
     conn.execute('''DELETE FROM OSDiscovery''')
@@ -129,8 +225,6 @@ def droptables():
     conn.commit()
     conn.execute('''DELETE FROM Google_Search''')
     conn.commit()
-    conn.execute('''DELETE FROM Spidering''')
-    conn.commit()
     conn.execute('''DELETE FROM Whois_Enummeration''')
     conn.commit()
     conn.execute('''DELETE FROM RPC''')
@@ -145,7 +239,7 @@ def droptables():
     conn.commit()
     cur.close()
     conn.close()
-createtables()
+createtables(conn)
 loop = True
 def project_menu():
     loop = True
@@ -174,28 +268,6 @@ def project_menu():
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
-
-def database_menu():
-    database_loop = True
-    while database_loop == True:
-        ascii_database = pyfiglet.figlet_format("Database")
-        print(ascii_database)
-        print("\nPlease Select an Option Below.")
-        print("1. Clear Database")
-        print("2. Save a copy of Database")
-        print("3. Exit")
-
-        menu_input = (input("Select option: "))
-        if menu_input == "1":
-            print("Database successfully cleared!")
-            droptables()
-        elif menu_input == "2":
-            print("Database successfully copied!")
-        elif menu_input == "3":
-            database_loop = False
-        else:
-                print("Invalid Input!\nPlease Try Again!")
-                continue
 
 def recon_menu():
 
@@ -384,7 +456,7 @@ def vulnscanning_menu():
         elif menu_input == "2":
             ascii_2 = pyfiglet.figlet_format("Nikto")
             print(ascii_2)
-            Nikto()
+            nikto_menu()
         elif menu_input == "3":
             ascii_3 = pyfiglet.figlet_format("Port Scanning")
             print(ascii_3)
@@ -412,6 +484,34 @@ def exploit_menu():
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
+
+def database_menu():
+    database_loop = True
+    while database_loop == True:
+        ascii_database = pyfiglet.figlet_format("Database")
+        print(ascii_database)
+        print("\nPlease Select an Option Below.")
+        print("1. Clear Database")
+        print("2. Save a copy of Database")
+        print("3. Exit")
+
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            droptables(conn)
+            print("Database successfully cleared!")
+        elif menu_input == "2":
+            DBname = str(input('Enter new Database name here: '))
+            newDBname = DBname + ".db"
+            conn = sqlite3.connect(newDBname)
+            conn.execute('ATTACH DATABASE newDBname as "newDB"')
+            conn.execute('ATTACH DATABASE "APTdatabase.db" as "oldDB"')
+            newdatabase(conn)
+            print("Database " + "APTdatabase.db" + "successfully copied as " + newDBname)
+        elif menu_input == "3":
+            database_loop = False
+        else:
+                print("Invalid Input!\nPlease Try Again!")
+                continue
 
 def openvas_menu():
     openvas_loop = True
@@ -674,7 +774,7 @@ def snmp_interface():
                     snmpInterfaceList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(snmp[host][proto][port]['script']['snmp-interfaces'])]
                     cur.execute('''
-                    INSERT INTO SNMP_Software_Enummeration (Host, Protocol, Port_Number, Port_Status, Interfaces) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO SNMP_Interface_Enummeration (Host, Protocol, Port_Number, Port_Status, Interfaces) VALUES (?, ?, ?, ?, ?)
                     ''', snmpInterfaceList)
                     conn.commit()
                 else:
@@ -761,7 +861,7 @@ def ldap_info():
                     ldapInfoList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(server.info)]
                     cur.execute('''
-                    INSERT INTO NFS_Share_Enummeration (Host, Protocol, Port_Number, Port_Status, Server_Info) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO LDAP_Information_Enummeration (Host, Protocol, Port_Number, Port_Status, Server_Info) VALUES (?, ?, ?, ?, ?)
                     ''', ldapInfoList)
                     conn.commit()
                 else:
@@ -791,7 +891,7 @@ def ldap_users():
                     ldapUsersList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(connection.entries)]
                     cur.execute('''
-                    INSERT INTO NFS_Share_Enummeration (Host, Protocol, Port_Number, Port_Status, Connection_Entries) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO LDAP_Users_Enummeration (Host, Protocol, Port_Number, Port_Status, Connection_Entries) VALUES (?, ?, ?, ?, ?)
                     ''', ldapUsersList)
                     conn.commit()
                 else:
@@ -826,7 +926,7 @@ def ldap_brute():
                     ldapBruteList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(ldap[host][proto][port]['script']['ldap-brute'])]
                     cur.execute('''
-                    INSERT INTO NFS_Share_Enummeration (Host, Protocol, Port_Number, Port_Status, ldap_brute) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO LDAP_Brute_Enummeration (Host, Protocol, Port_Number, Port_Status, ldap_brute) VALUES (?, ?, ?, ?, ?)
                     ''', ldapBruteList)
                     conn.commit()
                 else:
@@ -857,7 +957,9 @@ def spidering():
 
     internal_urls = set()
     in_list = []
+    SpideringList_in = []
     external_urls = set()
+    SpideringList_ex = []
     ex_list = []
 
     def is_valid(url):
@@ -906,18 +1008,18 @@ def spidering():
 
     if __name__ == "__main__":
         crawl(url,max_urls)
-        pos = 0
         while len(in_list) > len(ex_list):
             ex_list.append("NULL")
             continue
-        for i in in_list:
-            SpideringList = [in_list[pos],ex_list[pos]]
-            cur.execute('''
-            INSERT INTO Spidering (Internal_URLs, External_URLs) VALUES (?, ?)
-            ''', SpideringList)
-            conn.commit()
-            pos += 1
-            continue
+        pos = 0
+        with open('Spider.csv', 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Internal_URLS', 'External_URLs'])
+            for i in in_list:
+                Spiderman = [in_list[pos], ex_list[pos]]
+                writer.writerow(Spiderman)
+                pos += 1
+
         print("[+] Total Internal links:", len(internal_urls))
         print("[+] Total External links:", len(external_urls))
         print("[+] Total URLs:", len(external_urls) + len(internal_urls))
@@ -1310,6 +1412,57 @@ def get_openvas_report():
         
 def stop_openvas():
     print(subprocess.call("gvm-stop", shell=True))
+
+def nikto_menu():
+
+    host = 'https://redtiger.labs.overthewire.org/'
+
+    os.system('apt-get nmap')
+    os.system('apt-get nikto')
+    os.system('nikto -update')
+    
+
+    print('For testing purposes')
+    ntime = str(input('Enter runtime(s): '))
+
+    nikto_loop = True
+    while nikto_loop == True:
+        ascii_nikto = pyfiglet.figlet_format("Nikto")
+        print(ascii_nikto)
+        print("\nPlease Select an Option Below.")
+        print("1. Basic scan (HTTP)")
+        print("2. Basic Scan (HTTPS)")
+        print("3. Tuning Scan (Vulnerabilities Thingies)")
+        print("4. Exit")
+
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            host = str(input('Enter domain name here (e.g. google.com):'))
+            n80 =  subprocess.check_output(['nikto', '-h', host, '-nossl', '-maxtime', ntime])
+            print(n80)
+        elif menu_input == "2":
+            host = str(input('Enter domain name here (e.g. google.com):'))
+            n443 =  subprocess.check_output(['nikto', '-h', host, '-ssl', '-maxtime', ntime])
+            print(n443)
+        elif menu_input == "3":
+            print('0. File Upload\n \
+                3. Information Disclosure\n \
+                4. Injection, XSS/Script/HTML\n \
+                6. Denial of Service\n \
+                8. Reverse Shell\n \
+                9. SQL Injection\n \
+                a. Authentication Bypass\n \
+                b. Software Identification\n \
+                c. Remote Source Inclusion\n ')
+            value = str(input('Enter Tuning value to be used here: '))
+            host = str(input('Enter domain name here (e.g. google.com):'))
+            nT = subprocess.check_output(['nikto', '-h', host, '-Tuning', value])
+            print(nT)
+        elif menu_input == "4":
+            database_loop = False
+        else:
+                print("Invalid Input!\nPlease Try Again!")
+                continue
 
 project_menu()
 
