@@ -923,6 +923,7 @@ def spidering():
         print("[+] Total URLs:", len(external_urls) + len(internal_urls))
 
 def whois_enum():
+    import whois
     def get_ip_address(domain):
         try:
             ip_address = socket.gethostbyname(domain)
