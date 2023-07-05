@@ -20,6 +20,7 @@ import whois
 import webb #pip install webb
 import builtwith #pip install builtwith
 from scapy.all import *
+import ldap3
 
 #FOR OPENVAS
 import subprocess
