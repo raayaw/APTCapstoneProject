@@ -15,7 +15,7 @@ import requests #pip install requests
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup #pip install bs4
 import colorama #pip install colorama
-# import dns.resolver
+import dns.resolver
 import whois
 import webb #pip install webb
 import builtwith #pip install builtwith
