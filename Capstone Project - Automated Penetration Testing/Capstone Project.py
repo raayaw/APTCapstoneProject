@@ -156,7 +156,8 @@ def project_menu():
         print("1. Reconnaissance")
         print("2. Vulnerability Scanning")
         print("3. Exploitation & Post Exploitation")
-        print("4. Exit")
+        print("4. Database Services")
+        print("5. End Session")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             recon_menu()
@@ -165,13 +166,36 @@ def project_menu():
         elif menu_input == "3":
             exploit_menu()
         elif menu_input == "4":
-            droptables()
+            database_menu()
+        elif menu_input == "5":
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
             print(ascii_bye)
             loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
+
+def database_menu():
+    database_loop = True
+    while database_loop == True:
+        ascii_database = pyfiglet.figlet_format("Database")
+        print(ascii_database)
+        print("\nPlease Select an Option Below.")
+        print("1. Clear Database")
+        print("2. Save a copy of Database")
+        print("3. Exit")
+
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            print("Database successfully cleared!")
+            droptables()
+        elif menu_input == "2":
+            print("Database successfully copied!")
+        elif menu_input == "3":
+            database_loop = False
+        else:
+                print("Invalid Input!\nPlease Try Again!")
+                continue
 
 def recon_menu():
 
@@ -360,7 +384,7 @@ def vulnscanning_menu():
         elif menu_input == "2":
             ascii_2 = pyfiglet.figlet_format("Nikto")
             print(ascii_2)
-            portDiscovery()
+            Nikto()
         elif menu_input == "3":
             ascii_3 = pyfiglet.figlet_format("Port Scanning")
             print(ascii_3)
