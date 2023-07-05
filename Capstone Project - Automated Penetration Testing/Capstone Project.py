@@ -566,7 +566,6 @@ def snmp_os():
 def snmp_processes():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
-    snmpProcessesList.append(target)
     scanner.scan(target, arguments='-sU -p 161')
     for host in scanner.all_hosts():
         print(host)
