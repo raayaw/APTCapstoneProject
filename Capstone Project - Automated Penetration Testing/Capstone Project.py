@@ -170,7 +170,7 @@ def reconMenu():
         print("\nPlease Select an Option Below.")
         print("1. Footprinting")
         print("2. Scanning")
-        print("3. Enumuration")
+        print("3. Enumeration")
         print("4. Exit")
     
         menu_input = (input("Select option: "))
