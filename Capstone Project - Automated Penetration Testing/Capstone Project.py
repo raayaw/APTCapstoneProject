@@ -1085,7 +1085,7 @@ def dns_enum():
         print(f"{record} records for {target}:")
         for rdata in answers:
             print(f" {rdata}")
-            dnsEnummerationList = [str(target), str({record_type}), str({rdata})]
+            dnsEnummerationList = [str(target), str({record}), str({rdata})]
             cur.execute('''
             INSERT INTO DNS_Enummeration_Ports (Domain, Record_Type, , Data) VALUES (?, ?, ?)
             ''', dnsEnummerationList)
