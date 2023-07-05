@@ -163,7 +163,7 @@ def project_menu():
         elif menu_input == "2":
             vulnscanning_menu()
         elif menu_input == "3":
-            exploitation_menu()
+            exploit_menu()
         elif menu_input == "4":
             droptables()
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
@@ -350,7 +350,8 @@ def vulnscanning_menu():
         print("\nPlease Select an Option Below.")
         print("1. OpenVAS")
         print("2. Nikto")
-        print("3. Exit")
+        print("3. Port Scanning")
+        print("4. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("OpenVAS")
@@ -361,6 +362,28 @@ def vulnscanning_menu():
             print(ascii_2)
             portDiscovery()
         elif menu_input == "3":
+            ascii_3 = pyfiglet.figlet_format("Port Scanning")
+            print(ascii_3)
+            vulnerable_ports()
+        elif menu_input == "4":
+            vulnscanning_loop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
+
+def exploit_menu():
+    exploit_loop = True
+    while exploit_loop == True:
+        #Input Scanning Options
+        print("\nPlease Select an Option Below.")
+        print("1. Packet Sniffer")
+        print("2. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("Packet Sniffer")
+            print(ascii_1)
+            packet_sniffer()
+        elif menu_input == "2":
             vulnscanning_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
