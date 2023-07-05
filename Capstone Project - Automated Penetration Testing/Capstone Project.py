@@ -206,7 +206,7 @@ def recon_menu():
 
 def footprinting_menu():
     footprinting_loop = True
-    while footprintingLoop == True:
+    while footprinting_loop == True:
         print("\nPlease Select an Option Below.")
         print("1. Google Search")
         print("2. Whois Lookup")
@@ -384,7 +384,7 @@ def exploit_menu():
             print(ascii_1)
             packet_sniffer()
         elif menu_input == "2":
-            vulnscanning_loop = False
+            exploit_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
