@@ -16,7 +16,7 @@ import requests #pip install requests
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup #pip install bs4
 import colorama #pip install colorama
-# import dns.resolver
+import dns.resolver
 import whois
 import webb #pip install webb
 import builtwith #pip install builtwith
@@ -27,13 +27,13 @@ import ldap3
 import subprocess
 import re
 
-# import xmltodict
-# import lxml.etree as ET
-# from gvm.connections import UnixSocketConnection
-# from gvm.protocols.latest import Gmp
-# from gvm.transforms import EtreeTransform
-# from gvm.xml import pretty_print
-# from terminaltables import SingleTable, DoubleTable
+import xmltodict
+import lxml.etree as ET
+from gvm.connections import UnixSocketConnection
+from gvm.protocols.latest import Gmp
+from gvm.transforms import EtreeTransform
+from gvm.xml import pretty_print
+from terminaltables import SingleTable, DoubleTable
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -1190,7 +1190,7 @@ def dns_enum():
             print(f" {rdata}")
             dnsEnummerationList = [str(target), str({record}), str({rdata})]
             cur.execute('''
-            INSERT INTO DNS_Enummeration_Ports (Domain, Record_Type, , Data) VALUES (?, ?, ?)
+            INSERT INTO DNS_Enummeration (Domain, Record_Type, , Data) VALUES (?, ?, ?)
             ''', dnsEnummerationList)
             conn.commit()
 
