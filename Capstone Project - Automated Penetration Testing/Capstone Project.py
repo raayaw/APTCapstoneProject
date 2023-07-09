@@ -22,6 +22,7 @@ import webb #pip install webb
 import builtwith #pip install builtwith
 from scapy.all import *
 import ldap3
+import pandas as pd
 
 #FOR OPENVAS
 import subprocess
@@ -1464,6 +1465,89 @@ def nikto_menu():
         else:
                 print("Invalid Input!\nPlease Try Again!")
                 continue
+
+def create_html_pages():
+
+    con = sqlite3.connect("APTdatabase.db")
+
+    cur = con.cursor()
+
+    allowed_methods = pd.read_sql_query("SELECT * from Allowed_Methods", con)
+    df_allowed = pd.DataFrame(data=allowed_methods)
+    df_allowed.to_html("methods.html",justify='left')
+
+    built_with = pd.read_sql_query("SELECT * from Built_With", con)
+    df_built = pd.DataFrame(data=built_with)
+    df_built.to_html("built_with.html",justify='left')
+
+    dns = pd.read_sql_query("SELECT * from DNS_Enummeration", con)
+    df_dns = pd.DataFrame(data=dns)
+    df_dns.to_html("dns.html",justify='left')
+
+    google = pd.read_sql_query("SELECT * from Google_Search", con)
+    df_google = pd.DataFrame(data=google)
+    df_google.to_html("google.html",justify='left')
+
+    host = pd.read_sql_query("SELECT * from HostDiscovery", con)
+    df_host = pd.DataFrame(data=host)
+    df_host.to_html("host.html",justify='left')
+
+    ldap_brute = pd.read_sql_query("SELECT * from LDAP_Brute_Enummeration", con)
+    df_ldapbrute = pd.DataFrame(data=ldap_brute)
+    df_ldapbrute.to_html("ldap_brute.html",justify='left')
+
+    ldap_users = pd.read_sql_query("SELECT * from LDAP_Users_Enummeration", con)
+    df_ldapusers = pd.DataFrame(data=ldap_users)
+    df_ldapusers.to_html("ldap_users.html",justify='left')
+
+    nfs = pd.read_sql_query("SELECT * from NFS_Share_Enummeration", con)
+    df_nfs = pd.DataFrame(data=nfs)
+    df_nfs.to_html("nfs.html",justify='left')
+
+    os = pd.read_sql_query("SELECT * from OSDiscovery", con)
+    df_os = pd.DataFrame(data=os)
+    df_os.to_html("os.html",justify='left')
+
+    port = pd.read_sql_query("SELECT * from PortDiscovery", con)
+    df_port = pd.DataFrame(data=port)
+    df_port.to_html("port.html",justify='left')
+
+    rpc = pd.read_sql_query("SELECT * from RPC", con)
+    df_rpc = pd.DataFrame(data=rpc)
+    df_rpc.to_html("rpc.html",justify='left')
+
+    smtp_users = pd.read_sql_query("SELECT * from SMTP_User_Enummeration", con)
+    df_smtpusers = pd.DataFrame(data=smtp_users)
+    df_smtpusers.to_html("smtp_users.html",justify='left')
+
+    snmp_interface = pd.read_sql_query("SELECT * from SNMP_Interface_Enummeration", con)
+    df_snmpinterface = pd.DataFrame(data=snmp_interface)
+    df_snmpinterface.to_html("snmp_interface.html",justify='left')
+
+    snmp_os = pd.read_sql_query("SELECT * from SNMP_OS_Enummeration", con)
+    df_snmpos = pd.DataFrame(data=snmp_os)
+    df_snmpos.to_html("snmp_os.html",justify='left')
+
+    snmp_process = pd.read_sql_query("SELECT * from SNMP_Process_Enummeration", con)
+    df_snmpprocess = pd.DataFrame(data=snmp_process)
+    df_snmpprocess.to_html("snmp_process.html",justify='left')
+
+    snmp_software = pd.read_sql_query("SELECT * from SNMP_Software_Enummeration", con)
+    df_snmpsoftware = pd.DataFrame(data=snmp_software)
+    df_snmpsoftware.to_html("snmp_software.html",justify='left')
+
+    spidering = pd.read_sql_query("SELECT * from Spidering", con)
+    df_spidering = pd.DataFrame(data=spidering)
+    df_spidering.to_html("spidering.html",justify='left')
+
+    vuln_ports = pd.read_sql_query("SELECT * from Vulnerable_Ports", con)
+    df_vulnports = pd.DataFrame(data=vuln_ports)
+    df_vulnports.to_html("vuln_ports.html",justify='left')
+
+    whois = pd.read_sql_query("SELECT * from Whois_Enummeration", con)
+    df_whois = pd.DataFrame(data=whois)
+    df_whois.to_html("whois.html",justify='left')
+
 
 project_menu()
 
