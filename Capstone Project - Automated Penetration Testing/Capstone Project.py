@@ -29,11 +29,11 @@ import re
 
 import xmltodict
 import lxml.etree as ET
-from gvm.connections import UnixSocketConnection
-from gvm.protocols.latest import Gmp
-from gvm.transforms import EtreeTransform
-from gvm.xml import pretty_print
-from terminaltables import SingleTable, DoubleTable
+# from gvm.connections import UnixSocketConnection
+# from gvm.protocols.latest import Gmp
+# from gvm.transforms import EtreeTransform
+# from gvm.xml import pretty_print
+# from terminaltables import SingleTable, DoubleTable
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -54,37 +54,37 @@ def createtables(conn):
     conn.execute('''CREATE TABLE IF NOT EXISTS OSDiscovery
     (Host TEXT, Device_Type TEXT, OS TEXT, OS_CPE TEXT, OS_Details TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_OS_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_OS_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Process_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Process_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Processes TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Software_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Software_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Softwares TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Interface_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Interface_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Interfaces TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SMTP_User_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS SMTP_User_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Users TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS NFS_Share_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS NFS_Share_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Shares TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Information_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Information_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Server_Info TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Users_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Users_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Connection_Entries TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Brute_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Brute_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, ldap_brute TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS Google_Search
     (Search TEXT, Results TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS Whois_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS Whois_Enumeration
     (Host TEXT, Domain TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS RPC
@@ -93,7 +93,7 @@ def createtables(conn):
     conn.execute('''CREATE TABLE IF NOT EXISTS Vulnerable_Ports
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS DNS_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS DNS_Enumeration
     (Domain TEXT, Record_Type TEXT, Data TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS Built_With
@@ -120,60 +120,60 @@ def newdatabase(conn):
     conn.commit()
     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.OSDiscovery')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_OS_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_OS_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_OS_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_OS_Enumeration')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Process_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Process_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Processes TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Process_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Process_Enumeration')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Software_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Software_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Softwares TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Software_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Software_Enumeration')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Interface_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Interface_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Interfaces TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Interface_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Interface_Enumeration')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SMTP_User_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SMTP_User_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Users TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SMTP_User_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SMTP_User_Enumeration')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.NFS_Share_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.NFS_Share_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Shares TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.NFS_Share_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.NFS_Share_Enumeration')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Information_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Information_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Server_Info TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Information_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Information_Enumeration')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Users_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Users_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Connection_Entries TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Users_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Users_Enumeration')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Brute_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Brute_Enumeration
     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, ldap_brute TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Brute_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Brute_Enumeration')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Google_Search
     (Search TEXT, Results TEXT)''')
     conn.commit()
     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Google_Search')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Whois_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Whois_Enumeration
     (Host TEXT, Domain TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Whois_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Whois_Enumeration')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.RPC
     (Host TEXT, RPC_Info TEXT)''')
@@ -185,10 +185,10 @@ def newdatabase(conn):
     conn.commit()
     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Vulnerable_Ports')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.DNS_Enummeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS newDB.DNS_Enumeration
     (Domain TEXT, Record_Type TEXT, Data TEXT)''')
     conn.commit()
-    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.DNS_Enummeration')
+    conn.execute('INSERT INTO newDB SELECT * FROM oldDB.DNS_Enumeration')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Built_With
     (Domain TEXT, Name TEXT, Language TEXT)''')
@@ -206,33 +206,33 @@ def droptables(conn):
     conn.commit()
     conn.execute('''DELETE FROM OSDiscovery''')
     conn.commit()   
-    conn.execute('''DELETE FROM SNMP_OS_Enummeration''')
+    conn.execute('''DELETE FROM SNMP_OS_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM SNMP_Process_Enummeration''')
+    conn.execute('''DELETE FROM SNMP_Process_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM SNMP_Software_Enummeration''')
+    conn.execute('''DELETE FROM SNMP_Software_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM SNMP_Interface_Enummeration''')
+    conn.execute('''DELETE FROM SNMP_Interface_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM SMTP_User_Enummeration''')
+    conn.execute('''DELETE FROM SMTP_User_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM NFS_Share_Enummeration''')
+    conn.execute('''DELETE FROM NFS_Share_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM LDAP_Information_Enummeration''')
+    conn.execute('''DELETE FROM LDAP_Information_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM LDAP_Users_Enummeration''')
+    conn.execute('''DELETE FROM LDAP_Users_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM LDAP_Brute_Enummeration''')
+    conn.execute('''DELETE FROM LDAP_Brute_Enumeration''')
     conn.commit()
     conn.execute('''DELETE FROM Google_Search''')
     conn.commit()
-    conn.execute('''DELETE FROM Whois_Enummeration''')
+    conn.execute('''DELETE FROM Whois_Enumeration''')
     conn.commit()
     conn.execute('''DELETE FROM RPC''')
     conn.commit()
     conn.execute('''DELETE FROM Vulnerable_Ports''')
     conn.commit()
-    conn.execute('''DELETE FROM DNS_Enummeration''')
+    conn.execute('''DELETE FROM DNS_Enumeration''')
     conn.commit()
     conn.execute('''DELETE FROM Built_With''')
     conn.commit()
@@ -292,7 +292,7 @@ def recon_menu():
             print(ascii_scanning)
             scanning_menu()
         elif menu_input == "3":
-            ascii_enum = pyfiglet.figlet_format("Enumuration")
+            ascii_enum = pyfiglet.figlet_format("Enumeration")
             print(ascii_enum)
             enum_menu()
         elif menu_input == "4":
@@ -362,17 +362,17 @@ def enum_menu():
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. Spidering")
-        print("2. SNMP OS Enumuration")
-        print("3. SNMP Processes Enumuration")
-        print("4. SNMP Software Enumuration")
-        print("5. SNMP Interface Enumuration")
-        print("6. SMTP Users Enumuration")
-        print("7. NFS Share Enumuration")
-        print("8. LDAP Information Enumuration")
-        print("9. LDAP Users Enumuration")
-        print("10. LDAP Username Enumuration using LDAP Brute")
-        print("11. RPC Information Enumuration")
-        print("12. DNS Enumuration")
+        print("2. SNMP OS Enumeration")
+        print("3. SNMP Processes Enumeration")
+        print("4. SNMP Software Enumeration")
+        print("5. SNMP Interface Enumeration")
+        print("6. SMTP Users Enumeration")
+        print("7. NFS Share Enumeration")
+        print("8. LDAP Information Enumeration")
+        print("9. LDAP Users Enumeration")
+        print("10. LDAP Username Enumeration using LDAP Brute")
+        print("11. RPC Information Enumeration")
+        print("12. DNS Enumeration")
         print("13. Website Allowed Methods")
         print("14. Website Built With")
         print("15. Exit")
@@ -402,27 +402,27 @@ def enum_menu():
             print(ascii_6)
             smtp_users()
         elif menu_input == "7":
-            ascii_7 = pyfiglet.figlet_format("NFS Share Enumuration")
+            ascii_7 = pyfiglet.figlet_format("NFS Share Enumeration")
             print(ascii_7)
             nfs_share()
         elif menu_input == "8":
-            ascii_8 = pyfiglet.figlet_format("LDAP Information Enumuration")
+            ascii_8 = pyfiglet.figlet_format("LDAP Information Enumeration")
             print(ascii_8)
             ldap_info()
         elif menu_input == "9":
-            ascii_9 = pyfiglet.figlet_format("LDAP Users Enumuration")
+            ascii_9 = pyfiglet.figlet_format("LDAP Users Enumeration")
             print(ascii_9)
             ldap_users()
         elif menu_input == "10":
-            ascii_10 = pyfiglet.figlet_format("LDAP Username Enumuration using LDAP Brute")
+            ascii_10 = pyfiglet.figlet_format("LDAP Username Enumeration using LDAP Brute")
             print(ascii_10)
             ldap_brute()
         elif menu_input == "11":
-            ascii_11 = pyfiglet.figlet_format("RPC Information Enumuration")
+            ascii_11 = pyfiglet.figlet_format("RPC Information Enumeration")
             print(ascii_11)
             rpc_info()
         elif menu_input == "12":
-            ascii_12 = pyfiglet.figlet_format("DNS Enumuration")
+            ascii_12 = pyfiglet.figlet_format("DNS Enumeration")
             print(ascii_12)
             dns_enum()
         elif menu_input == "13":
@@ -650,7 +650,7 @@ def osDiscovery():
         else:
             print('Failed to determine operating system')
  
-#SNMP OS Enumuration
+#SNMP OS Enumeration
 def snmp_os():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -681,13 +681,13 @@ def snmp_os():
                                   str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[1]:list[2]-15]),
                                   str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[2]:])]
                     cur.execute('''
-                    INSERT INTO SNMP_OS_Enummeration (Host, Protocol, Port_Number, Port_Status, Hardware, Software, System_uptime) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO SNMP_OS_Enumeration (Host, Protocol, Port_Number, Port_Status, Hardware, Software, System_uptime) VALUES (?, ?, ?, ?, ?, ?, ?)
                     ''', snmpOSList)
                     conn.commit()
                 else:
-                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
+                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumeration")
 
-#SNMP Processes Enumuration
+#SNMP Processes Enumeration
 def snmp_processes():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -719,13 +719,13 @@ def snmp_processes():
                     snmpProcessesList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                                          str(snmp[host][proto][port]['script']['snmp-processes'])]
                     cur.execute('''
-                    INSERT INTO SNMP_Process_Enummeration (Host, Protocol, Port_Number, Port_Status, Processes) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO SNMP_Process_Enumeration (Host, Protocol, Port_Number, Port_Status, Processes) VALUES (?, ?, ?, ?, ?)
                     ''', snmpProcessesList)
                     conn.commit()
                 else:
-                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
+                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumeration")
     
-#SNMP Software Enumuration
+#SNMP Software Enumeration
 def snmp_software():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -747,13 +747,13 @@ def snmp_software():
                     snmpSoftwareList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                                         str(snmp[host][proto][port]['script']['snmp-win32-software'])]
                     cur.execute('''
-                    INSERT INTO SNMP_Software_Enummeration (Host, Protocol, Port_Number, Port_Status, Softwares) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO SNMP_Software_Enumeration (Host, Protocol, Port_Number, Port_Status, Softwares) VALUES (?, ?, ?, ?, ?)
                     ''', snmpSoftwareList)
                     conn.commit()
                 else:
-                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
+                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumeration")
 
-#SNMP Interface Enumuration
+#SNMP Interface Enumeration
 def snmp_interface():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -775,14 +775,14 @@ def snmp_interface():
                     snmpInterfaceList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(snmp[host][proto][port]['script']['snmp-interfaces'])]
                     cur.execute('''
-                    INSERT INTO SNMP_Interface_Enummeration (Host, Protocol, Port_Number, Port_Status, Interfaces) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO SNMP_Interface_Enumeration (Host, Protocol, Port_Number, Port_Status, Interfaces) VALUES (?, ?, ?, ?, ?)
                     ''', snmpInterfaceList)
                     conn.commit()
                 else:
-                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumuration")
+                    print("Port 161 (SNMP) not opened, can't perform SNMP Enumeration")
 
 
-#SMTP Users Enumuration
+#SMTP Users Enumeration
 def smtp_users():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -804,13 +804,13 @@ def smtp_users():
                     smtpUsersList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(smtp[host][proto][port]['script']['smtp-enum-users'])]
                     cur.execute('''
-                    INSERT INTO SMTP_User_Enummeration (Host, Protocol, Port_Number, Port_Status, Users) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO SMTP_User_Enumeration (Host, Protocol, Port_Number, Port_Status, Users) VALUES (?, ?, ?, ?, ?)
                     ''', smtpUsersList)
                     conn.commit()
                 else:
-                    print("Port 25 (SMTP) not opened, can't perform SMTP Enumuration")
+                    print("Port 25 (SMTP) not opened, can't perform SMTP Enumeration")
 
-#NFS Share Enumuration
+#NFS Share Enumeration
 def nfs_share():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -833,13 +833,13 @@ def nfs_share():
                     nfsShareList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(smtp[host][proto][port]['script']['nfs-showmount'])]
                     cur.execute('''
-                    INSERT INTO NFS_Share_Enummeration (Host, Protocol, Port_Number, Port_Status, Shares) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO NFS_Share_Enumeration (Host, Protocol, Port_Number, Port_Status, Shares) VALUES (?, ?, ?, ?, ?)
                     ''', nfsShareList)
                     conn.commit()
                 else:
-                    print("Port 2049 (NFS) not opened, can't perform NFS Enumuration")
+                    print("Port 2049 (NFS) not opened, can't perform NFS Enumeration")
 
-#LDAP Information Enumuration
+#LDAP Information Enumeration
 def ldap_info():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -862,12 +862,12 @@ def ldap_info():
                     ldapInfoList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(server.info)]
                     cur.execute('''
-                    INSERT INTO LDAP_Information_Enummeration (Host, Protocol, Port_Number, Port_Status, Server_Info) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO LDAP_Information_Enumeration (Host, Protocol, Port_Number, Port_Status, Server_Info) VALUES (?, ?, ?, ?, ?)
                     ''', ldapInfoList)
                     conn.commit()
                 else:
-                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
-#LDAP Users Enumuration
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumeration")
+#LDAP Users Enumeration
 def ldap_users():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -892,13 +892,13 @@ def ldap_users():
                     ldapUsersList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(connection.entries)]
                     cur.execute('''
-                    INSERT INTO LDAP_Users_Enummeration (Host, Protocol, Port_Number, Port_Status, Connection_Entries) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO LDAP_Users_Enumeration (Host, Protocol, Port_Number, Port_Status, Connection_Entries) VALUES (?, ?, ?, ?, ?)
                     ''', ldapUsersList)
                     conn.commit()
                 else:
-                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumeration")
 
-#LDAP Username Enumuration using LDAP Brute
+#LDAP Username Enumeration using LDAP Brute
 def ldap_brute():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
@@ -927,11 +927,11 @@ def ldap_brute():
                     ldapBruteList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(ldap[host][proto][port]['script']['ldap-brute'])]
                     cur.execute('''
-                    INSERT INTO LDAP_Brute_Enummeration (Host, Protocol, Port_Number, Port_Status, ldap_brute) VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO LDAP_Brute_Enumeration (Host, Protocol, Port_Number, Port_Status, ldap_brute) VALUES (?, ?, ?, ?, ?)
                     ''', ldapBruteList)
                     conn.commit()
                 else:
-                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumuration")
+                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumeration")
 
 
 def googleSearch():
@@ -1062,7 +1062,7 @@ def whois_enum():
 
         whoisEnumList = [str(ip_address), str(domain)]
         cur.execute('''
-        INSERT INTO Whois_Enummeration (Host, Domain) VALUES (?,?)
+        INSERT INTO Whois_Enumeration (Host, Domain) VALUES (?,?)
         ''', whoisEnumList)
         conn.commit()
 
@@ -1188,10 +1188,10 @@ def dns_enum():
         print(f"{record} records for {target}:")
         for rdata in answers:
             print(f" {rdata}")
-            dnsEnummerationList = [str(target), str({record}), str({rdata})]
+            dnsEnumerationList = [str(target), str({record}), str({rdata})]
             cur.execute('''
-            INSERT INTO DNS_Enummeration (Domain, Record_Type, , Data) VALUES (?, ?, ?)
-            ''', dnsEnummerationList)
+            INSERT INTO DNS_Enumeration (Domain, Record_Type, Data) VALUES (?, ?, ?)
+            ''', dnsEnumerationList)
             conn.commit()
 
 
