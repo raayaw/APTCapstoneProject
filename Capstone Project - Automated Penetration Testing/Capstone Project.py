@@ -41,6 +41,7 @@ Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
 api = shodan.Shodan(Shodan_APIKEY)
 #Spidering Global Variables
 total_urls_visited = 0
+
 #Setting Up Database
 conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
@@ -475,13 +476,23 @@ def exploit_menu():
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. Packet Sniffer")
-        print("2. Exit")
+        print("2. ARP Spoof")
+        print("3. DNS Spoof")
+        print("4. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Packet Sniffer")
             print(ascii_1)
             packet_sniffer()
         elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("ARP Spoof")
+            print(ascii_2)
+            arp_spoof()
+        elif menu_input == "3":
+            ascii_3 = pyfiglet.figlet_format("DNS Spoof")
+            print(ascii_3)
+            dns_spoof()
+        elif menu_input == "3":
             exploit_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -1547,6 +1558,13 @@ def create_html_pages():
     whois = pd.read_sql_query("SELECT * from Whois_Enummeration", con)
     df_whois = pd.DataFrame(data=whois)
     df_whois.to_html("whois.html",justify='left')
+
+def arp_spoof():
+    arp_spoof = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python3 arp-spoof.py; exec bash"'])
+
+
+def dns_spoof():
+    arp_spoof = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python3 dns-spoof.py; exec bash"'])
 
 
 project_menu()
