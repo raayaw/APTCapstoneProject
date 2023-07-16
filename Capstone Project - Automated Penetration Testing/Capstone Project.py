@@ -30,11 +30,11 @@ import re
 
 import xmltodict
 import lxml.etree as ET
-# from gvm.connections import UnixSocketConnection
-# from gvm.protocols.latest import Gmp
-# from gvm.transforms import EtreeTransform
-# from gvm.xml import pretty_print
-# from terminaltables import SingleTable, DoubleTable
+from gvm.connections import UnixSocketConnection
+from gvm.protocols.latest import Gmp
+from gvm.transforms import EtreeTransform
+from gvm.xml import pretty_print
+from terminaltables import SingleTable, DoubleTable
 
 #Shodan API KEY
 Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
@@ -581,36 +581,6 @@ def portDiscovery():
                              scanner[host][proto][port]['product'],
                              scanner[host][proto][port]['version'],
                              scanner[host][proto][port]['extrainfo']))
-                
-def option_2():
-    print("This is option 2 function")
-    target = input("Enter an IP Address to scan: ")
-    #target = 'www.cloudfare.com'
-    #dnsResolve = 'https://api.shodan.io/dns/resolve?hostnames=' + target + '&key=' + Shodan_APIKEY
-    try:
-        ## First we need to resolve our targets domain to an IP
-        #resolved = requests.get(dnsResolve)
-        #hostIP = resolved.json()[target]
-        print(target)
-
-        # Then we need to do a Shodan search on that IP
-        host = api.host(target)
-        print("IP: %s" % host['ip_str'])
-        print("Organization: %s" % host.get('org', 'n/a'))
-        print("Operating System: %s" % host.get('os', 'n/a'))
-
-        # Print all banners
-        for item in host['data']:
-            print("Port: %s" % item['port'])
-            print("Banner: %s" % item['data'])
-
-    except:
-        'An error occured'
-
-    #ipinfo = api.host('104.16.133.229')
-    #print(ipinfo)
-
-
 
 def hostDiscovery():
     scanner = nmap.PortScanner()
