@@ -58,8 +58,8 @@ conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
 conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
 def SpiderDB(list):
     cur.execute('''INSERT INTO SpiderDB.Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
-#             ''', list)
-def createtables(db):
+             ''', list)
+def createtables():
     conn.execute('''CREATE TABLE IF NOT EXISTS SpiderDB.Spider
                 (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
     conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
@@ -227,7 +227,7 @@ def createtables(db):
 #     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Allowed_Methods')
 #     conn.commit()
 
-def droptables(db):
+def droptables():
     conn.execute('''DELETE FROM APT.HostDiscovery''')
     conn.commit()
     conn.execute('''DELETE FROM APT.OSDiscovery''')
@@ -553,8 +553,7 @@ def database_menu():
 
         menu_input = (input("Select option: "))
         if menu_input == "1":
-            droptables("APT")
-            conn = sqlite3.connect("Spider")
+            droptables()
             conn.execute('''DELETE FROM Spider''')
             conn.commit()
             print("Database successfully cleared!")
