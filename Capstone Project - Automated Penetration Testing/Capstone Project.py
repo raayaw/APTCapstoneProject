@@ -52,16 +52,18 @@ total_urls_visited = 0
 
 #Setting Up Database
 conn = sqlite3.connect("APTdatabase.db")
-conn = sqlite3.connect("Spider.db")
-conn.execute('''CREATE TABLE IF NOT EXISTS Spider
-             (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
-conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
-conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
-def SpiderDB(list):
-    conn = sqlite3.connect("Spider")
-    cur = conn.cursor()
-    cur.execute('''INSERT INTO Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
-            ''', list)
+cur = conn.cursor()
+print('database created')
+# conn = sqlite3.connect("Spider.db")
+# conn.execute('''CREATE TABLE IF NOT EXISTS Spider
+#              (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
+# conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
+# conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
+# def SpiderDB(list):
+#     conn = sqlite3.connect("Spider")
+#     cur = conn.cursor()
+#     cur.execute('''INSERT INTO Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
+#             ''', list)
 def createtables(db):
     conn = sqlite3.connect(db)
     cur = conn.cursor()
