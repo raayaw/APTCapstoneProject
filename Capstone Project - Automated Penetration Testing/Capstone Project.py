@@ -54,14 +54,15 @@ total_urls_visited = 0
 conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
 conn = sqlite3.connect("Spider.db")
-conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
 conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
+conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
 def SpiderDB(list):
     cur.execute('''INSERT INTO SpiderDB.Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
              ''', list)
 def createtables():
     conn.execute('''CREATE TABLE IF NOT EXISTS SpiderDB.Spider
                 (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
+    conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS APT.PortDiscovery
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
     Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT)''')
