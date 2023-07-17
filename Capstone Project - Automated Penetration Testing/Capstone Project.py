@@ -1179,15 +1179,20 @@ def rpc_info():
 
 def packet_sniffer():
     def packet_callback(packet):
-        p = packet.show()
-        print(p)
-        plist.append(p)
+        packet.show()
+        p = str(packet)
+        print(plist)
+        plist[3] = p
+        print(plist)
+        print(len(plist))
         cur.execute('''
-                    INSERT INTO APT.Packet_Sniffing (id, Interface, Timeout, Filter, Packet) VALUES (NULL, ?, ?, ?, ?)
-                    ''', plist)
+            INSERT INTO APT.Packet_Sniffing (id, Interface, Timeout, Filter, Packet) VALUES (NULL, ?, ?, ?, ?)
+            ''', plist)
+        
     while True:
-        plist = []
+
         try:
+            plist = []
             interface = input("Enter network interface: ")
             plist.append(interface)
             capture = sniff(iface = interface, timeout = 0)
@@ -1207,6 +1212,7 @@ def packet_sniffer():
         try:
             toFilter = input("What do you want to filter? (eg. dst port ftp / icmp, or enter nothing for no filter): ")
             plist.append(toFilter)
+            plist.append('test')
             capture = sniff(iface = interface, timeout = 0, filter = toFilter)
             break
         except:
