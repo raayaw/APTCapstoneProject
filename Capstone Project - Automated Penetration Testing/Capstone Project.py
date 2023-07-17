@@ -122,7 +122,7 @@ def createtables():
     (id integer primary key, Domain TEXT, Item TEXT, Result TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS APT.OpenVAS
-    (id integer primary key, Domain TEXT, Vulnerability TEXT, Severity TEXT, CVE_ID TEXT
+    (id integer primary key, Domain TEXT, Vulnerability TEXT, Severity TEXT, CVE_ID TEXT,
                  Risk TEXT, Description TEXT, Solution TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS APT.Packet_Sniffing
