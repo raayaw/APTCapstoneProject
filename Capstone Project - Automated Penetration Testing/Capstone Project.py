@@ -1478,11 +1478,6 @@ def get_openvas_report():
                 solution = vuln['solution']
 
                 scan_report.append([ count, name, risk, severity, cve_id, description, solution ])
-                vlist = [name, risk, severity, cve_id, description, solution ]
-                cur.execute('''
-                INSERT INTO OpenVAS (id, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) VALUES (NULL, ?, ?, ?, ?, ?, ?)
-                ''', vlist)
-                conn.commit()
                 scan_display_report.append([ count, name, risk, severity, cve_id])
                 
             with open('vulnerabilities.txt', 'w') as file:
@@ -1507,6 +1502,14 @@ def get_openvas_report():
 
                     file.write("\n")
                     file.write("\n")
+
+                                        
+                    vlist = [vuln_name, risk, severity, cve, desc, solution ]
+                    print(vlist)
+                    cur.execute('''
+                    INSERT INTO OpenVAS (id, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) VALUES (NULL, ?, ?, ?, ?, ?, ?)
+                    ''', vlist)
+                    conn.commit()
                     
 
 
