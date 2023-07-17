@@ -26,7 +26,6 @@ import pandas as pd
 from zapv2 import ZAPv2 #pip install python-owasp-zap-v2.4
 import time
 import subprocess
-from subprocess import Pope
 
 #FOR OPENVAS
 import subprocess
@@ -34,11 +33,11 @@ import re
 
 import xmltodict
 import lxml.etree as ET
-from gvm.connections import UnixSocketConnection
-from gvm.protocols.latest import Gmp
-from gvm.transforms import EtreeTransform
-from gvm.xml import pretty_print
-from terminaltables import SingleTable, DoubleTable
+# from gvm.connections import UnixSocketConnection
+# from gvm.protocols.latest import Gmp
+# from gvm.transforms import EtreeTransform
+# from gvm.xml import pretty_print
+# from terminaltables import SingleTable, DoubleTable
 
 # Creating Directories
 
@@ -53,17 +52,16 @@ total_urls_visited = 0
 
 #Setting Up Database
 conn = sqlite3.connect("APTdatabase.db")
-cur = conn.cursor()
-conn = sqlite3.connect('Spider')
+conn = sqlite3.connect("Spider.db")
 conn.execute('''CREATE TABLE IF NOT EXISTS Spider
              (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
-conn.execute('ATTACH DATABASE Spider as "SpiderDB"')
+conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
+conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
 def SpiderDB(list):
     conn = sqlite3.connect("Spider")
     cur = conn.cursor()
     cur.execute('''INSERT INTO Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
             ''', list)
-conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
 def createtables(db):
     conn = sqlite3.connect(db)
     cur = conn.cursor()
@@ -128,6 +126,9 @@ def createtables(db):
     conn.execute('''CREATE TABLE IF NOT EXISTS OpenVAS
     (id integer primary key, Domain TEXT, Vulnerability TEXT, Severity TEXT, 
                  Risk TEXT, Description TEXT, Solution TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS Packet_Sniffing
+    (id integer primary key, Interface TEXT, Timeout TEXT, Filter TEXT, Packet TEXT)''')
     conn.commit()
 
 # def newdatabase(conn):
@@ -268,6 +269,8 @@ def droptables(db):
     conn.execute('''DELETE FROM Allowed_Methods''')
     conn.commit()
     conn.execute('''DELETE FROM OpenVAS''')
+    conn.commit()
+    conn.execute('''DELETE FROM Packet_Sniffing''')
     conn.commit()
     cur.close()
     conn.close()
@@ -1181,10 +1184,17 @@ def rpc_info():
 
 def packet_sniffer():
     def packet_callback(packet):
-        print(packet.show())
+        p = packet.show()
+        print(p)
+        plist.append(p)
+        cur.execute('''
+                    INSERT INTO Packet_Sniffing (id, Interface, Timeout, Filter, Packet) VALUES (NULL, ?, ?, ?, ?)
+                    ''', plist)
     while True:
+        plist = []
         try:
             interface = input("Enter network interface: ")
+            plist.append(interface)
             capture = sniff(iface = interface, timeout = 0)
             break
         except OSError:
@@ -1193,6 +1203,7 @@ def packet_sniffer():
     while True:
         try:
             timeout = int(input("How long do you want to sniff for? (in seconds): "))
+            plist.append(timeout)
             break
         except:
             print("Not a valid input. Please try again.")
@@ -1200,6 +1211,7 @@ def packet_sniffer():
     while True:
         try:
             toFilter = input("What do you want to filter? (eg. dst port ftp / icmp, or enter nothing for no filter): ")
+            plist.append(toFilter)
             capture = sniff(iface = interface, timeout = 0, filter = toFilter)
             break
         except:
