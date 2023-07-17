@@ -51,11 +51,11 @@ api = shodan.Shodan(Shodan_APIKEY)
 total_urls_visited = 0
 
 #Setting Up Database
+conn = sqlite3.connect("Spider.db")
 conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
-conn = sqlite3.connect("Spider.db")
-conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
 conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
+conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
 def SpiderDB(list):
     cur.execute('''INSERT INTO SpiderDB.Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
              ''', list)
