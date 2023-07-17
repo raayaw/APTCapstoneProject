@@ -53,83 +53,79 @@ total_urls_visited = 0
 #Setting Up Database
 conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
-print('database created')
-# conn = sqlite3.connect("Spider.db")
-# conn.execute('''CREATE TABLE IF NOT EXISTS Spider
-#              (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
-# conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
-# conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
-# def SpiderDB(list):
-#     conn = sqlite3.connect("Spider")
-#     cur = conn.cursor()
-#     cur.execute('''INSERT INTO Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
+conn = sqlite3.connect("Spider.db")
+conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
+conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
+def SpiderDB(list):
+    cur.execute('''INSERT INTO SpiderDB.Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
 #             ''', list)
 def createtables(db):
-    conn = sqlite3.connect(db)
-    cur = conn.cursor()
-    conn.execute('''CREATE TABLE IF NOT EXISTS PortDiscovery
+    conn.execute('''CREATE TABLE IF NOT EXISTS SpiderDB.Spider
+                (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
+    conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.PortDiscovery
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
     Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS HostDiscovery
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.HostDiscovery
     (id integer primary key, Host TEXT, State TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS OSDiscovery
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.OSDiscovery
     (id integer primary key, Host TEXT, Device_Type TEXT, OS TEXT, OS_CPE TEXT, OS_Details TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_OS_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SNMP_OS_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Process_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SNMP_Process_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Processes TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Software_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SNMP_Software_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Softwares TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SNMP_Interface_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SNMP_Interface_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Interfaces TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS SMTP_User_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SMTP_User_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Users TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS NFS_Share_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.NFS_Share_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Shares TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Information_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.LDAP_Information_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Server_Info TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Users_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.LDAP_Users_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Connection_Entries TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS LDAP_Brute_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.LDAP_Brute_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, ldap_brute TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS Google_Search
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Google_Search
     (id integer primary key, Search TEXT, Results TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS Whois_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Whois_Enumeration
     (id integer primary key, Host TEXT, Domain TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS RPC
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.RPC
     (id integer primary key, Host TEXT, RPC_Info TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS Vulnerable_Ports
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Vulnerable_Ports
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS DNS_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.DNS_Enumeration
     (id integer primary key, Domain TEXT, Record_Type TEXT, Data TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS Built_With
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Built_With
     (id integer primary key, Domain TEXT, Name TEXT, Language TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS Allowed_Methods
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Allowed_Methods
     (id integer primary key, Domain TEXT, Item TEXT, Result TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS OpenVAS
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.OpenVAS
     (id integer primary key, Domain TEXT, Vulnerability TEXT, Severity TEXT, 
                  Risk TEXT, Description TEXT, Solution TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS Packet_Sniffing
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Packet_Sniffing
     (id integer primary key, Interface TEXT, Timeout TEXT, Filter TEXT, Packet TEXT)''')
     conn.commit()
 
@@ -232,51 +228,49 @@ def createtables(db):
 #     conn.commit()
 
 def droptables(db):
-    conn = sqlite3.connect(db)
-    cur = conn.cursor()
-    conn.execute('''DELETE FROM HostDiscovery''')
+    conn.execute('''DELETE FROM APT.HostDiscovery''')
     conn.commit()
-    conn.execute('''DELETE FROM OSDiscovery''')
+    conn.execute('''DELETE FROM APT.OSDiscovery''')
     conn.commit()   
-    conn.execute('''DELETE FROM SNMP_OS_Enumeration''')
+    conn.execute('''DELETE FROM APT.SNMP_OS_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM SNMP_Process_Enumeration''')
+    conn.execute('''DELETE FROM APT.SNMP_Process_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM SNMP_Software_Enumeration''')
+    conn.execute('''DELETE FROM APT.SNMP_Software_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM SNMP_Interface_Enumeration''')
+    conn.execute('''DELETE FROM APT.SNMP_Interface_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM SMTP_User_Enumeration''')
+    conn.execute('''DELETE FROM APT.SMTP_User_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM NFS_Share_Enumeration''')
+    conn.execute('''DELETE FROM APT.NFS_Share_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM LDAP_Information_Enumeration''')
+    conn.execute('''DELETE FROM APT.LDAP_Information_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM LDAP_Users_Enumeration''')
+    conn.execute('''DELETE FROM APT.LDAP_Users_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM LDAP_Brute_Enumeration''')
+    conn.execute('''DELETE FROM APT.LDAP_Brute_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM Google_Search''')
+    conn.execute('''DELETE FROM APT.Google_Search''')
     conn.commit()
-    conn.execute('''DELETE FROM Whois_Enumeration''')
+    conn.execute('''DELETE FROM APT.Whois_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM RPC''')
+    conn.execute('''DELETE FROM APT.RPC''')
     conn.commit()
-    conn.execute('''DELETE FROM Vulnerable_Ports''')
+    conn.execute('''DELETE FROM APT.Vulnerable_Ports''')
     conn.commit()
-    conn.execute('''DELETE FROM DNS_Enumeration''')
+    conn.execute('''DELETE FROM APT.DNS_Enumeration''')
     conn.commit()
-    conn.execute('''DELETE FROM Built_With''')
+    conn.execute('''DELETE FROM APT.Built_With''')
     conn.commit()
-    conn.execute('''DELETE FROM Allowed_Methods''')
+    conn.execute('''DELETE FROM APT.Allowed_Methods''')
     conn.commit()
-    conn.execute('''DELETE FROM OpenVAS''')
+    conn.execute('''DELETE FROM APT.OpenVAS''')
     conn.commit()
-    conn.execute('''DELETE FROM Packet_Sniffing''')
+    conn.execute('''DELETE FROM APT.Packet_Sniffing''')
     conn.commit()
     cur.close()
     conn.close()
-createtables("APT")
+createtables()
 loop = True
 def project_menu():
     loop = True
@@ -698,7 +692,7 @@ def portDiscovery():
                                       str(scanner[host][proto][port]['product']), str(scanner[host][proto][port]['version']),
                                       str(scanner[host][proto][port]['extrainfo'])]
                  cur.execute('''
-                 INSERT INTO PortDiscovery (id, Host, Protocol, Port_Number, Port_Status, Reason, Name, 
+                 INSERT INTO APT.PortDiscovery (id, Host, Protocol, Port_Number, Port_Status, Reason, Name, 
                  Product, Version, Extra_Info) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                  ''', PortDiscoveryList)
                  conn.commit()
@@ -717,7 +711,7 @@ def hostDiscovery():
     for host in scanner.all_hosts():
         hostDiscoveryList = [str(host), str(scanner[host]['status']['state'])]
         cur.execute('''
-        INSERT INTO HostDiscovery (id, Host, State) VALUES (NULL, ?, ?)
+        INSERT INTO APT.HostDiscovery (id, Host, State) VALUES (NULL, ?, ?)
         ''', hostDiscoveryList)
         conn.commit()
         print(host + " is " + scanner[host]['status']['state'])
@@ -737,7 +731,7 @@ def osDiscovery():
                                 str(scanner[host]['osmatch'][0]['osclass'][0]['cpe'][0]),
                                 str(scanner[host]['osmatch'][0]['name'])]
             cur.execute('''
-            INSERT INTO OSDiscovery (id, Host, Device_Type, OS, OS_CPE, OS_Details) VALUES (NULL, ?, ?, ?, ?, ?)
+            INSERT INTO APT.OSDiscovery (id, Host, Device_Type, OS, OS_CPE, OS_Details) VALUES (NULL, ?, ?, ?, ?, ?)
             ''', OSDiscoveryList)
             conn.commit()
             print('Device type: ' + (scanner[host]['osmatch'][0]['osclass'][0]['type']))
@@ -780,7 +774,7 @@ def snmp_os():
                                   str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[1]:list[2]-15]),
                                   str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[2]:])]
                     cur.execute('''
-                    INSERT INTO SNMP_OS_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Hardware, Software, System_uptime) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.SNMP_OS_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Hardware, Software, System_uptime) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)
                     ''', snmpOSList)
                     conn.commit()
                 else:
@@ -818,7 +812,7 @@ def snmp_processes():
                     snmpProcessesList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                                          str(snmp[host][proto][port]['script']['snmp-processes'])]
                     cur.execute('''
-                    INSERT INTO SNMP_Process_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Processes) VALUES (NULL, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.SNMP_Process_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Processes) VALUES (NULL, ?, ?, ?, ?, ?)
                     ''', snmpProcessesList)
                     conn.commit()
                 else:
@@ -846,7 +840,7 @@ def snmp_software():
                     snmpSoftwareList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                                         str(snmp[host][proto][port]['script']['snmp-win32-software'])]
                     cur.execute('''
-                    INSERT INTO SNMP_Software_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Softwares) VALUES (NULL, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.SNMP_Software_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Softwares) VALUES (NULL, ?, ?, ?, ?, ?)
                     ''', snmpSoftwareList)
                     conn.commit()
                 else:
@@ -874,7 +868,7 @@ def snmp_interface():
                     snmpInterfaceList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(snmp[host][proto][port]['script']['snmp-interfaces'])]
                     cur.execute('''
-                    INSERT INTO SNMP_Interface_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Interfaces) VALUES (NULL, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.SNMP_Interface_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Interfaces) VALUES (NULL, ?, ?, ?, ?, ?)
                     ''', snmpInterfaceList)
                     conn.commit()
                 else:
@@ -903,7 +897,7 @@ def smtp_users():
                     smtpUsersList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(smtp[host][proto][port]['script']['smtp-enum-users'])]
                     cur.execute('''
-                    INSERT INTO SMTP_User_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Users) VALUES (NULL, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.SMTP_User_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Users) VALUES (NULL, ?, ?, ?, ?, ?)
                     ''', smtpUsersList)
                     conn.commit()
                 else:
@@ -932,7 +926,7 @@ def nfs_share():
                     nfsShareList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(smtp[host][proto][port]['script']['nfs-showmount'])]
                     cur.execute('''
-                    INSERT INTO NFS_Share_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Shares) VALUES (NULL, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.NFS_Share_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Shares) VALUES (NULL, ?, ?, ?, ?, ?)
                     ''', nfsShareList)
                     conn.commit()
                 else:
@@ -961,7 +955,7 @@ def ldap_info():
                     ldapInfoList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(server.info)]
                     cur.execute('''
-                    INSERT INTO LDAP_Information_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Server_Info) VALUES (NULL, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.LDAP_Information_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Server_Info) VALUES (NULL, ?, ?, ?, ?, ?)
                     ''', ldapInfoList)
                     conn.commit()
                 else:
@@ -991,7 +985,7 @@ def ldap_users():
                     ldapUsersList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(connection.entries)]
                     cur.execute('''
-                    INSERT INTO LDAP_Users_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Connection_Entries) VALUES (NULL, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.LDAP_Users_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Connection_Entries) VALUES (NULL, ?, ?, ?, ?, ?)
                     ''', ldapUsersList)
                     conn.commit()
                 else:
@@ -1026,7 +1020,7 @@ def ldap_brute():
                     ldapBruteList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(ldap[host][proto][port]['script']['ldap-brute'])]
                     cur.execute('''
-                    INSERT INTO LDAP_Brute_Enumeration (id, Host, Protocol, Port_Number, Port_Status, ldap_brute) VALUES (NULL, ?, ?, ?, ?, ?)
+                    INSERT INTO APT.LDAP_Brute_Enumeration (id, Host, Protocol, Port_Number, Port_Status, ldap_brute) VALUES (NULL, ?, ?, ?, ?, ?)
                     ''', ldapBruteList)
                     conn.commit()
                 else:
@@ -1040,7 +1034,7 @@ def googleSearch():
         print(searchItem)
         googleSearchList = [str(toSearch), str(searchItem)]
         cur.execute('''
-        INSERT INTO Google_Search (id, Search, Results) VALUES (NULL, ?, ?)
+        INSERT INTO APT.Google_Search (id, Search, Results) VALUES (NULL, ?, ?)
         ''', googleSearchList)
         conn.commit()
 
@@ -1164,7 +1158,7 @@ def whois_enum():
 
         whoisEnumList = [str(ip_address), str(domain)]
         cur.execute('''
-        INSERT INTO Whois_Enumeration (id, Host, Domain) VALUES (NULL, ?,?)
+        INSERT INTO APT.Whois_Enumeration (id, Host, Domain) VALUES (NULL, ?,?)
         ''', whoisEnumList)
         conn.commit()
 
@@ -1180,7 +1174,7 @@ def rpc_info():
     print(rpc_info)
     rpcList = [str(target), str(rpc_info)]
     cur.execute('''
-    INSERT INTO RPC (id, Host, RPC_Info) VALUES (NULL, ?,?)
+    INSERT INTO APT.RPC (id, Host, RPC_Info) VALUES (NULL, ?,?)
     ''', rpcList)
     conn.commit()
 
@@ -1190,7 +1184,7 @@ def packet_sniffer():
         print(p)
         plist.append(p)
         cur.execute('''
-                    INSERT INTO Packet_Sniffing (id, Interface, Timeout, Filter, Packet) VALUES (NULL, ?, ?, ?, ?)
+                    INSERT INTO APT.Packet_Sniffing (id, Interface, Timeout, Filter, Packet) VALUES (NULL, ?, ?, ?, ?)
                     ''', plist)
     while True:
         plist = []
