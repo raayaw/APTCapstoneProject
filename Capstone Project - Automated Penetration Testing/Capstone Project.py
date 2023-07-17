@@ -62,7 +62,6 @@ def SpiderDB(list):
 def createtables():
     conn.execute('''CREATE TABLE IF NOT EXISTS SpiderDB.Spider
                 (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
-    conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
     conn.execute('''CREATE TABLE IF NOT EXISTS APT.PortDiscovery
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
     Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT)''')
