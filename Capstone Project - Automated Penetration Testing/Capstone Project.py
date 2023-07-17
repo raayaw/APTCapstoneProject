@@ -1463,7 +1463,6 @@ def get_openvas_report():
             results = list(scan_results.values())
 
             scan_report = []
-            vlist = []
             scan_display_report = []
             scan_display_report.append([ '#', 'Vuln. Name', 'Risk', 'Severity', 'CVE ID' ])
 
@@ -1478,8 +1477,8 @@ def get_openvas_report():
                 description = vuln['description']
                 solution = vuln['solution']
 
-                scan_report.append([ count, name, risk, severity, "cve", description, solution ])
-                vlist.append([ name, risk, severity, "cve", description, solution ])
+                scan_report.append([ count, name, risk, severity, cve_id, description, solution ])
+                vlist = [name, risk, severity, cve_id, description, solution ]
                 cur.execute('''
                 INSERT INTO OpenVAS (id, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) VALUES (NULL, ?, ?, ?, ?, ?, ?)
                 ''', vlist)
