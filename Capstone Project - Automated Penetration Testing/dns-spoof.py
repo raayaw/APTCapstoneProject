@@ -1,6 +1,12 @@
 
 from scapy.all import *
 from netfilterqueue import NetfilterQueue #apt-get install libnetfilter-queue-dev and pip install netfilterqueue
+import sqlite3
+
+conn = sqlite3.connect("APTdatabase.db")
+cur = conn.cursor()
+conn.execute('''CREATE TABLE IF NOT EXISTS DNS_Spoofing (id integer primary key, )''')
+conn.commit()
 
 dns_hosts = {}
 while True:

@@ -23,7 +23,7 @@ import builtwith #pip install builtwith
 from scapy.all import *
 import ldap3
 import pandas as pd
-from zapv2 import ZAPv2
+from zapv2 import ZAPv2 #pip install python-owasp-zap-v2.4
 import time
 import subprocess
 from subprocess import Pope
@@ -56,7 +56,7 @@ conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
 conn = sqlite3.connect('Spider')
 conn.execute('''CREATE TABLE IF NOT EXISTS Spider
-             (id integer primary key, Internal_Links TEXT. External_Links TEXT)''')
+             (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
 conn.execute('ATTACH DATABASE Spider as "SpiderDB"')
 def SpiderDB(list):
     conn = sqlite3.connect("Spider")
