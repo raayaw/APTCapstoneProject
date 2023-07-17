@@ -33,11 +33,11 @@ import re
 
 import xmltodict
 import lxml.etree as ET
-# from gvm.connections import UnixSocketConnection
-# from gvm.protocols.latest import Gmp
-# from gvm.transforms import EtreeTransform
-# from gvm.xml import pretty_print
-# from terminaltables import SingleTable, DoubleTable
+from gvm.connections import UnixSocketConnection
+from gvm.protocols.latest import Gmp
+from gvm.transforms import EtreeTransform
+from gvm.xml import pretty_print
+from terminaltables import SingleTable, DoubleTable
 
 # Creating Directories
 
