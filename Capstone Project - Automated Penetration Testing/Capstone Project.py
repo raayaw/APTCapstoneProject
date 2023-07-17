@@ -1188,6 +1188,7 @@ def packet_sniffer():
         cur.execute('''
             INSERT INTO APT.Packet_Sniffing (id, Interface, Timeout, Filter, Packet) VALUES (NULL, ?, ?, ?, ?)
             ''', plist)
+        conn.commit()
         
     while True:
 
