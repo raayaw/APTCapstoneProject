@@ -548,8 +548,7 @@ def database_menu():
         print(ascii_database)
         print("\nPlease Select an Option Below.")
         print("1. Clear Database")
-        print("2. Save a copy of Database")
-        print("3. Exit")
+        print("2. Exit")
 
         menu_input = (input("Select option: "))
         if menu_input == "1":
@@ -1578,7 +1577,7 @@ def nikto_menu():
             nT = subprocess.check_output(['nikto', '-h', host, '-Tuning', value])
             print(nT)
         elif menu_input == "4":
-            database_loop = False
+            nikto_loop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
                 continue
