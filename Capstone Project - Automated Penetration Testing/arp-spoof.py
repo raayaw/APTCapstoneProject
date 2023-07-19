@@ -3,6 +3,10 @@ import argparse
 import time
 import os
 import sys
+import sqlite3
+
+conn = sqlite3.connect("APTdatabase.db")
+cur = conn.cursor()
 
 def _enable_linux_iproute():
     file_path = "/proc/sys/net/ipv4/ip_forward"
@@ -31,6 +35,11 @@ def spoof(target_ip, host_ip, verbose=True):
         # get the MAC address of the default interface we are using
         self_mac = ARP().hwsrc
         print("[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, self_mac))
+        alist = [target_ip, host_ip, verbose, target_mac, self_mac]
+        cur.execute('''INSERT INTO ARP_Spoofing (id, Target_IP, Default_Gateway, Verbose, Target_Mac_Addr,
+                    Interface_Mac_Addr) VALUES (NULL, ?, ?, ?, ?, ?)
+             ''', alist)
+        conn.commit()
         
         
 def restore(target_ip, host_ip, verbose=True):

