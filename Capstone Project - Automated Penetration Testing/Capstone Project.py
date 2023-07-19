@@ -51,234 +51,164 @@ api = shodan.Shodan(Shodan_APIKEY)
 total_urls_visited = 0
 
 #Setting Up Database
+conn = sqlite3.connect("Reconnaissance.db")
+conn = sqlite3.connect("Vulnerability.db")
+conn = sqlite3.connect("Exploitation.db")
 conn = sqlite3.connect("Spider.db")
-conn = sqlite3.connect("APTdatabase.db")
 cur = conn.cursor()
-conn.execute('ATTACH DATABASE "APTdatabase.db" as "APT"')
-conn.execute('ATTACH DATABASE "Spider.db" as "SpiderDB"')
-def SpiderDB(list):
-    cur.execute('''INSERT INTO SpiderDB.Spider (id, Internal_Links, External_Links) VALUES (NULL, ?, ?)
-             ''', list)
+conn.execute('ATTACH DATABASE "Spider.db" as "SpiDB"')
+conn.execute('ATTACH DATABASE "Exploitation.db" as "ExpDB"')
+conn.execute('ATTACH DATABASE "Vulnerability.db" as "VulDB"')
+conn.execute('ATTACH DATABASE "Reconnaissance.db" as "RecDB"')
+
+def createtablesS():
+    conn.execute('''CREATE TABLE IF NOT EXISTS SpiDB.Spider
+    (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
     conn.commit()
-def createtables():
-    conn.execute('''CREATE TABLE IF NOT EXISTS SpiderDB.Spider
-                (id integer primary key, Internal_Links TEXT, External_Links TEXT)''')
+def droptablesS():
+    conn.execute('''DELETE FROM SpiDB.Spider''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.PortDiscovery
+
+def createtablesR():
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.Google_Search
+    (id integer primary key, Search TEXT, Results TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.Whois_Enumeration
+    (id integer primary key, Host TEXT, Domain TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.PortDiscovery
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
     Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.HostDiscovery
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.HostDiscovery
     (id integer primary key, Host TEXT, State TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.OSDiscovery
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.OSDiscovery
     (id integer primary key, Host TEXT, Device_Type TEXT, OS TEXT, OS_CPE TEXT, OS_Details TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SNMP_OS_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SNMP_OS_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SNMP_Process_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SNMP_Process_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Processes TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SNMP_Software_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SNMP_Software_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Softwares TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SNMP_Interface_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SNMP_Interface_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Interfaces TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.SMTP_User_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SMTP_Users_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Users TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.NFS_Share_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.NFS_Share_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Shares TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.LDAP_Information_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.LDAP_Information_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Server_Info TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.LDAP_Users_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.LDAP_Users_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Connection_Entries TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.LDAP_Brute_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.LDAP_Brute_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, ldap_brute TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Google_Search
-    (id integer primary key, Search TEXT, Results TEXT)''')
-    conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Whois_Enumeration
-    (id integer primary key, Host TEXT, Domain TEXT)''')
-    conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.RPC
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.RPC
     (id integer primary key, Host TEXT, RPC_Info TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Vulnerable_Ports
-    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
-    conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.DNS_Enumeration
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.DNS_Enumeration
     (id integer primary key, Domain TEXT, Record_Type TEXT, Data TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Built_With
-    (id integer primary key, Domain TEXT, Name TEXT, Language TEXT)''')
-    conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Allowed_Methods
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.Allowed_Methods
     (id integer primary key, Domain TEXT, Item TEXT, Result TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.OpenVAS
-    (id integer primary key, Domain TEXT, Vulnerability TEXT, Severity TEXT, CVE_ID TEXT,
-                 Risk TEXT, Description TEXT, Solution TEXT)''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.Built_With
+    (id integer primary key, Domain TEXT, Name TEXT, Language TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.Packet_Sniffing
+def droptablesR():
+    conn.execute('''DELETE FROM RecDB.Google_Search''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.Whois_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.PortDiscovery''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.HostDiscovery''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.OSDiscovery''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.SNMP_OS_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.SNMP_Process_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.SNMP_Software_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.SNMP_Interface_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.SMTP_Users_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.NFS_Share_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.LDAP_Information_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.LDAP_Users_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.LDAP_Brute_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.RPC''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.DNS_Enumeration''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.Allowed_Methods''')
+    conn.commit()
+    conn.execute('''DELETE FROM RecDB.Built_With''')
+    conn.commit()
+
+def createtablesV():
+    conn.execute('''CREATE TABLE IF NOT EXISTS VulDB.OpenVAS
+    (id integer primary key, Domain TEXT, Vulnerability TEXT, Severity TEXT, CVE_ID TEXT,
+    Risk TEXT, Description TEXT, Solution TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS VulDB.Vulnerable_Ports
+    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
+    conn.commit()
+def droptablesV():
+    conn.execute('''DELETE FROM VulDB.OpenVAS''')
+    conn.commit()
+    conn.execute('''DELETE FROM VulDB.Vulnerable_Ports''')
+    conn.commit()
+
+def createtablesE():
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.Packet_Sniffing
     (id integer primary key, Interface TEXT, Timeout TEXT, Filter TEXT, Packet TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.ARP_Spoofing (id integer primary key, Target_IP, Default_Gateway, Verbose,
-                 Target_Mac_Addr)''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.ARP_Spoofing 
+    (id integer primary key, Target_IP, Default_Gateway, Verbose,Target_Mac_Addr)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.DNS_Spoofing (id integer primary key, )''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.VNC 
+    (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS APT.VNC (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT
-                 Payload TEXT, Listening TEXT)''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR (id integer primary key, )''')
+    conn.commit()
+def droptablesE():
+    conn.execute('''DELETE FROM ExpDB.Packet_Sniffing''')
+    conn.commit()
+    conn.execute('''DELETE FROM ExpDB.ARP_Spoofing ''')
+    conn.commit()
+    conn.execute('''DELETE FROM ExpDB.VNC''')
     conn.commit()
 
-# def newdatabase(conn):
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.PortDiscovery
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
-#     Reason TEXT, Name TEXT, Product  TEXT, Version  TEXT, Extra_Info TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.PortDiscovery')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.HostDiscovery
-#     (Host TEXT, State TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.HostDiscovery')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.OSDiscovery
-#     (Host TEXT, Device_Type TEXT, OS TEXT, OS_CPE TEXT, OS_Details TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.OSDiscovery')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_OS_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_OS_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Process_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Processes TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Process_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Software_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Softwares TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Software_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SNMP_Interface_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Interfaces TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SNMP_Interface_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.SMTP_User_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Users TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.SMTP_User_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.NFS_Share_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Shares TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.NFS_Share_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Information_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Server_Info TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Information_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Users_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Connection_Entries TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Users_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.LDAP_Brute_Enumeration
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, ldap_brute TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.LDAP_Brute_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Google_Search
-#     (Search TEXT, Results TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Google_Search')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Whois_Enumeration
-#     (Host TEXT, Domain TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Whois_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.RPC
-#     (Host TEXT, RPC_Info TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.RPC')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Vulnerable_Ports
-#     (Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Vulnerable_Ports')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.DNS_Enumeration
-#     (Domain TEXT, Record_Type TEXT, Data TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.DNS_Enumeration')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Built_With
-#     (Domain TEXT, Name TEXT, Language TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Built_With')
-#     conn.commit()
-#     conn.execute('''CREATE TABLE IF NOT EXISTS newDB.Allowed_Methods
-#     (Domain TEXT, Item TEXT, Result TEXT)''')
-#     conn.commit()
-#     conn.execute('INSERT INTO newDB SELECT * FROM oldDB.Allowed_Methods')
-#     conn.commit()
+def createtables():
+    createtablesS()
+    createtablesR()
+    createtablesV()
+    createtablesE()
 
 def droptables():
-    conn.execute('''DELETE FROM APT.HostDiscovery''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.OSDiscovery''')
-    conn.commit()   
-    conn.execute('''DELETE FROM APT.SNMP_OS_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.SNMP_Process_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.SNMP_Software_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.SNMP_Interface_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.SMTP_User_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.NFS_Share_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.LDAP_Information_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.LDAP_Users_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.LDAP_Brute_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.Google_Search''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.Whois_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.RPC''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.Vulnerable_Ports''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.DNS_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.Built_With''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.Allowed_Methods''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.OpenVAS''')
-    conn.commit()
-    conn.execute('''DELETE FROM APT.Packet_Sniffing''')
-    conn.commit()
-    cur.close()
-    conn.close()
+    droptablesS()
+    droptablesR()
+    droptablesV()
+    droptablesE()
+
 createtables()
 loop = True
 def project_menu():
@@ -304,6 +234,8 @@ def project_menu():
         elif menu_input == "5":
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
             print(ascii_bye)
+            cur.close()
+            conn.close()
             loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -698,10 +630,9 @@ def portDiscovery():
                                       str(scanner[host][proto][port]['reason']), str(scanner[host][proto][port]['name']),
                                       str(scanner[host][proto][port]['product']), str(scanner[host][proto][port]['version']),
                                       str(scanner[host][proto][port]['extrainfo'])]
-                 cur.execute('''
-                 INSERT INTO APT.PortDiscovery (id, Host, Protocol, Port_Number, Port_Status, Reason, Name, 
-                 Product, Version, Extra_Info) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                 ''', PortDiscoveryList)
+                 cur.execute('''INSERT INTO RecDB.PortDiscovery 
+                 (id, Host, Protocol, Port_Number, Port_Status, Reason, Name, Product, Version, Extra_Info) 
+                 VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', PortDiscoveryList)
                  conn.commit()
                  print ('port : %s\tstate : %s\treason : %s\tservice : %s\t version : %s %s (%s)'
                           % (port, scanner[host][proto][port]['state'], 
@@ -717,9 +648,9 @@ def hostDiscovery():
     scanner.scan(target, arguments='-n -sP')
     for host in scanner.all_hosts():
         hostDiscoveryList = [str(host), str(scanner[host]['status']['state'])]
-        cur.execute('''
-        INSERT INTO APT.HostDiscovery (id, Host, State) VALUES (NULL, ?, ?)
-        ''', hostDiscoveryList)
+        cur.execute('''INSERT INTO RecDB.HostDiscovery 
+        (id, Host, State) 
+        VALUES (NULL, ?, ?)''', hostDiscoveryList)
         conn.commit()
         print(host + " is " + scanner[host]['status']['state'])
 
@@ -737,9 +668,9 @@ def osDiscovery():
                                (scanner[host]['osmatch'][0]['osclass'][0]['osgen'])),
                                 str(scanner[host]['osmatch'][0]['osclass'][0]['cpe'][0]),
                                 str(scanner[host]['osmatch'][0]['name'])]
-            cur.execute('''
-            INSERT INTO APT.OSDiscovery (id, Host, Device_Type, OS, OS_CPE, OS_Details) VALUES (NULL, ?, ?, ?, ?, ?)
-            ''', OSDiscoveryList)
+            cur.execute('''INSERT INTO RecDB.OSDiscovery 
+            (id, Host, Device_Type, OS, OS_CPE, OS_Details) 
+            VALUES (NULL, ?, ?, ?, ?, ?)''', OSDiscoveryList)
             conn.commit()
             print('Device type: ' + (scanner[host]['osmatch'][0]['osclass'][0]['type']))
             print("Operating System running: " + (scanner[host]['osmatch'][0]['osclass'][0]['vendor']) + ' ' +
@@ -780,9 +711,9 @@ def snmp_os():
                                   str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[0]:list[1]-12]),
                                   str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[1]:list[2]-15]),
                                   str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[2]:])]
-                    cur.execute('''
-                    INSERT INTO APT.SNMP_OS_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Hardware, Software, System_uptime) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)
-                    ''', snmpOSList)
+                    cur.execute('''INSERT INTO RecDB.SNMP_OS_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Hardware, Software, System_uptime) 
+                    VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', snmpOSList)
                     conn.commit()
                 else:
                     print("Port 161 (SNMP) not opened, can't perform SNMP Enumeration")
@@ -818,9 +749,9 @@ def snmp_processes():
                     # snmpProcessesList.append(snmp[host][proto][port]['script']['snmp-processes'][list[2]:])
                     snmpProcessesList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                                          str(snmp[host][proto][port]['script']['snmp-processes'])]
-                    cur.execute('''
-                    INSERT INTO APT.SNMP_Process_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Processes) VALUES (NULL, ?, ?, ?, ?, ?)
-                    ''', snmpProcessesList)
+                    cur.execute('''INSERT INTO RecDB.SNMP_Process_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Processes) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', snmpProcessesList)
                     conn.commit()
                 else:
                     print("Port 161 (SNMP) not opened, can't perform SNMP Enumeration")
@@ -846,9 +777,9 @@ def snmp_software():
                     print(snmp[host][proto][port]['script']['snmp-win32-software'])
                     snmpSoftwareList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                                         str(snmp[host][proto][port]['script']['snmp-win32-software'])]
-                    cur.execute('''
-                    INSERT INTO APT.SNMP_Software_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Softwares) VALUES (NULL, ?, ?, ?, ?, ?)
-                    ''', snmpSoftwareList)
+                    cur.execute('''INSERT INTO RecDB.SNMP_Software_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Softwares) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', snmpSoftwareList)
                     conn.commit()
                 else:
                     print("Port 161 (SNMP) not opened, can't perform SNMP Enumeration")
@@ -874,9 +805,9 @@ def snmp_interface():
                     print(snmp[host][proto][port]['script']['snmp-interfaces'])
                     snmpInterfaceList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(snmp[host][proto][port]['script']['snmp-interfaces'])]
-                    cur.execute('''
-                    INSERT INTO APT.SNMP_Interface_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Interfaces) VALUES (NULL, ?, ?, ?, ?, ?)
-                    ''', snmpInterfaceList)
+                    cur.execute('''INSERT INTO RecDB.SNMP_Interface_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Interfaces) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', snmpInterfaceList)
                     conn.commit()
                 else:
                     print("Port 161 (SNMP) not opened, can't perform SNMP Enumeration")
@@ -903,9 +834,9 @@ def smtp_users():
                     print(smtp[host][proto][port]['script']['smtp-enum-users'])
                     smtpUsersList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(smtp[host][proto][port]['script']['smtp-enum-users'])]
-                    cur.execute('''
-                    INSERT INTO APT.SMTP_User_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Users) VALUES (NULL, ?, ?, ?, ?, ?)
-                    ''', smtpUsersList)
+                    cur.execute('''INSERT INTO RecDB.SMTP_Users_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Users) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', smtpUsersList)
                     conn.commit()
                 else:
                     print("Port 25 (SMTP) not opened, can't perform SMTP Enumeration")
@@ -932,9 +863,9 @@ def nfs_share():
                     print(smtp[host][proto][port]['script']['nfs-showmount'])
                     nfsShareList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(smtp[host][proto][port]['script']['nfs-showmount'])]
-                    cur.execute('''
-                    INSERT INTO APT.NFS_Share_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Shares) VALUES (NULL, ?, ?, ?, ?, ?)
-                    ''', nfsShareList)
+                    cur.execute('''INSERT INTO RecDB.NFS_Share_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Shares) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', nfsShareList)
                     conn.commit()
                 else:
                     print("Port 2049 (NFS) not opened, can't perform NFS Enumeration")
@@ -961,9 +892,9 @@ def ldap_info():
                     print(server.info)
                     ldapInfoList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(server.info)]
-                    cur.execute('''
-                    INSERT INTO APT.LDAP_Information_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Server_Info) VALUES (NULL, ?, ?, ?, ?, ?)
-                    ''', ldapInfoList)
+                    cur.execute('''INSERT INTO RecDB.LDAP_Information_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Server_Info) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', ldapInfoList)
                     conn.commit()
                 else:
                     print("Port 389 (LDAP) not opened, can't perform LDAP Enumeration")
@@ -991,9 +922,9 @@ def ldap_users():
                     print(connection.entries)
                     ldapUsersList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(connection.entries)]
-                    cur.execute('''
-                    INSERT INTO APT.LDAP_Users_Enumeration (id, Host, Protocol, Port_Number, Port_Status, Connection_Entries) VALUES (NULL, ?, ?, ?, ?, ?)
-                    ''', ldapUsersList)
+                    cur.execute('''INSERT INTO RecDB.LDAP_Users_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Connection_Entries) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', ldapUsersList)
                     conn.commit()
                 else:
                     print("Port 389 (LDAP) not opened, can't perform LDAP Enumeration")
@@ -1026,9 +957,9 @@ def ldap_brute():
                     print(ldap[host][proto][port]['script']['ldap-brute'])
                     ldapBruteList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                     str(ldap[host][proto][port]['script']['ldap-brute'])]
-                    cur.execute('''
-                    INSERT INTO APT.LDAP_Brute_Enumeration (id, Host, Protocol, Port_Number, Port_Status, ldap_brute) VALUES (NULL, ?, ?, ?, ?, ?)
-                    ''', ldapBruteList)
+                    cur.execute('''INSERT INTO RecDB.LDAP_Brute_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, ldap_brute) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', ldapBruteList)
                     conn.commit()
                 else:
                     print("Port 389 (LDAP) not opened, can't perform LDAP Enumeration")
@@ -1040,9 +971,9 @@ def googleSearch():
     for searchItem in search(toSearch, num=10, stop=10):
         print(searchItem)
         googleSearchList = [str(toSearch), str(searchItem)]
-        cur.execute('''
-        INSERT INTO APT.Google_Search (id, Search, Results) VALUES (NULL, ?, ?)
-        ''', googleSearchList)
+        cur.execute('''INSERT INTO RecDB.Google_Search 
+        (id, Search, Results) 
+        VALUES (NULL, ?, ?)''', googleSearchList)
         conn.commit()
 
 #Spidering / Crawling Domains
@@ -1115,7 +1046,10 @@ def spidering():
         pos = 0
         for i in in_list:
             Spiderman = [in_list[pos], ex_list[pos]]
-            SpiderDB(Spiderman)
+            cur.execute('''INSERT INTO SpiDB.Spider 
+            (id, Internal_Links, External_Links) 
+            VALUES (NULL, ?, ?)''', Spiderman)
+            conn.commit()
             pos += 1
         # with open('Spider.csv', 'w', newline='') as f:
         #     writer = csv.writer(f)
@@ -1164,9 +1098,9 @@ def whois_enum():
         get_whois_info(domain)
 
         whoisEnumList = [str(ip_address), str(domain)]
-        cur.execute('''
-        INSERT INTO APT.Whois_Enumeration (id, Host, Domain) VALUES (NULL, ?,?)
-        ''', whoisEnumList)
+        cur.execute('''INSERT INTO RecDB.Whois_Enumeration 
+        (id, Host, Domain) 
+        VALUES (NULL, ?, ?)''', whoisEnumList)
         conn.commit()
 
     if __name__ == "__main__":
@@ -1180,9 +1114,9 @@ def rpc_info():
     # Process the RPC information as needed
     print(rpc_info)
     rpcList = [str(target), str(rpc_info)]
-    cur.execute('''
-    INSERT INTO APT.RPC (id, Host, RPC_Info) VALUES (NULL, ?,?)
-    ''', rpcList)
+    cur.execute('''INSERT INTO RecDB.RPC 
+    (id, Host, RPC_Info) 
+    VALUES (NULL, ?,?)''', rpcList)
     conn.commit()
 
 def packet_sniffer():
@@ -1193,9 +1127,9 @@ def packet_sniffer():
         plist[3] = p
         print(plist)
         print(len(plist))
-        cur.execute('''
-            INSERT INTO APT.Packet_Sniffing (id, Interface, Timeout, Filter, Packet) VALUES (NULL, ?, ?, ?, ?)
-            ''', plist)
+        cur.execute('''INSERT INTO ExpDB.Packet_Sniffing 
+        (id, Interface, Timeout, Filter, Packet) 
+        VALUES (NULL, ?, ?, ?, ?)''', plist)
         conn.commit()
         
     while True:
@@ -1260,9 +1194,9 @@ def vulnerable_ports():
                                 % (port, scanner[host][proto][port]['state'], scanner[host][proto][port]['name']))
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
-                            cur.execute('''
-                            INSERT INTO Vulnerable_Ports (id, Host, Protocol, Port_Number, Port_Status, Vulnerability) VALUES (NULL, ?, ?, ?, ?, ?)
-                            ''', VulnerablePortsList)
+                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            (id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
+                            VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
 
                                 
@@ -1287,9 +1221,9 @@ def vulnerable_ports():
                                 % (port, scanner[host][proto][port]['state'], scanner[host][proto][port]['name']))
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
-                            cur.execute('''
-                            INSERT INTO Vulnerable_Ports (id, Host, Protocol, Port_Number, Port_Status, Vulnerability) VALUES (NULL, ?, ?, ?, ?, ?)
-                            ''', VulnerablePortsList)
+                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            (id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
+                            VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
 def dns_enum():
     # Set the target domain and record type
@@ -1308,9 +1242,9 @@ def dns_enum():
         for rdata in answers:
             print(f" {rdata}")
             dnsEnumerationList = [str(target), str({record}), str({rdata})]
-            cur.execute('''
-            INSERT INTO DNS_Enumeration (id, Domain, Record_Type, Data) VALUES (NULL, ?, ?, ?)
-            ''', dnsEnumerationList)
+            cur.execute('''INSERT INTO RecDB.DNS_Enumeration 
+            (id, Domain, Record_Type, Data) 
+            VALUES (NULL, ?, ?, ?)''', dnsEnumerationList)
             conn.commit()
 
 
@@ -1320,9 +1254,9 @@ def built_with():
     for name in website:
         print(name + ":" , website[name])
         builtWithList = [str(website), str(name), str(website[name])]
-        cur.execute('''
-        INSERT INTO Built_With (id, Domain, Name, Language) VALUES (NULL, ?, ?, ?)
-        ''', builtWithList)
+        cur.execute('''INSERT INTO RecDB.Built_With 
+        (id, Domain, Name, Language) 
+        VALUES (NULL, ?, ?, ?)''', builtWithList)
         conn.commit()
 
 
@@ -1332,9 +1266,9 @@ def allowed_methods():
     for item in requestResponse.headers:
         print(item + ": " + requestResponse.headers[item])
         allowedMethodsList = [str(target), str(item), str(requestResponse.headers[item])]
-        cur.execute('''
-        INSERT INTO Allowed_Methods (id, Domain, Item, Result) VALUES (NULL, ?, ?, ?)
-        ''', allowedMethodsList)
+        cur.execute('''INSERT INTO RecDB.Allowed_Methods 
+        (id, Domain, Item, Result) 
+        VALUES (NULL, ?, ?, ?)''', allowedMethodsList)
         conn.commit()
 
 
@@ -1521,9 +1455,9 @@ def get_openvas_report():
                                         
                     vlist = [vuln_name, risk, severity, cve, desc, solution ]
                     print(vlist)
-                    cur.execute('''
-                    INSERT INTO OpenVAS (id, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) VALUES (NULL, ?, ?, ?, ?, ?, ?)
-                    ''', vlist)
+                    cur.execute('''INSERT INTO VulDB.OpenVAS 
+                    (id, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) 
+                    VALUES (NULL, ?, ?, ?, ?, ?, ?)''', vlist)
                     conn.commit()
                     
 
@@ -1692,8 +1626,9 @@ def vnc_exploit():
     lport = "444"
     sleep = input("How long do you want to listen for (in seconds)? ")
     vlist = [lhost, lport, exploit, payload, sleep]
-    cur.execute('''INSERT INTO APT.VNC (id, Target_IP, Port, Exploit, Payload, Listening) VALUES (NULL, ?, ?, ?, ?, ?)
-             ''', vlist)
+    cur.execute('''INSERT INTO ExpDB.VNC 
+    (id, Target_IP, Port, Exploit, Payload, Listening) 
+    VALUES (NULL, ?, ?, ?, ?, ?)''', vlist)
     conn.commit()
     
     # Run msfconsole in new terminal
@@ -1723,8 +1658,9 @@ def keyscan_exploit():
     listen_sleep = input("How long do you want to listen for (in seconds)? ")
     keyscan_sleep = input("How long do you want to run the keyscan for (in seconds)? ")
     klist = [lhost, lport, exploit, payload, listen_sleep, keyscan_sleep]
-    cur.execute('''INSERT INTO APT.Keyscan (id, Target_IP, Port, Exploit, Payload, Listening, Keyscan_Runtime) VALUES (NULL, ?, ?, ?, ?, ?, ?)
-             ''', klist)
+    cur.execute('''INSERT INTO ExpDB.Keyscan 
+    (id, Target_IP, Port, Exploit, Payload, Listening, Keyscan_Runtime) 
+    VALUES (NULL, ?, ?, ?, ?, ?, ?)''', klist)
     conn.commit()
     
     # Run msfconsole in new terminal
