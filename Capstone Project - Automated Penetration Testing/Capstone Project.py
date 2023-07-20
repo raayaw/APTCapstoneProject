@@ -184,8 +184,14 @@ def createtablesE():
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.ARP_Spoofing 
     (id integer primary key, Target_IP, Default_Gateway, Verbose,Target_Mac_Addr)''')
     conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.DNS_Spoofing 
+    (id integer primary key, Target_IP, Default_Gateway, Verbose,Target_Mac_Addr)''')
+    conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.VNC 
     (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT)''')
+    conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.Keyscan 
+    (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT, Keyscan_Runtime TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR (id integer primary key, )''')
     conn.commit()
