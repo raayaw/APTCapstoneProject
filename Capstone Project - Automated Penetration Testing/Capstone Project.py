@@ -1134,11 +1134,9 @@ def rpc_info():
 def packet_sniffer():
     def packet_callback(packet):
         packet.show()
-        p = str(packet)
-        print(plist)
+        p = str(packet.show(dump=True))
         plist[3] = p
         print(plist)
-        print(len(plist))
         cur.execute('''INSERT INTO ExpDB.Packet_Sniffing 
         (id, Interface, Timeout, Filter, Packet) 
         VALUES (NULL, ?, ?, ?, ?)''', plist)
