@@ -165,7 +165,7 @@ def droptablesR():
 
 def createtablesV():
     conn.execute('''CREATE TABLE IF NOT EXISTS VulDB.OpenVAS
-    (id integer primary key, Domain TEXT, Vulnerability TEXT, Severity TEXT, CVE_ID TEXT,
+    (id integer primary key, Task_ID TEXT, Target_IP TEXT, Vulnerability TEXT, Severity TEXT, CVE_ID TEXT,
     Risk TEXT, Description TEXT, Solution TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS VulDB.Vulnerable_Ports
@@ -1468,7 +1468,7 @@ def get_openvas_report():
                     vlist = [vuln_name, risk, severity, cve, desc, solution ]
                     print(vlist)
                     cur.execute('''INSERT INTO VulDB.OpenVAS 
-                    (id, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) 
+                    (id, Task_Name, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) 
                     VALUES (NULL, ?, ?, ?, ?, ?, ?)''', vlist)
                     conn.commit()
                     
