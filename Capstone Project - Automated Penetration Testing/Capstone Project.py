@@ -198,9 +198,15 @@ def createtablesE():
 def droptablesE():
     conn.execute('''DELETE FROM ExpDB.Packet_Sniffing''')
     conn.commit()
-    conn.execute('''DELETE FROM ExpDB.ARP_Spoofing ''')
+    conn.execute('''DELETE FROM ExpDB.ARP_Spoofing''')
+    conn.commit()
+    conn.execute('''DELETE FROM ExpDB.DNS_Spoofing''')
     conn.commit()
     conn.execute('''DELETE FROM ExpDB.VNC''')
+    conn.commit()
+    conn.execute('''DELETE FROM ExpDB.Keyscan''')
+    conn.commit()
+    conn.execute('''DELETE FROM ExpDB.LLMNR''')
     conn.commit()
 
 def createtables():
