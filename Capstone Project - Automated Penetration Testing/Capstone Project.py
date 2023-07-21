@@ -193,7 +193,7 @@ def createtablesE():
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.Keyscan 
     (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT, Keyscan_Runtime TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR (id integer primary key, )''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR (id integer primary key, Host_Name, )''')
     conn.commit()
 def droptablesE():
     conn.execute('''DELETE FROM ExpDB.Packet_Sniffing''')
