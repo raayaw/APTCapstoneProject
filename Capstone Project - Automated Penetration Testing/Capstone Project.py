@@ -1738,8 +1738,9 @@ def start_listener():
 
 def crack_hash_generated():
     hash_file = input("Input name of hash file: ")
-    remove_rec_file = subprocess.call("rm /root/.john/john.rec", shell = True)
-    start_listener = subprocess.call(['gnome-terminal', '-e', 'bash -c "john Responder/logs/{}; exec bash"'.format(hash_file)])
+    remove_pot_file = subprocess.call("rm /root/.john/john.pot", shell = True)
+    crack_hash = subprocess.call(['gnome-terminal', '-e', 'bash -c "john Responder/logs/{}; exec bash"'.format(hash_file)])
+    show_hash = subprocess.call("john Responder/logs/{} --show".format(hash_file), shell=True)
 
 def zap_scan():
     run_zap = "python3 zap.py"
