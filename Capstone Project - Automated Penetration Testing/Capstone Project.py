@@ -196,6 +196,9 @@ def createtablesE():
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR 
     (id integer primary key, Username TEXT, Password TEXT, Domain TEXT, Password_Hash TEXT)''')
     conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.WPA 
+    (id integer primary key, Hash1 TEXT, Hash2 TEXT, Hash3 TEXT, Network TEXT, Password TEXT)''')
+    conn.commit()
 def droptablesE():
     conn.execute('''DELETE FROM ExpDB.Packet_Sniffing''')
     conn.commit()
@@ -208,6 +211,8 @@ def droptablesE():
     conn.execute('''DELETE FROM ExpDB.Keyscan''')
     conn.commit()
     conn.execute('''DELETE FROM ExpDB.LLMNR''')
+    conn.commit()
+    conn.execute('''DELETE FROM ExpDB.WPA''')
     conn.commit()
 
 def createtables():
@@ -1746,7 +1751,7 @@ def crack_hash_generated():
     print(type(show_hash))
     clean_hashA = show_hash[2:]
     clean_hashB = clean_hashA.split(":")
-    cur.execute('''INSERT INTO ExpDB.Keyscan 
+    cur.execute('''INSERT INTO ExpDB.LLMNR 
     (id, Username, Password, Domain, Password_Hash) 
     VALUES (NULL, ?, ?, ?, ?)''', clean_hashB)
     conn.commit()
@@ -1775,9 +1780,19 @@ def capture_handshake():
     
 def crack_password():
     file_name = input("Enter the name desired .cap file (eg. if the .cap file name is dump-01.cap, please enter dump-01) : ")
+    digits = int(input("Enter the number of digits of the password: "))
+    digit = "?d"*digits
+    print("hashcat --potfile-disable -o result.txt -m 22000 -a3 --increment --increment-min 8 --increment-max 10 {}.txt {}".format(file_name,digit))
     subprocess.call("hcxpcapngtool {}.cap -o {}.txt".format(file_name,file_name),shell=True)
-    subprocess.Popen(['gnome-terminal', '-e', 'bash -c "hashcat -m 22000 -a3 --increment --increment-min 8 --increment-max 10 {}.txt ?d?d?d?d?d?d?d?d; exec bash"'.format(file_name)])
-    
+    subprocess.Popen(['gnome-terminal', '-e', 'bash -c "hashcat --potfile-disable -o result.txt -m 22000 -a3 {}.txt {}; exec bash"'.format(file_name,digit)])
+    file = open('result.txt', 'r')
+    lines = file.readlines()
+    for line in lines:
+        line_list = line.split(":")
+        cur.execute('''INSERT INTO ExpDB.WPA 
+        (id, Hash1, Hash2, Hash3, Network, Password) 
+        VALUES (NULL, ?, ?, ?, ?, ?)''', line_list)
+        conn.commit()
 
 project_menu()
 
