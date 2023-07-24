@@ -1277,11 +1277,11 @@ def vulnerable_tcp_ports():
                         if port in vulnerable_ports:
                             print ('port : %s\tstate : %s\tservice : %s\n%s'
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
-                            VulnerablePortsList = [target, ]
-                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
-                            (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
-                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
-                            conn.commit()
+                            # VulnerablePortsList = [target, ]
+                            # cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            # (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
+                            # VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            # conn.commit()
 
                                 
     else:
@@ -1627,12 +1627,12 @@ def get_openvas_report():
                     file.write("\n")
 
                                         
-                    # vlist = [task_name, str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(item[5]), v]
-                    # print(vlist)
-                    # cur.execute('''INSERT INTO VulDB.OpenVAS 
-                    # (id, Task_Name, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) 
-                    # VALUES (NULL, ?, ?, ?, ?, ?, ?)''', vlist)
-                    # conn.commit()
+                    vlist = [task_name, str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(item[5]), v]
+                    print(vlist)
+                    cur.execute('''INSERT INTO VulDB.OpenVAS 
+                    (id, Task_Name, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) 
+                    VALUES (NULL, ?, ?, ?, ?, ?, ?)''', vlist)
+                    conn.commit()
                     
 
 
