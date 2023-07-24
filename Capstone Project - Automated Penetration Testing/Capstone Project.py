@@ -436,8 +436,9 @@ def vulnscanning_menu():
         print("\nPlease Select an Option Below.")
         print("1. OpenVAS")
         print("2. ZAP Spidering + Active Scan")
-        print("3. Port Scanning")
-        print("4. Exit")
+        print("3. TCP Port Scanning")
+        print("4. UDP Port Scanning")
+        print("5. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("OpenVAS")
@@ -448,9 +449,13 @@ def vulnscanning_menu():
             print(ascii_2)
             zap_scan()
         elif menu_input == "3":
-            ascii_3 = pyfiglet.figlet_format("Port Scanning")
+            ascii_3 = pyfiglet.figlet_format("TCP Port Scanning")
             print(ascii_3)
-            vulnerable_ports()
+            vulnerable_tcp_ports()
+        elif menu_input == "4":
+            ascii_4 = pyfiglet.figlet_format("UDP Port Scanning")
+            print(ascii_4)
+            vulnerable_udp_ports()
         elif menu_input == "4":
             vulnscanning_loop = False
         else:
@@ -1211,7 +1216,68 @@ def packet_sniffer():
     else: 
         capture = sniff(iface = interface, prn=packet_callback, timeout = timeout, filter = toFilter)
 
-def vulnerable_ports():
+def vulnerable_tcp_ports():
+    
+    vulnerable_tcp_ports = [[7, "Echo", "Vulneraility: \nDOS Threat: Attackers may use it to relay flooding data and to flood the port with a large volume of requests, consuming network resources and causing a service disruption. \nAmplification Attacks: Since the Echo protocol will respond with an exact copy, attackers may send small requests to port 7, and the Echo protocol may potentially amplify the attack and increase its impact.\nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troublehshooting."], 
+    
+    [19, "Chargen", "Vulnerability: \nDOS Threat: Attackers may loop it to the echo port, creating a DOS Attack.\nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troubleshooting."],
+    
+    [20, "FTP [File Transfer Protocol]", "Vulnerability: \nData leakage, unauthorized file access.\nSolution: \nConsider using FTPS (FTP over SSL/TLS) or SFTP (SSH File Transfer Protocol). These protocols provide encryption of data in transit and stronger security controls as compared to the traditional FTP."],
+    
+    [21, "FTP Control", "Vulnerability: \nWeak authentication, anonymous access, FTP bounce attacks.\nSolution: \nDeploy Intrustion Detection/Prevention Systems (IDS/IPS) to monitor and detect any suspicious activities or attempts to exploit vulnerabilities in the FTP server. Set up alerts and response mechanisms to mitigate potential attacks."],
+    
+    [22, "SSH [Secure Shell]", "Vulnerability: \nOlder versions of the SSH protocol may have vulnerabilities that can be exploited by attackers.\nSolution: \nKeep the SSH software updated with the latest security patches. Configure SSH server settings to enhance security. This may include disabling insecure SSH protocol versions, limiting the number of failed login attempts, and restricting SSH access to specific IP addresses or networks that may seem vulnerable."],
+    
+    [23, "Telnet", "Vulnerability: \nThe data that telnet transmits, including usernames and passwords, are not encrypted and is in plaintext. This makes it vulnerable to eavesdropping and unauthorized access.\nSolution: \nConisder replacing Telnet with SSH for remote administration as SSH provices encrypted communication and stronger authentication, mitigating the vulnerailities associated with Telnet."],
+    
+    [25, "SMTP [Simple Mail Transfer Protocol]", "Vulnerability: \nEmail Spoofing attacks. Attackers may forge the sender's email address, leading to phishing and social engineering attacks.\nSolution: \nImplement authentication mechanisms, such as Sender Policy Framework (SPF), DomainKeys Identified Mail (DKIM), and Domain-based Message Authentication, Reporting, and Conformance (DMARC). These can verify the authenticity of emails and prevent email spoofing."],
+    
+    [53, "DNS [Domain Name System]", "Vulneraility: \nDOS Threat: Attackers may flood DNS servers with a high volume of requests, causing service disruption and denying legitimate users access. \nDNS Spoofing Threat:Attackers may manipulate DNS responses to redirect users to malicious websites or intercept their traffic by poisoning the DNS cache.\nSolution: \nImplement Rate Limiting by configuring your DNS server to limit the rate of incoming DNS queries from a single source to prevent DNS amplification and DoS attacks. \nImplement DNSSEC (DNS Security Extensions) which adds digital signatures and authentication to DNS responses, ensuring data integrity and preventing cache poisoning attacks."],
+    
+    [80, "HTTP [Hypertext Transfer Protocol]", "Vulnerability: \nCross-Site Scripting (XSS) and SQL Injection leading to unauthorized access, data leakage, data manipulation, data theft, or session hijacking.\nWhen data is being transmitted over HTTP, it is not encrypted and is sent in plaintext. This means that anyone with access to the network can potentially intercept and read the information being transmitted. This lack of encryption makes HTTP vulnerable to eavesdropping and data interception.\nSolution: \nDeploy a Web Application Firewall (WAF) to filter and block malicious web wtraffic, helping to protect against XSS and SQL Injections.\nEnable SSL/TLS over HTTP to use HTTPS (HTTP Secure) to encrypt the data being transmitted, ensuring that the data cannot be easily intercepted or tampered with."],
+    
+    [110, "POP3 [Post Office Protocol v.3]", "Vulnerability: \nPOP3 transmits data, including usernames and passwords, in plaintext format, making it susceptible to eavesdropping and interception.\nSolution: \nEnable SSL/TLS encryption for POP3 (usually on port 995) to ensure secure communication and protect sensitive information"],
+    
+    ["111, SUN Remote Procedure Call Service","Vulnerability: \nBuffer Overflows: Like other network services, RPC services might be vulnerable to buffer overflow attacks, where an attacker can send malicious data to a vulnerable service, causing it to crash or execute arbitrary code.\nRPC data transmitted over the network can be intercepted and read by attackers if encryption is not employed.\nSolution: \nIf specific RPC services are not required, consider disabling or removing them to reduce the attack surface. Only enable the necessary RPC services needed for your system's functionality.\nImplement strong authentication and authorization mechanisms for RPC services. Ensure that only authorized users or systems can access the RPC services.\nEnable encryption for RPC communication using protocols such as SSL/TLS or IPsec to protect the confidentiality and integrity of data transmitted over the network."],
+    
+    [137, "NetBIOS over TCP/IP", "Vulnerability: \nSMB (Server Message Block) Protocol Vulnerabilities: NetBIOS utilizes the SMB protocol for file and printer sharing, which can have vulnerabilities that can be exploited by attackers. \nSolution: \nKeep the SMB server software up to date with the latest security patches. Disable SMB version 1 (SMBv1) and use newer versions (such as SMBv2 or SMBv3) that have improved security features. Implement proper access controls, strong authentication mechanisms, and encryption for SMB communication."],
+    
+    [138, "NetBIOS over TCP/IP", "Vulnerability: \nSMB (Server Message Block) Protocol Vulnerabilities: NetBIOS utilizes the SMB protocol for file and printer sharing, which can have vulnerabilities that can be exploited by attackers.\nSolution: \nKeep the SMB server software up to date with the latest security patches. Disable SMB version 1 (SMBv1) and use newer versions (such as SMBv2 or SMBv3) that have improved security features. \
+    Implement proper access controls, strong authentication mechanisms, and encryption for SMB communication."],
+    
+    [139, "NetBIOS over TCP/IP", "Vulnerability: \nSMB (Server Message Block) Protocol Vulnerabilities: NetBIOS utilizes the SMB protocol for file and printer sharing, which can have vulnerabilities that can be exploited by attackers.\nSolution: \nKeep the SMB server software up to date with the latest security patches. Disable SMB version 1 (SMBv1) and use newer versions (such as SMBv2 or SMBv3) that have improved security features. Implement proper access controls, strong authentication mechanisms, and encryption for SMB communication."],
+    
+    [143, "IMAP [Internet Message Access Protocol]", "Vulnerability: \nIMAP transmits data, including usernames and passwords, in plain text format, making it susceptible to eavesdropping and interception.\nSolution: \nEnable SSL/TLS encryption for IMAP (usually on port 993) to ensure secure communication and protect sensitive information."],
+    
+    [161, "SNMP [Simple Network Management Protocol]", "Vulnerability: \nWeak Community Strings: SNMP uses community strings for authentication, and if weak or default community strings are used, attackers can gain unauthorized access.\nSolution: \nUse strong and unique community strings. Avoid using default or easily guessable community strings."],
+    
+    [443, "HTTPS [Hypertext Transfer Protocol Secure]", "Vulnerability: \nCertificate-based Vulnerabilities: Improperly issued or expired SSL/TLS certificates can weaken the security of HTTPS connections.\nSSL Downgrading: The attacker may manipulate the communication in a way that the negotiation process results in the use of an older or weaker SSL/TLS version.\nSolution: \nRegularly update SSL/TLS certificates and ensure they are properly issued and configured. Implement certificate revocation mechanisms to invalidate compromised or revoked certificates.\nStrict Transport Security (HSTS): Websites can implement HSTS, a response header that instructs the client to always use HTTPS and prevents the client from accepting downgraded connections."], 
+    
+    [445, "Microsoft-DS [SMB]", "Vulnerability: \nSMB Signing Disabled: If SMB signing is disabled, it could potentially allow attackers to conduct man-in-the-middle attacks and modify data exchanged between systems.\nSolution: \nImplement SMB Signing: Enforce SMB signing to ensure the integrity and authenticity of data transmitted between systems, preventing man-in-the-middle attacks."],
+    
+    [512, "r-services, RSH [Remote Shell]", "Vulnerability: \nWeak Authentication: RSH relies on weak or insecure authentication mechanisms, such as using host-based authentication or clear text passwords.\nSolution: \nDisable or block RSH services if not needed. Use more secure alternatives like SSH (Secure Shell)for remote command execution. If RSH is required, use strong authentication mechanisms like public key authentication or Kerberos, which provide better security than host-based authentication or clear text passwords."],
+    
+    [513, "r-services, REXEC [Remote Execution]", "Vulnerability: \nWeak Authentication: REXEC uses clear text passwords for authentication, making it susceptible to eavesdropping and interception.\nSolution: \nDisable or block REXEC services if not needed. Use more secure alternatives like SSH for remote command execution. If REXEC is required, use strong authentication mechanisms like public key authentication or Kerberos, \
+    which provide better security than clear text passwords."],
+    
+    [514, "r-services, Syslog", "Vulnerability: \nLog Manipulation: Attackers can tamper with syslog messages, modify log entries, or flood the logging server with excessive logs to disrupt logging operations or hide their activities.\nSolution: \nImplement access controls and proper authentication mechanisms to restrict access to the syslog server and prevent unauthorized modifications or tampering of logs."],
+    
+    [1433, "Microsoft SQL Server [ms-sql-s]", "Vulnerability: \nSQL Injection: If the SQL Server is not properly secured, attackers can exploit vulnerabilities in web applications or other entry points to inject malicious SQL queries into the database.\nSolution: \nImplement proper input validation and parameterized queries in web applications to prevent SQL injection attacks."],
+    
+    [1434, "Microsoft SQL Monitor [ms-sq-m]", "Vulnerability: \nSSRP Spoofing: Attackers can spoof the SQL Server Browser service responses, potentially redirecting clients to malicious or unauthorized SQL Server instances.\nSolution: \nEnable Authentication: Configure the SQL Server Browser service to require authentication for client connections. By enabling authentication, you ensure that only authorized clients can access the service."],
+    
+    [1723, "PPTP VPN [Point-to-Point Tunelling Protocol Virtual Private Network]", "Vulnerability: \nWeak Encryption: PPTP uses weak encryption algorithms, making it susceptible to attacks like brute force and decryption.\nSolution: \nConsider using more secure VPN protocols like OpenVPN or IPsec instead of PPTP. If PPTP is used, implement strong passwords and enforce account lockouts after multiple failed login attempts."],
+    
+    [3306, "MySQL Server", "Vulnerability: \nMonitor for Suspicious Activity: Implement intrusion detection and monitoring systems to detect and alert on any unauthorized access attempts or suspicious behavior related to RDP.\nSolution: \nImplement proper input validation and parameterized queries in web applications to prevent SQL injection attacks."],
+    
+    [3389, "RDP [Remote Desktop Protocol]", "Vulnerability: \nCredential Theft: If an attacker gains access to a system with RDP enabled, they can attempt to steal credentials or perform lateral movement within the network.\nSolution: \nNetwork Segmentation: Restrict RDP access to trusted networks or specific IP addresses using firewalls or network segmentation. Avoid exposing RDP directly to the internet if possible.\nMonitor for Suspicious Activity: Implement intrusion detection and monitoring systems to detect and alert on any unauthorized access attempts or suspicious behavior related to RDP."],
+    
+    [8080, "HTTP Proxy", "Vulnerability: \nCross-Site Scripting (XSS) and SQL Injection leading to unauthorized access, data leakage, data manipulation, data theft, or session hijacking.\nWhen data is being transmitted over HTTP, it is not encrypted and is sent in plaintext. This means that anyone with access to the network can potentially intercept and read the information being transmitted. This lack of encryption makes HTTP vulnerable to eavesdropping and data interception.\nSolution: \nDeploy a Web Application Firewall (WAF) to filter and block malicious web wtraffic, helping to protect against XSS and SQL Injections.\nEnable SSL/TLS over HTTP to use HTTPS (HTTP Secure) to encrypt the data being transmitted, ensuring that the data cannot be easily intercepted or tampered with."],
+    
+    [8443, "HTTPS", "Vulnerability: \nCertificate-based Vulnerabilities: Improperly issued or expired SSL/TLS certificates can weaken the security of HTTPS connections.\nSSL Downgrading: The attacker may manipulate the communication in a way that the negotiation process results in the use of an older or weaker SSL/TLS version.\nSolution: \nRegularly update SSL/TLS certificates and ensure they are properly issued and configured. Implement certificate revocation mechanisms to invalidate compromised or revoked certificates.\nStrict Transport Security (HSTS): Websites can implement HSTS, a response header that instructs the client to always use HTTPS and prevents the client from accepting downgraded connections."]]
+    
+    
+    
     target = input("Enter an IP Address to scan: ")
     port_range = input("Enter the range of ports to scan (eg. 1-1024, or enter nothing for no port range): ")
     scanner = nmap.PortScanner()
@@ -1227,19 +1293,15 @@ def vulnerable_ports():
             print('Vulnerable Ports:')
             for port in lport:
                 if scanner[host][proto][port]['state'] == "open":
-                    new_port = (r'\b%s\b' % (str(port)))
-                    with open('TCP_List.txt', 'r') as file:
-                        contents = file.read()
-                        matches = re.findall(new_port, contents)
-                        if matches:
-                            print('Vulnerable Ports:')
-                            print ('port : %s\tstate : %s\tservice : %s'
-                                % (port, scanner[host][proto][port]['state'], scanner[host][proto][port]['name']))
+                    for vulnerable_ports in vulnerable_tcp_ports:
+                        if port in vulnerable_ports:
+                            print ('port : %s\tstate : %s\tservice : %s\n%s'
+                                % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
-                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
-                            (id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
-                            VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            #cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            #(id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
+                            #VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
 
                                 
@@ -1255,19 +1317,109 @@ def vulnerable_ports():
             print('Vulnerable Ports:')
             for port in lport:
                 if scanner[host][proto][port]['state'] == "open":
-                    new_port = (r'\b%s\b' % (str(port)))
-                    with open('TCP_List.txt', 'r') as file:
-                        contents = file.read()
-                        matches = re.findall(new_port, contents)
-                        if matches:
-                            print ('port : %s\tstate : %s\tservice : %s'
-                                % (port, scanner[host][proto][port]['state'], scanner[host][proto][port]['name']))
+                    for vulnerable_ports in vulnerable_tcp_ports:
+                        if port in vulnerable_ports:
+                            print ('port : %s\tstate : %s\tservice : %s\n%s'
+                                % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
-                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
-                            (id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
-                            VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            #cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            #(id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
+                            #VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
+                            
+                            
+def vulnerable_udp_ports():
+    
+    vulnerable_udp_ports =  [[7, "Echo", "Vulneraility: \nDOS Threat: Attackers may use it to relay flooding data and to flood the port with a large volume of requests, consuming network resources and causing a service disruption. \n Amplification Attacks: Since the Echo protocol will respond with an exact copy, attackers may send small requests to port 7, and the Echo protocol may potentially amplify the attack and increase its impact. \nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troublehshooting."], 
+    
+    [19, "Chargen", "Vulnerability: \nDOS Threat: Attackers may loop it to the echo port, creating a DOS Attack. \nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troubleshooting."],
+    
+    [53, "DNS [Domain Name System]", "Vulneraility: \nDOS Threat: Attackers may flood DNS servers with a high volume of requests, causing service disruption and denying legitimate users access. \nDNS Spoofing Threat:Attackers may manipulate DNS responses to redirect users to malicious websites or intercept their traffic by poisoning the DNS cache. \nSolution: \nImplement Rate Limiting by configuring your DNS server to limit the rate of incoming DNS queries from a single source to prevent DNS amplification and DoS attacks. \n Implement DNSSEC (DNS Security Extensions) which adds digital signatures and authentication to DNS responses, ensuring data integrity and preventing cache poisoning attacks."],
+
+    ["69, Trivial File Transfer Protocl","Vulnerability: \nNo Authentication: TFTP does not provide any built-in authentication mechanism, which means that anyone with access to the TFTP server can read from or write to files on the server without requiring any credentials.\nNo Encryption: TFTP does not support encryption, which means that data transmitted over the network is in clear text and can be intercepted by attackers. \nSolution: \nReview and configure the TFTP server to provide the necessary access rights only to authorized users. Avoid providing write access to critical system files or directories.\nIsolate critical systems or sensitive files from the TFTP server by using network segmentation. This ensures that even if the TFTP server is compromised, the impact on other parts of the network is limited."],
+
+    [80, "HTTP [Hypertext Transfer Protocol]", "Vulnerability: \nCross-Site Scripting (XSS) and SQL Injection leading to unauthorized access, data leakage, data manipulation, data theft, or session hijacking.\nWhen data is being transmitted over HTTP, it is not encrypted and is sent in plaintext. This means that anyone with access to the network can potentially intercept and read the information being transmitted. This lack of encryption makes HTTP vulnerable to eavesdropping and data interception.\nSolution: \nDeploy a Web Application Firewall (WAF) to filter and block malicious web wtraffic, helping to protect against XSS and SQL Injections.\nEnable SSL/TLS over HTTP to use HTTPS (HTTP Secure) to encrypt the data being transmitted, ensuring that the data cannot be easily intercepted or tampered with."],
+
+    [111, "SUN Remote Procedure Call Service","Vulnerability: \nBuffer Overflows: Like other network services, RPC services might be vulnerable to buffer overflow attacks, where an attacker can send malicious data to a vulnerable service, causing it to crash or execute arbitrary code.\nRPC data transmitted over the network can be intercepted and read by attackers if encryption is not employed. \nSolution: \nIf specific RPC services are not required, consider disabling or removing them to reduce the attack surface. Only enable the necessary RPC services needed for your system's functionality.\nImplement strong authentication and authorization mechanisms for RPC services. Ensure that only authorized users or systems can access the RPC services.\nMitigation: Enable encryption for RPC communication using protocols such as SSL/TLS or IPsec to protect the confidentiality and integrity of data transmitted over the network."],
+
+    [123, "Network Time Protocpl", "Vulnerability: \nNTP Amplification Attacks: Attackers can abuse misconfigured NTP servers to amplify the volume of traffic directed at a target, leading to Distributed Denial of Service (DDoS) attacks. This is similar to other amplification  attacks like DNS amplification. NTP Reflection Attacks: Attackers can use NTP servers to reflect and amplify traffic to a target, making it appear as if the requests are originating from the NTP server itself. \nSolution: \nSet rate-limiting rules on NTP servers to prevent excessive requests from a single source, mitigating the impact of amplification and reflection attacks.\nConsider using NTP Pool servers instead of running your own publicly accessible NTP server. NTP Pool servers are community-managed and distributed, reducing the risk of abuse."],
+    
+    [137, "NetBIOS over TCP/IP", "Vulnerability: \nSMB (Server Message Block) Protocol Vulnerabilities: NetBIOS utilizes the SMB protocol for file and printer sharing, which can have vulnerabilities that can be exploited by attackers. \nSolution: \nKeep the SMB server software up to date with the latest security patches. Disable SMB version 1 (SMBv1) and use newer versions (such as SMBv2 or SMBv3) that have improved security features. Implement proper access controls, strong authentication mechanisms, and encryption for SMB communication."],
+   
+    [138, "NetBIOS over TCP/IP", "Vulnerability: \nSMB (Server Message Block) Protocol Vulnerabilities: NetBIOS utilizes the SMB protocol for file and printer sharing, which can have vulnerabilities that can be exploited by attackers. \nSolution: \nKeep the SMB server software up to date with the latest security patches. Disable SMB version 1 (SMBv1) and use newer versions (such as SMBv2 or SMBv3) that have improved security features. Implement proper access controls, strong authentication mechanisms, and encryption for SMB communication."],
+    
+    [139, "NetBIOS over TCP/IP", "Vulnerability: \nSMB (Server Message Block) Protocol Vulnerabilities: NetBIOS utilizes the SMB protocol for file and printer sharing, which can have vulnerabilities that can be exploited by attackers. \nSolution: \nKeep the SMB server software up to date with the latest security patches. Disable SMB version 1 (SMBv1) and use newer versions (such as SMBv2 or SMBv3) that have improved security features. Implement proper access controls, strong authentication mechanisms, and encryption for SMB communication."],
+    
+    [161, "SNMP [Simple Network Management Protocol]", "Vulnerability: \nWeak Community Strings: SNMP uses community strings for authentication, and if weak or default community strings are used, attackers can gain unauthorized access. \nSolution: \nUse strong and unique community strings. Avoid using default or easily guessable community strings."],
+    
+    [443, "HTTPS [Hypertext Transfer Protocol Secure]", "Vulnerability: \nCertificate-based Vulnerabilities: Improperly issued or expired SSL/TLS certificates can weaken the security of HTTPS connections. \nSSL Downgrading: The attacker may manipulate the communication in a way that the negotiation process results in the use of an older or weaker SSL/TLS version. \nSolution: \nRegularly update SSL/TLS certificates and ensure they are properly issued and configured. Implement certificate revocation mechanisms to invalidate compromised or revoked certificates. \nStrict Transport Security (HSTS): Websites can implement HSTS, a response header that instructs the client to always use HTTPS and prevents the client from accepting downgraded connections."],
+    
+    [445, "Microsoft-DS [SMB]", "Vulnerability: \nSMB Signing Disabled: If SMB signing is disabled, it could potentially allow attackers to conduct man-in-the-middle attacks and modify data exchanged between systems.\nSolution: \nImplement SMB Signing: Enforce SMB signing to ensure the integrity and authenticity of data transmitted between systems, preventing man-in-the-middle attacks."],
+    
+    [1433, "Microsoft SQL Server [ms-sql-s]", "Vulnerability: \nSQL Injection: If the SQL Server is not properly secured, attackers can exploit vulnerabilities in web applications or other entry points to inject malicious SQL queries into the database. \nSolution: \nImplement proper input validation and parameterized queries in web applications to prevent SQL injection attacks."],
+    
+    [1434, "Microsoft SQL Monitor [ms-sq-m]", "Vulnerability: \nSSRP Spoofing: Attackers can spoof the SQL Server Browser service responses, potentially redirecting clients to malicious or unauthorized SQL Server instances. \nSolution: \nEnable Authentication: Configure the SQL Server Browser service to require authentication for client connections. By enabling authentication, you ensure that only authorized clients can access the service."],
+    
+    [1900, "SSDP [Simple Service Delivery Protocol]", "Vulnerability: \nReflection and Amplification Attacks: Attackers can abuse the SSDP protocol to launch reflection and amplification attacks, where they send small requests to SSDP-enabled devices, which then respond with larger responses to a targeted victim, potentially causing network congestion or denial of service. \nSolution: \nDisable or Restrict SSDP: If SSDP is not necessary for the functionality of your network or devices, consider disabling or restricting SSDP traffic at the network level."],
+    
+    [5353, "mDNS [Multicast Domain Name System]", "Vulnerability: \nDNS Spoofing: Attackers can spoof or manipulate mDNS responses, redirecting clients to malicious or unauthorized services. \nSolution: \nDNSSEC (DNS Security Extensions): If possible, consider implementing DNSSEC to validate the authenticity and integrity of mDNS responses, reducing the risk of DNS spoofing."],
+    
+    [8080, "HTTP Proxy", "Vulnerability: \nCross-Site Scripting (XSS) and SQL Injection leading to unauthorized access, data leakage, data manipulation, data theft, or session hijacking.\nWhen data is being transmitted over HTTP, it is not encrypted and is sent in plaintext. This means that anyone with access to the network can potentially intercept and read the information being transmitted. This lack of encryption makes HTTP vulnerable to eavesdropping and data interception.\nSolution: \nDeploy a Web Application Firewall (WAF) to filter and block malicious web wtraffic, helping to protect against XSS and SQL Injections.\nEnable SSL/TLS over HTTP to use HTTPS (HTTP Secure) to encrypt the data being transmitted, ensuring that the data cannot be easily intercepted or tampered with."],
+    
+    [8443, "HTTPS", "Vulnerability: \nCertificate-based Vulnerabilities: Improperly issued or expired SSL/TLS certificates can weaken the security of HTTPS connections. \nSSL Downgrading: The attacker may manipulate the communication in a way that the negotiation process results in the use of an older or weaker SSL/TLS version. \nSolution: \nRegularly update SSL/TLS certificates and ensure they are properly issued and configured. Implement certificate revocation mechanisms to invalidate compromised or revoked certificates. \nStrict Transport Security (HSTS): Websites can implement HSTS, a response header that instructs the client to always use HTTPS and prevents the client from accepting downgraded connections."]]
+    
+    
+    target = input("Enter an IP Address to scan: ")
+    port_range = input("Enter the range of ports to scan (eg. 1-1024, or enter nothing for no port range): ")
+    scanner = nmap.PortScanner()
+    if port_range == "":
+        scanner.scan(target, arguments='-sU')
+        for host in scanner.all_hosts():
+            print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+ 
+            lport = scanner[host][proto].keys()
+            print('Vulnerable Ports:')
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    for vulnerable_ports in vulnerable_udp_ports:
+                        if port in vulnerable_ports:
+                            print ('port : %s\tstate : %s\tservice : %s\n%s'
+                                % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
+                            VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
+                            str(scanner[host][proto][port]['name'])]
+                            #cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            #(id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
+                            #VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            conn.commit()
+
+                                
+    else:
+        scanner.scan(target, port_range, arguments='-sU')
+        for host in scanner.all_hosts():
+            print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+ 
+            lport = scanner[host][proto].keys()
+            print('Vulnerable Ports:')
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    for vulnerable_ports in vulnerable_udp_ports:
+                        if port in vulnerable_ports:
+                            print ('port : %s\tstate : %s\tservice : %s\n%s'
+                                % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
+                            VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
+                            str(scanner[host][proto][port]['name'])]
+                            #cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            #(id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
+                            #VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            conn.commit()
+
 def dns_enum():
     # Set the target domain and record type
     target = input("Enter domain name: ")
