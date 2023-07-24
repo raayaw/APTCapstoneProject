@@ -1910,7 +1910,6 @@ def crack_password():
     file_name = input("Enter the name desired .cap file (eg. if the .cap file name is dump-01.cap, please enter dump-01) : ")
     digits = int(input("Enter the number of digits of the password: "))
     digit = "?d"*digits
-    print("hashcat --potfile-disable -o result.txt -m 22000 -a3 --increment --increment-min 8 --increment-max 10 {}.txt {}".format(file_name,digit))
     subprocess.call("hcxpcapngtool {}.cap -o {}.txt".format(file_name,file_name),shell=True)
     subprocess.Popen(['gnome-terminal', '-e', 'bash -c "hashcat --potfile-disable -o result.txt -m 22000 -a3 {}.txt {}; exec bash"'.format(file_name,digit)])
     file = open('result.txt', 'r')
