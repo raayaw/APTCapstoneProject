@@ -1277,13 +1277,13 @@ def vulnerable_tcp_ports():
                         if port in vulnerable_ports:
                             print ('port : %s\tstate : %s\tservice : %s\n%s'
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
-                            # VulnerablePortsList = [target, ]
-                            # cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
-                            # (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
-                            # VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
-                            # conn.commit()
-
-                                
+                            VulnerablePortsList = [target, scanner[host][proto], port, scanner[host][proto][port]['state'],
+                                                   vulnerable_ports[1], vulnerable_ports[2]]
+                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
+                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            conn.commit()
+                      
     else:
         scanner.scan(target, port_range)
         for host in scanner.all_hosts():
@@ -1368,11 +1368,12 @@ def vulnerable_udp_ports():
                         if port in vulnerable_ports:
                             print ('port : %s\tstate : %s\tservice : %s\n%s'
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
-                            VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
-                            str(scanner[host][proto][port]['name'])]
-                            #cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
-                            #(id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
-                            #VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            VulnerablePortsList = [target, scanner[host][proto], port, scanner[host][proto][port]['state'],
+                                                   vulnerable_ports[1], vulnerable_ports[2]]
+                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
+                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            conn.commit()
                             conn.commit()
 
                                 
