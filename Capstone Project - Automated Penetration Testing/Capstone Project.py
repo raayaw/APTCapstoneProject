@@ -456,7 +456,7 @@ def vulnscanning_menu():
             ascii_4 = pyfiglet.figlet_format("UDP Port Scanning")
             print(ascii_4)
             vulnerable_udp_ports()
-        elif menu_input == "4":
+        elif menu_input == "5":
             vulnscanning_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
