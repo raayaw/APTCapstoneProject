@@ -165,8 +165,8 @@ def droptablesR():
 
 def createtablesV():
     conn.execute('''CREATE TABLE IF NOT EXISTS VulDB.OpenVAS
-    (id integer primary key, Task_ID TEXT, Target_IP TEXT, Vulnerability TEXT, Severity TEXT, CVE_ID TEXT,
-    Risk TEXT, Description TEXT, Solution TEXT)''')
+    (id integer primary key, Task_Name TEXT, Vulnerability TEXT, Risk TEXT, Severity TEXT, CVE_ID TEXT,
+    Description TEXT, Solution TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS VulDB.Vulnerable_Ports
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
@@ -1277,11 +1277,10 @@ def vulnerable_tcp_ports():
                         if port in vulnerable_ports:
                             print ('port : %s\tstate : %s\tservice : %s\n%s'
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
-                            VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
-                            str(scanner[host][proto][port]['name'])]
-                            #cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
-                            #(id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
-                            #VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            VulnerablePortsList = [target, ]
+                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
+                            (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
+                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
 
                                 
@@ -1628,12 +1627,12 @@ def get_openvas_report():
                     file.write("\n")
 
                                         
-                    vlist = [str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(item[5]), v]
-                    print(vlist)
-                    cur.execute('''INSERT INTO VulDB.OpenVAS 
-                    (id, Task_Name, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) 
-                    VALUES (NULL, ?, ?, ?, ?, ?, ?)''', vlist)
-                    conn.commit()
+                    # vlist = [task_name, str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(item[5]), v]
+                    # print(vlist)
+                    # cur.execute('''INSERT INTO VulDB.OpenVAS 
+                    # (id, Task_Name, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) 
+                    # VALUES (NULL, ?, ?, ?, ?, ?, ?)''', vlist)
+                    # conn.commit()
                     
 
 
