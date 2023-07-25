@@ -1154,7 +1154,6 @@ def packet_sniffer():
         packet.show()
         p = str(packet.show(dump=True))
         plist[3] = p
-        print(plist)
         cur.execute('''INSERT INTO ExpDB.Packet_Sniffing 
         (id, Interface, Timeout, Filter, Packet) 
         VALUES (NULL, ?, ?, ?, ?)''', plist)
