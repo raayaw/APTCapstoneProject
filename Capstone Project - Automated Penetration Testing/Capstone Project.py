@@ -87,7 +87,8 @@ def createtablesR():
     (id integer primary key, Host TEXT, Device_Type TEXT, OS TEXT, OS_CPE TEXT, OS_Details TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SNMP_OS_Enumeration
-    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Hardware TEXT, Software TEXT, System_uptime TEXT)''')
+    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
+    Hardware TEXT, Software TEXT, System_uptime TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SNMP_Process_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Processes TEXT)''')
@@ -187,16 +188,18 @@ def createtablesE():
     (id integer primary key, Interface TEXT, Timeout TEXT, Filter TEXT, Packet TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.ARP_Spoofing 
-    (id integer primary key, Target_IP, Default_Gateway, Verbose,Target_Mac_Addr)''')
+    (id integer primary key, Target_IP TEXT, Default_Gateway TEXT, Verbose TEXT, Target_Mac_Addr TEXT
+    Interface_Mac_Addr TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.DNS_Spoofing 
-    (id integer primary key, Target_IP, Default_Gateway, Verbose,Target_Mac_Addr)''')
+    (id integer primary key, Source TEXT, Destination TEXT, Before TEXT, After TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.VNC 
     (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.Keyscan 
-    (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT, Keyscan_Runtime TEXT, Clean_Content TEXT)''')
+    (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT, 
+    Keyscan_Runtime TEXT, Clean_Content TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR 
     (id integer primary key, Username TEXT, Password TEXT, Domain TEXT, Password_Hash TEXT)''')

