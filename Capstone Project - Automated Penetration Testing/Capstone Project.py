@@ -1629,10 +1629,9 @@ def get_openvas_report():
 
                                         
                     vlist = [task_name, str(item[1]), str(item[2]), str(item[3]), str(item[4]), str(item[5]), v]
-                    print(vlist)
                     cur.execute('''INSERT INTO VulDB.OpenVAS 
                     (id, Task_Name, Vulnerability, Risk, Severity, CVE_ID, Description, Solution) 
-                    VALUES (NULL, ?, ?, ?, ?, ?, ?)''', vlist)
+                    VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', vlist)
                     conn.commit()
                     
 
