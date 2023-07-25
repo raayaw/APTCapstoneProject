@@ -3,7 +3,7 @@ from scapy.all import *
 from netfilterqueue import NetfilterQueue #apt-get install libnetfilter-queue-dev and pip install netfilterqueue
 import sqlite3
 
-conn = sqlite3.connect("APTdatabase.db")
+conn = sqlite3.connect("Exploitation.db")
 cur = conn.cursor()
 
 dns_hosts = {}

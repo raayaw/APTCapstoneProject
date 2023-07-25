@@ -5,7 +5,7 @@ import os
 import sys
 import sqlite3
 
-conn = sqlite3.connect("APTdatabase.db")
+conn = sqlite3.connect("Exploitation.db")
 cur = conn.cursor()
 
 def _enable_linux_iproute():
@@ -60,6 +60,11 @@ def restore(target_ip, host_ip, verbose=True):
     send(arp_response, verbose=0, count=7)
     if verbose:
         print("[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, host_mac))
+        alist = [target_ip, host_ip, verbose, target_mac, host_mac]
+        cur.execute('''INSERT INTO ARP_Spoofing (id, Target_IP, Default_Gateway, Verbose, Target_Mac_Addr,
+                    Interface_Mac_Addr) VALUES (NULL, ?, ?, ?, ?, ?)
+             ''', alist)
+        conn.commit()
         
        
 target = input("Enter target IP address: ")
