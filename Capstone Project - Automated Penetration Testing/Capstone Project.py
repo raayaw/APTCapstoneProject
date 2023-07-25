@@ -1274,7 +1274,7 @@ def vulnerable_tcp_ports():
                 if scanner[host][proto][port]['state'] == "open":
                     for vulnerable_ports in vulnerable_tcp_ports:
                         if port in vulnerable_ports:
-                            print ('port : %s\tstate : %s\tservice : %s\n%s'
+                            print ('\nport : %s\tstate : %s\tservice : %s\n%s'
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
                             VulnerablePortsList = [target, scanner[host][proto], port, scanner[host][proto][port]['state'],
                                                    vulnerable_ports[1], vulnerable_ports[2]]
@@ -1297,7 +1297,7 @@ def vulnerable_tcp_ports():
                 if scanner[host][proto][port]['state'] == "open":
                     for vulnerable_ports in vulnerable_tcp_ports:
                         if port in vulnerable_ports:
-                            print ('port : %s\tstate : %s\tservice : %s\n%s'
+                            print ('\nport : %s\tstate : %s\tservice : %s\n%s'
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
@@ -1365,7 +1365,7 @@ def vulnerable_udp_ports():
                 if scanner[host][proto][port]['state'] == "open":
                     for vulnerable_ports in vulnerable_udp_ports:
                         if port in vulnerable_ports:
-                            print ('port : %s\tstate : %s\tservice : %s\n%s'
+                            print ('\nport : %s\tstate : %s\tservice : %s\n%s'
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
                             VulnerablePortsList = [target, scanner[host][proto], port, scanner[host][proto][port]['state'],
                                                    vulnerable_ports[1], vulnerable_ports[2]]
@@ -1390,7 +1390,7 @@ def vulnerable_udp_ports():
                 if scanner[host][proto][port]['state'] == "open":
                     for vulnerable_ports in vulnerable_udp_ports:
                         if port in vulnerable_ports:
-                            print ('port : %s\tstate : %s\tservice : %s\n%s'
+                            print ('\nport : %s\tstate : %s\tservice : %s\n%s'
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
