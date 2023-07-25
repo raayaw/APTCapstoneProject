@@ -1919,7 +1919,7 @@ def crack_password():
     lines = file.readlines()
     for line in lines:
         temp_list = line.split(":")
-        line_list = [temp_list[0] + ':' temp_list[1] + ':' + temp_list[2], temp_list[3], temp_list[4]]
+        line_list = [temp_list[0] + ':' + temp_list[1] + ':' + temp_list[2], temp_list[3], temp_list[4]]
         cur.execute('''INSERT INTO ExpDB.WPA 
         (id, Hash, Network, Password) 
         VALUES (NULL, ?, ?, ?)''', line_list)
