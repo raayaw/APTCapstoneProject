@@ -1309,9 +1309,9 @@ def vulnerable_tcp_ports():
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
-                            #cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
-                            #(id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
-                            #VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_TCP 
+                            (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
+                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
                             
                             
@@ -1381,7 +1381,6 @@ def vulnerable_udp_ports():
                             (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
                             VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
-                            conn.commit()
 
                                 
     else:
@@ -1402,9 +1401,9 @@ def vulnerable_udp_ports():
                                 % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2]))
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
-                            #cur.execute('''INSERT INTO VulDB.Vulnerable_Ports 
-                            #(id, Host, Protocol, Port_Number, Port_Status, Vulnerability) 
-                            #VALUES (NULL, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_UDP 
+                            (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
+                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
 
 def dns_enum():
@@ -1918,7 +1917,7 @@ def crack_password():
     digit = "?d"*digits
     subprocess.call("hcxpcapngtool {}.cap -o {}.txt".format(file_name,file_name),shell=True)
     subprocess.Popen(['gnome-terminal', '-e', 'bash -c "hashcat --potfile-disable -o result.txt -m 22000 -a3 {}.txt {}; exec bash"'.format(file_name,digit)])
-    input("Please press enter once hashcat displays 'status:cracked ")
+    input("Please press enter once hashcat displays 'status:cracked' ")
     lines = file.readlines()
     for line in lines:
         temp_list = line.split(":")
