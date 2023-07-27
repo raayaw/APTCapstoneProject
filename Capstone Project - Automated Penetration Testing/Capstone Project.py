@@ -1918,7 +1918,7 @@ def crack_password():
     digit = "?d"*digits
     subprocess.call("hcxpcapngtool {}.cap -o {}.txt".format(file_name,file_name),shell=True)
     subprocess.Popen(['gnome-terminal', '-e', 'bash -c "hashcat --potfile-disable -o result.txt -m 22000 -a3 {}.txt {}; exec bash"'.format(file_name,digit)])
-    file = open('result.txt', 'r')
+    input("Please press enter once hashcat displays 'status:cracked ")
     lines = file.readlines()
     for line in lines:
         temp_list = line.split(":")
@@ -1927,6 +1927,7 @@ def crack_password():
         (id, Hash, Network, Password) 
         VALUES (NULL, ?, ?, ?)''', line_list)
         conn.commit()
+
 
 project_menu()
 
