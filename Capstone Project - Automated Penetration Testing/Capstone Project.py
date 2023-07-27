@@ -202,7 +202,7 @@ def createtablesE():
     Keyscan_Runtime TEXT, Clean_Content TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR 
-    (id integer primary key, Username TEXT, Password TEXT, Domain TEXT, Password_Hash TEXT)''')
+    (id integer primary key, Username TEXT, Password TEXT, Algorithm TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.WPA 
     (id integer primary key, Hash TEXT, Network TEXT, Password TEXT)''')
