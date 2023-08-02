@@ -39,6 +39,11 @@ from gvm.transforms import EtreeTransform
 from gvm.xml import pretty_print
 from terminaltables import SingleTable, DoubleTable
 
+#Email
+from email.message import EmailMessage
+import ssl
+import smtplib
+
 # Creating Directories
 
 subprocess.call("mkdir Payloads", shell=True)
@@ -250,6 +255,7 @@ def project_menu():
         print("3. Exploitation & Post Exploitation")
         print("4. Database Services")
         print("5. End Session")
+        print("6. Email Thingy")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             recon_menu()
@@ -265,6 +271,32 @@ def project_menu():
             cur.close()
             conn.close()
             loop = False
+        elif menu_input == "6":
+            print('email thingy')
+            email_sender = 'automatedpenetrationtesting@gmail.com'
+            email_password = 'sniczghgyrybspsh'
+            email_receiver = str(input("Enter email receiver here: "))#input here
+
+            subject = 'Testing Email' #input here
+            body = """
+            Test Mail
+            """ #input here
+
+            em = EmailMessage()
+            em['From'] = email_sender
+            em['To'] = email_receiver
+            em['Subject'] = subject
+            em.set_content(body)
+
+            # with open('C:\\Users\\frozl\\Downloads\\Test\\example.pdf', 'rb') as content_file:
+            #     content = content_file.read()
+            #     em.add_attachment(content, maintype='application', subtype='pdf', filename='example.pdf')
+
+            context = ssl.create_default_context()
+
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+                smtp.login(email_sender, email_password)
+                smtp.sendmail(email_sender, email_receiver, em.as_string())
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
