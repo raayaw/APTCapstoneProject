@@ -1402,7 +1402,7 @@ def vulnerable_udp_ports():
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
                             cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_UDP 
-                            (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
+                            (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
                             VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
 
