@@ -576,7 +576,7 @@ def openvas_menu():
             print("Invalid Input!\nPlease Try Again!")
             continue
 
-def vnc_menu():
+def reverse_tcp_menu():
     reverse_tcp_loop = True
     while reverse_tcp_loop == True:
         print("\nPlease Select an Option Below.")
