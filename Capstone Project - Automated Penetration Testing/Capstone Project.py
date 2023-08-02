@@ -170,10 +170,10 @@ def createtablesV():
     Description TEXT, Solution TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS VulDB.Vulnerable_Ports_TCP
-    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
+    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, State TEXT, Vulnerability TEXT, Solution TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS VulDB.Vulnerable_Ports_UDP
-    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Vulnerability TEXT)''')
+    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, State TEXT, Vulnerability TEXT, Solution TEXT)''')
     conn.commit()
 def droptablesV():
     conn.execute('''DELETE FROM VulDB.OpenVAS''')
@@ -1310,7 +1310,7 @@ def vulnerable_tcp_ports():
                             VulnerablePortsList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                             str(scanner[host][proto][port]['name'])]
                             cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_TCP 
-                            (id, Host, Protocol, Port, State, Service, Vulnerability, Solution) 
+                            (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
                             VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
                             conn.commit()
                             
