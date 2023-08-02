@@ -62,7 +62,7 @@ def process_packet(packet):
                 pass
             print("[After ]:", scapy_packet.summary())
             dlist.append(scapy_packet.summary())
-            cur.execute('''INSERT INTO ARP_Spoofing (id, Source, Destination, Before, After) 
+            cur.execute('''INSERT INTO DNS_Spoofing (id, Source, Destination, Before, After) 
             VALUES (NULL, ?, ?, ?, ?)
              ''', dlist)
             conn.commit()
