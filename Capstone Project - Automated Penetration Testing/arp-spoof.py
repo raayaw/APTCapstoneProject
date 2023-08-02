@@ -37,8 +37,7 @@ def spoof(target_ip, host_ip, verbose=True):
         print("[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, self_mac))
         alist = [target_ip, host_ip, verbose, target_mac, self_mac]
         cur.execute('''INSERT INTO ARP_Spoofing (id, Target_IP, Default_Gateway, Verbose, Target_Mac_Addr,
-                    Interface_Mac_Addr) VALUES (NULL, ?, ?, ?, ?, ?)
-             ''', alist)
+                    Interface_Mac_Addr) VALUES (NULL, ?, ?, ?, ?, ?)''', alist)
         conn.commit()
         
         
