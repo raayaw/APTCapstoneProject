@@ -1306,47 +1306,47 @@ def vulnerable_tcp_ports():
         scanner.scan(target)
         for host in scanner.all_hosts():
             print(host)
-        for proto in scanner[host].all_protocols():
-            print('----------')
-            print('Protocol : %s' % proto)
+            for proto in scanner[host].all_protocols():
+                print('----------')
+                print('Protocol : %s' % proto)
  
-            lport = scanner[host][proto].keys()
-            print('Vulnerable Ports:')
-            for port in lport:
-                if scanner[host][proto][port]['state'] == "open":
-                    for vulnerable_ports in vulnerable_tcp_ports:
-                        if port in vulnerable_ports:
-                            print ('\nport : %s\tstate : %s\tservice : %s\n%s'
-                                % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2] + vulnerable_ports[3]))
-                            VulnerablePortsList = [str(target), str(scanner[host][proto]), str(port), str(scanner[host][proto][port]['state']),
-                                                   str(vulnerable_ports[1]), str(vulnerable_ports[2]), str(vulnerable_ports[3])]
-                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_TCP 
-                            (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
-                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
-                            conn.commit()
+                lport = scanner[host][proto].keys()
+                print('Vulnerable Ports:')
+                for port in lport:
+                    if scanner[host][proto][port]['state'] == "open":
+                        for vulnerable_ports in vulnerable_tcp_ports:
+                            if port in vulnerable_ports:
+                                print ('\nport : %s\tstate : %s\tservice : %s\n%s'
+                                    % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2] + vulnerable_ports[3]))
+                                VulnerablePortsList = [str(target), str(scanner[host][proto]), str(port), str(scanner[host][proto][port]['state']),
+                                                       str(vulnerable_ports[1]), str(vulnerable_ports[2]), str(vulnerable_ports[3])]
+                                cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_TCP 
+                                (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
+                                VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                                conn.commit()
                       
     else:
         scanner.scan(target, port_range)
         for host in scanner.all_hosts():
             print(host)
-        for proto in scanner[host].all_protocols():
-            print('----------')
-            print('Protocol : %s' % proto)
+            for proto in scanner[host].all_protocols():
+                print('----------')
+                print('Protocol : %s' % proto)
  
-            lport = scanner[host][proto].keys()
-            print('Vulnerable Ports:')
-            for port in lport:
-                if scanner[host][proto][port]['state'] == "open":
-                    for vulnerable_ports in vulnerable_tcp_ports:
-                        if port in vulnerable_ports:
-                            print ('\nport : %s\tstate : %s\tservice : %s\n%s'
-                                % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2] + vulnerable_ports[3]))
-                            VulnerablePortsList = [str(target), str(scanner[host][proto]), str(port), str(scanner[host][proto][port]['state']),
-                                                   str(vulnerable_ports[1]), str(vulnerable_ports[2]), str(vulnerable_ports[3])]
-                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_TCP 
-                            (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
-                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
-                            conn.commit()
+                lport = scanner[host][proto].keys()
+                print('Vulnerable Ports:')
+                for port in lport:
+                    if scanner[host][proto][port]['state'] == "open":
+                        for vulnerable_ports in vulnerable_tcp_ports:
+                            if port in vulnerable_ports:
+                                print ('\nport : %s\tstate : %s\tservice : %s\n%s'
+                                    % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2] + vulnerable_ports[3]))
+                                VulnerablePortsList = [str(target), str(scanner[host][proto]), str(port), str(scanner[host][proto][port]['state']),
+                                                       str(vulnerable_ports[1]), str(vulnerable_ports[2]), str(vulnerable_ports[3])]
+                                cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_TCP 
+                                (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
+                                VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                                conn.commit()
 
 
 def vulnerable_udp_ports():
@@ -1397,48 +1397,48 @@ def vulnerable_udp_ports():
         scanner.scan(target, arguments='-sU')
         for host in scanner.all_hosts():
             print(host)
-        for proto in scanner[host].all_protocols():
-            print('----------')
-            print('Protocol : %s' % proto)
+            for proto in scanner[host].all_protocols():
+                print('----------')
+                print('Protocol : %s' % proto)
  
-            lport = scanner[host][proto].keys()
-            print('Vulnerable Ports:')
-            for port in lport:
-                if scanner[host][proto][port]['state'] == "open":
-                    for vulnerable_ports in vulnerable_udp_ports:
-                        if port in vulnerable_ports:
-                            print ('\nport : %s\tstate : %s\tservice : %s\n%s'
-                                % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2] + vulnerable_ports[3]))
-                            VulnerablePortsList = [str(target), str(scanner[host][proto]), str(port), str(scanner[host][proto][port]['state']),
-                                                   str(vulnerable_ports[1]), str(vulnerable_ports[2]), str(vulnerable_ports[3])]
-                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_UDP 
-                            (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
-                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
-                            conn.commit()
+                lport = scanner[host][proto].keys()
+                print('Vulnerable Ports:')
+                for port in lport:
+                    if scanner[host][proto][port]['state'] == "open":
+                        for vulnerable_ports in vulnerable_udp_ports:
+                            if port in vulnerable_ports:
+                                print ('\nport : %s\tstate : %s\tservice : %s\n%s'
+                                    % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2] + vulnerable_ports[3]))
+                                VulnerablePortsList = [str(target), str(scanner[host][proto]), str(port), str(scanner[host][proto][port]['state']),
+                                                       str(vulnerable_ports[1]), str(vulnerable_ports[2]), str(vulnerable_ports[3])]
+                                cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_UDP 
+                                (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
+                                VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                                conn.commit()
 
                                 
     else:
         scanner.scan(target, port_range, arguments='-sU')
         for host in scanner.all_hosts():
             print(host)
-        for proto in scanner[host].all_protocols():
-            print('----------')
-            print('Protocol : %s' % proto)
+            for proto in scanner[host].all_protocols():
+                print('----------')
+                print('Protocol : %s' % proto)
  
-            lport = scanner[host][proto].keys()
-            print('Vulnerable Ports:')
-            for port in lport:
-                if scanner[host][proto][port]['state'] == "open":
-                    for vulnerable_ports in vulnerable_udp_ports:
-                        if port in vulnerable_ports:
-                            print ('\nport : %s\tstate : %s\tservice : %s\n%s'
-                                % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2] + vulnerable_ports[3]))
-                            VulnerablePortsList = [str(target), str(scanner[host][proto]), str(port), str(scanner[host][proto][port]['state']),
-                                                   str(vulnerable_ports[1]), str(vulnerable_ports[2]), str(vulnerable_ports[3])]
-                            cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_UDP 
-                            (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
-                            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
-                            conn.commit()
+                lport = scanner[host][proto].keys()
+                print('Vulnerable Ports:')
+                for port in lport:
+                    if scanner[host][proto][port]['state'] == "open":
+                        for vulnerable_ports in vulnerable_udp_ports:
+                            if port in vulnerable_ports:
+                                print ('\nport : %s\tstate : %s\tservice : %s\n%s'
+                                    % (port, scanner[host][proto][port]['state'], vulnerable_ports[1], vulnerable_ports[2] + vulnerable_ports[3]))
+                                VulnerablePortsList = [str(target), str(scanner[host][proto]), str(port), str(scanner[host][proto][port]['state']),
+                                                       str(vulnerable_ports[1]), str(vulnerable_ports[2]), str(vulnerable_ports[3])]
+                                cur.execute('''INSERT INTO VulDB.Vulnerable_Ports_UDP 
+                                (id, Host, Protocol, Port_Number, State, Service, Vulnerability, Solution) 
+                                VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', VulnerablePortsList)
+                                conn.commit()
 
 def dns_enum():
     # Set the target domain and record type
