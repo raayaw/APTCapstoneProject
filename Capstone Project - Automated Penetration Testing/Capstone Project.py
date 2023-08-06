@@ -195,11 +195,10 @@ def createtablesE():
     (id integer primary key, Interface TEXT, Timeout TEXT, Filter TEXT, Packet TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.ARP_Spoofing 
-    (id integer primary key, Target_IP TEXT, Default_Gateway TEXT, Verbose TEXT, Target_Mac_Addr TEXT,
-    Interface_Mac_Addr TEXT)''')
+    (id integer primary key, Values TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.DNS_Spoofing 
-    (id integer primary key, Source TEXT, Destination TEXT, Before TEXT, After TEXT)''')
+    (id integer primary key, Values TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.VNC 
     (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT)''')

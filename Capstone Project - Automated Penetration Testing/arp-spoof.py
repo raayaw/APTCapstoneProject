@@ -34,11 +34,10 @@ def spoof(y, target_ip, host_ip, verbose=True):
     if verbose:
         # get the MAC address of the default interface we are using
         self_mac = ARP().hwsrc
+        db = "[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, self_mac)
         print("[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, self_mac))
         if y == False:
-            alist = [target_ip, host_ip, verbose, target_mac, self_mac]
-            cur.execute('''INSERT INTO ARP_Spoofing (id, Target_IP, Default_Gateway, Verbose, Target_Mac_Addr,
-                        Interface_Mac_Addr) VALUES (NULL, ?, ?, ?, ?, ?)''', alist)
+            cur.execute('''INSERT INTO ARP_Spoofing (id, Values) VALUES (NULL, db)''')
             conn.commit()
             return y == True
         
@@ -60,12 +59,10 @@ def restore(x, target_ip, host_ip, verbose=True):
     # we send each reply seven times for a good measure (count=7)
     send(arp_response, verbose=0, count=7)
     if verbose:
+        db = "[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, host_mac)
         print("[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, host_mac))
         if x == False:
-            alist = [target_ip, host_ip, verbose, target_mac, host_mac]
-            cur.execute('''INSERT INTO ARP_Spoofing (id, Target_IP, Default_Gateway, Verbose, Target_Mac_Addr,
-                        Interface_Mac_Addr) VALUES (NULL, ?, ?, ?, ?, ?)
-                ''', alist)
+            cur.execute('''INSERT INTO ARP_Spoofing (id, Values) VALUES (NULL, db)''')
             conn.commit()
             return x == True
         
