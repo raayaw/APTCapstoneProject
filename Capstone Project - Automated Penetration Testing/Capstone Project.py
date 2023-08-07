@@ -1982,7 +1982,7 @@ def email():
     em['Subject'] = subject
     em.set_content(body)
 
-    with open('Payloads\\malicious_payload.exe', 'rb') as content_file:
+    with open('Payloads/malicious_payload.exe', 'rb') as content_file:
         content = content_file.read()
         em.add_attachment(content, maintype='application', subtype='exe', filename='malicious_payload.exe')
 
