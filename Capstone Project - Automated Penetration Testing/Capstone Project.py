@@ -201,10 +201,10 @@ def createtablesE():
     (id integer primary key, Source TEXT, Destination TEXT, Before TEXT, After TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.VNC 
-    (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT)''')
+    (id integer primary key, LHOST TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.Keyscan 
-    (id integer primary key, Target_IP TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT, 
+    (id integer primary key, LHOST TEXT, Port TEXT, Exploit TEXT, Payload TEXT, Listening TEXT, 
     Keyscan_Runtime TEXT, Clean_Content TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.LLMNR 
@@ -1839,7 +1839,7 @@ def vnc_exploit():
     sleep = input("How long do you want to listen for (in seconds)? ")
     vlist = [lhost, lport, exploit, payload, sleep]
     cur.execute('''INSERT INTO ExpDB.VNC 
-    (id, Target_IP, Port, Exploit, Payload, Listening) 
+    (id, LHOST, Port, Exploit, Payload, Listening) 
     VALUES (NULL, ?, ?, ?, ?, ?)''', vlist)
     conn.commit()
     
@@ -1892,7 +1892,7 @@ def keyscan_exploit():
 
     klist = [lhost, lport, exploit, payload, listen_sleep, keyscan_sleep, clean_content]
     cur.execute('''INSERT INTO ExpDB.Keyscan 
-    (id, Target_IP, Port, Exploit, Payload, Listening, Keyscan_Runtime, Clean_Content) 
+    (id, LHOST, Port, Exploit, Payload, Listening, Keyscan_Runtime, Clean_Content) 
     VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', klist)
     conn.commit()
 
