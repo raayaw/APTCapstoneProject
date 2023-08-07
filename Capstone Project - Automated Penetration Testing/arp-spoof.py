@@ -62,7 +62,7 @@ def restore(x, target_ip, host_ip, verbose=True):
         db = "[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, host_mac)
         print("[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, host_mac))
         if x == False:
-            cur.execute('''INSERT INTO ARP_Spoofing (id, Values) VALUES (NULL, db)''')
+            cur.execute('''INSERT INTO ARP_Spoofing (id, Spoofing) VALUES (NULL, db)''')
             conn.commit()
             return x == True
         
