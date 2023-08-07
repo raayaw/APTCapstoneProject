@@ -254,7 +254,6 @@ def project_menu():
         print("3. Exploitation & Post Exploitation")
         print("4. Database Services")
         print("5. End Session")
-        print("6. Email Thingy")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             recon_menu()
@@ -270,32 +269,6 @@ def project_menu():
             cur.close()
             conn.close()
             loop = False
-        elif menu_input == "6":
-            print('email thingy')
-            email_sender = 'automatedpenetrationtesting@gmail.com'
-            email_password = 'sniczghgyrybspsh'
-            email_receiver = str(input("Enter email receiver here: "))#input here
-
-            subject = 'Testing Email' #input here
-            body = """
-            Test Mail
-            """ #input here
-
-            em = EmailMessage()
-            em['From'] = email_sender
-            em['To'] = email_receiver
-            em['Subject'] = subject
-            em.set_content(body)
-
-            # with open('C:\\Users\\frozl\\Downloads\\Test\\example.pdf', 'rb') as content_file:
-            #     content = content_file.read()
-            #     em.add_attachment(content, maintype='application', subtype='pdf', filename='example.pdf')
-
-            context = ssl.create_default_context()
-
-            with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-                smtp.login(email_sender, email_password)
-                smtp.sendmail(email_sender, email_receiver, em.as_string())
         else:
             print("Invalid Input!\nPlease Try Again!")
             continue
@@ -514,7 +487,8 @@ def exploit_menu():
         print("4. Reverse TCP Exploits")
         print("5. LLMNR / NBT-NS Poisoning")
         print("6. WPA/WPA2 Crack")
-        print("7. Exit")
+        print("7. Email")
+        print("8. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Packet Sniffer")
@@ -541,6 +515,10 @@ def exploit_menu():
             print(ascii_6)
             wpa_menu()
         elif menu_input == "7":
+            ascii_7 = pyfiglet.figlet_format("Email")
+            print(ascii_7)
+            email()
+        elif menu_input == "8":
             exploit_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -1986,6 +1964,33 @@ def crack_password():
         (id, Hash, Network, Password) 
         VALUES (NULL, ?, ?, ?)''', line_list)
         conn.commit()
+
+def email():
+    email_sender = 'automatedpenetrationtesting@gmail.com'
+    email_password = 'sniczghgyrybspsh'
+
+    email_receiver = str(input("Enter email recipient here: "))#input here
+
+    subject = str(input('Enter email subject here: ')) #input here
+    body = """
+    Test Mail
+    """ #input here
+
+    em = EmailMessage()
+    em['From'] = email_sender
+    em['To'] = email_receiver
+    em['Subject'] = subject
+    em.set_content(body)
+
+    with open('C:\\Users\\frozl\\Downloads\\Test\\example.pdf', 'rb') as content_file:
+        content = content_file.read()
+        em.add_attachment(content, maintype='application', subtype='pdf', filename='example.pdf')
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(email_sender, email_password)
+        smtp.sendmail(email_sender, email_receiver, em.as_string())
 
 
 project_menu()
