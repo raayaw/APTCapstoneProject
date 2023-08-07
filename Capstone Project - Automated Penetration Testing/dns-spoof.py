@@ -61,8 +61,6 @@ def process_packet(packet):
                 pass
             print("[After ]:", scapy_packet.summary())
             dlist.append(scapy_packet.summary())
-            print("DLIST", dlist)
-            print(dlist[0])
             cur.execute('''INSERT INTO DNS_Spoofing (id, Source, Destination, Before, After) 
             VALUES (NULL, ?, ?, ?, ?)
              ''', dlist)
