@@ -1971,9 +1971,9 @@ def email():
 
     email_receiver = str(input("Enter email recipient here: "))#input here
 
-    subject = str(input('Enter email subject here: ')) #input here
+    subject = 'I like fishes' #input here
     body = """
-    Test Mail
+    This is a phishing email do not click on the file
     """ #input here
 
     em = EmailMessage()
@@ -1982,9 +1982,9 @@ def email():
     em['Subject'] = subject
     em.set_content(body)
 
-    with open('C:\\Users\\frozl\\Downloads\\Test\\example.pdf', 'rb') as content_file:
+    with open('Payloads\\malicious_payload.exe', 'rb') as content_file:
         content = content_file.read()
-        em.add_attachment(content, maintype='application', subtype='pdf', filename='example.pdf')
+        em.add_attachment(content, maintype='application', subtype='exe', filename='malicious_payload.exe')
 
     context = ssl.create_default_context()
 
