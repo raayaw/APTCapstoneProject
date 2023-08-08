@@ -1,4 +1,4 @@
-#Capstobne Project
+#Capstone Project
 #Members: Aw Jin Le Ray, Kim Junghan, Lucas Sim
 import sys
 import nmap
@@ -364,7 +364,7 @@ def enum_menu():
     while enum_loop == True:
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
-        print("1. Spidering")
+        print("1. NetBIOS Enumeration")
         print("2. SNMP OS Enumeration")
         print("3. SNMP Processes Enumeration")
         print("4. SNMP Software Enumeration")
@@ -378,12 +378,13 @@ def enum_menu():
         print("12. DNS Enumeration")
         print("13. Website Allowed Methods")
         print("14. Website Built With")
-        print("15. Exit")
+        print("15. Spidering")
+        print("16. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
-            ascii_1 = pyfiglet.figlet_format("Spidering")
+            ascii_1 = pyfiglet.figlet_format("NetBIOS Enumeration")
             print(ascii_1)
-            spidering()
+            netbios()
         elif menu_input == "2":
             ascii_2 = pyfiglet.figlet_format("SNMP OS Enumeration")
             print(ascii_2)
@@ -437,6 +438,10 @@ def enum_menu():
             print(ascii_14)
             built_with()
         elif menu_input == "15":
+            ascii_15 = pyfiglet.figlet_format("Spidering")
+            print(ascii_15)
+            spidering()
+        elif menu_input == "16":
             enum_loop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
@@ -729,6 +734,48 @@ def osDiscovery():
             print("OS Details: " + (scanner[host]['osmatch'][0]['name']))
         else:
             print('Failed to determine operating system')
+
+
+#NetBIOS Enumeration
+def netbios():
+    scanner = nmap.PortScanner()
+    target = input("Enter IP Address: ")
+    scanner.scan(target, arguments='-sU -p 137')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    net = nmap.PortScanner()
+                    net.scan(host, arguments='-sU -p 137 --script nbstat.nse')
+                    for items in net[host]['hostscript']:
+                        for key, value in items.items():
+                            print(key + ':', value)
+                    pos = 0
+                    list = []
+                    for i in net[host]['hostscript']:
+                        pos += 1
+                        if i == ":":
+                            list.append(pos+1)
+                            continue
+                    #snmpOSList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
+                    #              str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[0]:list[1]-12]),
+                    #              str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[1]:list[2]-15]),
+                    #              str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[2]:])]
+                    #cur.execute('''INSERT INTO RecDB.SNMP_OS_Enumeration 
+                    #(id, Host, Protocol, Port_Number, Port_Status, Hardware, Software, System_uptime) 
+                    #VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', snmpOSList)
+                    #conn.commit()
+                else:
+                    print("Port 137 (NetBIOS) not opened, can't perform NetBIOS Enumeration")
+
+
  
 #SNMP OS Enumeration
 def snmp_os():
@@ -906,12 +953,12 @@ def nfs_share():
                 if scanner[host][proto][port]['state'] == "open":
                     print ('port : %s\tstate : %s'
                             % (port, scanner[host][proto][port]['state']))
-                    smtp = nmap.PortScanner()
-                    smtp.scan(host, arguments='-sV -p 2049 --script nfs-showmount')
+                    nfs = nmap.PortScanner()
+                    nfs.scan(host, arguments='-sV -p 2049 --script nfs-showmount')
                     print("\nnfs-showmount:")
-                    print(smtp[host][proto][port]['script']['nfs-showmount'])
+                    print(nfs[host][proto][port]['script']['nfs-showmount'])
                     nfsShareList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
-                    str(smtp[host][proto][port]['script']['nfs-showmount'])]
+                    str(nfs[host][proto][port]['script']['nfs-showmount'])]
                     cur.execute('''INSERT INTO RecDB.NFS_Share_Enumeration 
                     (id, Host, Protocol, Port_Number, Port_Status, Shares) 
                     VALUES (NULL, ?, ?, ?, ?, ?)''', nfsShareList)
