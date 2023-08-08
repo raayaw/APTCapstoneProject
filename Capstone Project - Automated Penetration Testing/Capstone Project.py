@@ -94,6 +94,7 @@ def createtablesR():
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.NetBIOS_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Names TEXT)''')
+    conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SNMP_OS_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
     Hardware TEXT, Software TEXT, System_uptime TEXT)''')
