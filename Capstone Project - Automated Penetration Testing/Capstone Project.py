@@ -91,6 +91,8 @@ def createtablesR():
     conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.OSDiscovery
     (id integer primary key, Host TEXT, Device_Type TEXT, OS TEXT, OS_CPE TEXT, OS_Details TEXT)''')
     conn.commit()
+    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.NetBIOS_Enumeration
+    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Names TEXT)''')
     conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.SNMP_OS_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, 
     Hardware TEXT, Software TEXT, System_uptime TEXT)''')
@@ -764,14 +766,12 @@ def netbios():
                         if i == ":":
                             list.append(pos+1)
                             continue
-                    #snmpOSList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
-                    #              str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[0]:list[1]-12]),
-                    #              str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[1]:list[2]-15]),
-                    #              str(snmp[host][proto][port]['script']['snmp-sysdescr'][list[2]:])]
-                    #cur.execute('''INSERT INTO RecDB.SNMP_OS_Enumeration 
-                    #(id, Host, Protocol, Port_Number, Port_Status, Hardware, Software, System_uptime) 
-                    #VALUES (NULL, ?, ?, ?, ?, ?, ?, ?)''', snmpOSList)
-                    #conn.commit()
+                    NetBIOSlist = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
+                                 str(net[host]['hostscript'])]
+                    cur.execute('''INSERT INTO RecDB.NetBIOS_Enumeration 
+                    (id, Host, Protocol, Port_Number, Port_Status, Names) 
+                    VALUES (NULL, ?, ?, ?, ?, ?)''', NetBIOSlist)
+                    conn.commit()
                 else:
                     print("Port 137 (NetBIOS) not opened, can't perform NetBIOS Enumeration")
 
