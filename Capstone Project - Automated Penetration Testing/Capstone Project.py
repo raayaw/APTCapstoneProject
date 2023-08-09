@@ -257,7 +257,8 @@ def project_menu():
         print("2. Vulnerability Scanning")
         print("3. Exploitation & Post Exploitation")
         print("4. Database Services")
-        print("5. End Session")
+        print("5. Generate Report")
+        print("6. End Session")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             recon_menu()
@@ -268,6 +269,11 @@ def project_menu():
         elif menu_input == "4":
             database_menu()
         elif menu_input == "5":
+            ascii_enum = pyfiglet.figlet_format("Report Generation")
+            print(ascii_enum)
+            report_generation()
+            print("Executive Summary generated successfully!")
+        elif menu_input == "6":
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
             print(ascii_bye)
             cur.close()
@@ -2046,7 +2052,696 @@ def email():
         smtp.login(email_sender, email_password)
         smtp.sendmail(email_sender, email_receiver, em.as_string())
 
+def report_generation():
+    # Connect to the database
+    conn = sqlite3.connect('Reconnaissance.db')
+    cursor = conn.cursor()
 
+    # Retrieve the value from the table
+    html_content = f"<title> Executive Summary </title> \n\
+    <p> Port Discovery </p>\n"
+
+    css_styles = """
+    <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap');
+    .my-table {
+        font-family: sans-serif;
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+    .my-table th, .my-table td {
+        border: 2px solid #547980;
+        padding: 8px;
+        text-align: left;
+        background-color: white;
+    }
+    .my-table th {
+        background-color: #45ADA8;
+    }
+
+
+    html {
+      background-color: #ECF7F7;
+    }
+
+    .collapsible {
+      background-color: White;
+      padding: 14px 28px;
+      cursor: pointer;
+      width:75%;
+      font-size: 20px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      border-width: 3px;
+      border-color: #594F4F;
+      border-radius: 12px;
+    }
+
+    .active, .collapsible:hover {
+      background-color: #979A9A;
+      box-shadow: 0 0 0 5px #547980;
+    }
+
+    .content {
+      padding: 0 18px;
+      background-color: white;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+      justify-content:center;
+      text-align:left;
+      margin: 0 auto;
+      width: 75%;
+      box-sizing: border-box;
+      border-radius: 12px;
+    }
+
+    .openvas, .vulnerable_ports, .sniffing, .arp, .dns, .reverse_tcp, .llmnr, .wpa{
+      text-align:center;
+      padding: 18px;
+    }
+
+    .vulnerable_ports {
+      text-align:center;
+      padding: 18px;
+    }
+
+    .sniffing{
+      text-align:center;
+    }
+
+    h1 {
+      font-family: 'Calibri', sans-serif;
+    }
+
+        
+    </style>
+    """
+
+    #html_content = """
+    #    <
+    #"""
+
+    javascript = """
+    <script>
+
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    }
+    // Get all elements with the class "content-box"
+    const boxes = document.querySelectorAll('.collapsible');
+
+    // Loop through each box
+    boxes.forEach(box => {
+      // Get the content of the box
+      const details = box.textContent.trim().toLowerCase();
+      // Change the box color based on the content
+      if (details.includes('high')){
+        box.style.color = '#A93226';
+        box.style.borderColor = '#A93226';
+        box.nextElementSibling.style.color = '#A93226';
+      } else if (details.includes('medium')) {
+        box.style.color = '#EB984E ';
+        box.style.borderColor = '#EB984E';
+        box.nextElementSibling.style.color = '#EB984E'
+      } else if (details.includes('low'))  {
+        box.style.color = '#229954';
+        box.style.borderColor = '#229954';
+        box.nextElementSibling.style.color = '#229954'
+      } 
+
+    });
+
+
+    </script>
+        """
+        
+    def is_table_empty(table_name):
+        query = f"SELECT EXISTS(SELECT 1 FROM {table_name} LIMIT 1);"
+        cursor.execute(query)
+        return not cursor.fetchone()[0]
+
+    with open('executive_report.html', 'w') as file:
+        file.write("<link href='https://fonts.googleapis.com/css?family=PT Sans' rel='stylesheet'>")
+        file.write("<h1>Executive Summary</h1>")
+        
+        #Port Scanning Section
+        file.write("<div class='port_scanning'>")
+        table_name = 'PortDiscovery'
+        if is_table_empty(table_name):
+            file.write(f"Scan has yet to be completed.")
+        else:
+            port_hosts = cursor.execute("SELECT Host from PortDiscovery")
+            host_list = []
+            for hosts in port_hosts:
+                for host in hosts:
+                    if host not in host_list:
+                        host_list.append(host)
+
+            for host in host_list:
+                file.write("<br><h3>Host: {}</h3>".format(host))
+                ports = pd.read_sql_query(("SELECT Protocol, Port_Number, Port_Status, Reason, Name, Product, Version, Extra_Info FROM PortDiscovery WHERE Host = '{}'").format(host), conn)
+                df_ports = pd.DataFrame(data=ports)
+                test = '<div style="overflow-x:auto;">'
+                html = df_ports.to_html(classes='my-table', index=False, justify='left')
+                test += html
+                test += "</div>"
+                file.write(test)    
+        file.write("</div>")
+
+        #OpenVAS Section
+        conn = sqlite3.connect('Vulnerability.db')
+        cursor = conn.cursor()
+        #openvas = cursor.execute("SELECT * FROM OpenVAS")
+        vuln_names = cursor.execute("SELECT Task_Name FROM OpenVAS")
+        task_list = []
+        for names in vuln_names:
+            for name in names:
+                if name not in task_list:
+                    task_list.append(name)    
+        file.write("<div class='openvas'>")
+        file.write("<h2>OpenVAS Vulnerability Scanner</h2>")
+        table_name = 'OpenVAS'
+        if is_table_empty(table_name):
+            file.write(f"Scan has yet to be completed.")
+        else:
+            for name in task_list:
+                task_name = "\n<p><b>Task: {}</b></p>".format(name)
+                
+                file.write(task_name)
+                #html = "<div class ='content'><button type='button' class='collapsible'>urmom</button></div>"
+                #p = "<div class=''><p> TEST </p></div><br>"
+                #html_button += html
+                #html_button += p
+
+                
+                vuln_query = "SELECT Vulnerability, Risk, Severity, CVE_ID, Description, Solution FROM OpenVas WHERE Task_Name = '{}'".format(name)
+                vulns = cursor.execute(vuln_query)
+                for vuln in vulns:
+                    summary = "\n<button type='button' class='collapsible'>{}, <b>{}</b></button>".format(vuln[0], vuln[1])
+                    p = "\n<div class='content'><b><p>Severity</b>: {} <br><br> <b>CVE ID</b>: {} <br><br> <b>Description</b>: {} <br><br> <b>Solution</b>: {}</p></div>".format(vuln[2],vuln[3],str(vuln[4]).replace('\n', '<br>\n'),str(vuln[5]).replace('\n', '<br>\n'))
+                    file.write(summary)
+                    file.write(p)
+            
+        file.write("</div>")
+        
+        
+        #Vulnerable TCP Section
+        file.write("<div class='vulnerable_ports'>")
+        file.write("<h2>Vulnerable TCP Port Scanning</h2>")
+        table_name = 'Vulnerable_Ports_TCP'
+        if is_table_empty(table_name):
+            file.write(f"Scan has yet to be completed.")
+        else:
+            tcp_hosts = cursor.execute("SELECT Host FROM Vulnerable_Ports_TCP")
+            tcp_host_list = []
+            for hosts in tcp_hosts:
+                for host in hosts:
+                    if host not in tcp_host_list:
+                        tcp_host_list.append(host)
+            
+            for host in tcp_host_list:
+                host_name = "\n<p><b>Host: {}</b></p>".format(host)
+                file.write(host_name)
+                
+                tcp_query = "SELECT Port_Number, Service, Vulnerability, Solution FROM Vulnerable_Ports_TCP WHERE Host = '{}'".format(host)
+                tcp_ports = cursor.execute(tcp_query)
+                
+                        
+                for tcp in tcp_ports:
+                    summary = "\n<button type='button' class='collapsible'>Port: {}, Service: {}</button>".format(tcp[0], tcp[1])
+                    p = "\n<div class='content'><p>{} <br><br>{} <br><br> </p></div>".format(tcp[2], tcp[3])
+                    file.write(summary)
+                    file.write(p)
+        
+        #Vulnerable UDP Section
+        file.write("<h2>Vulnerable UDP Port Scanning</h2>")
+        table_name = 'Vulnerable_Ports_TCP'
+        if is_table_empty(table_name):
+            file.write(f"Scan has yet to be completed.")
+        else:
+            udp_hosts = cursor.execute("SELECT Host FROM Vulnerable_Ports_UDP")
+            udp_host_list = []
+            for hosts in udp_hosts:
+                for host in hosts:
+                    if host not in udp_host_list:
+                        udp_host_list.append(host)
+            
+            for host in udp_host_list:
+                host_name = "\n<p><b>Host: {}</b></p>".format(host)
+                file.write(host_name)
+                
+                udp_query = "SELECT Port_Number, Service, Vulnerability, Solution FROM Vulnerable_Ports_UDP WHERE Host = '{}'".format(host)
+                udp_ports = cursor.execute(udp_query)
+                
+                        
+                for udp in udp_ports:
+                    summary = "\n<button type='button' class='collapsible'>Port: {}, Serivce: {}</button>".format(udp[0], udp[1])
+                    p = "\n<div class='content'><p>{} <br><br>{} <br><br> </p></div>".format(udp[2], udp[3])
+                    file.write(summary)
+                    file.write(p)
+        file.write("</div>")
+        
+        #Explotation Section
+        file.write("<h1 style='text-align:center'>Exploitations</h1>")
+        
+        
+        #Exploits - Packet Sniffing
+        file.write("<div class='sniffing'>")
+        file.write("<h2>Packet Sniffing</h2>")
+        data_list = []
+        conn = sqlite3.connect('Exploitation.db')
+        cursor = conn.cursor()
+        conditions = cursor.execute("SELECT Interface, Timeout, Filter FROM Packet_Sniffing")
+
+        for condition in conditions:
+            item = list(condition)
+            if item not in data_list:
+                data_list.append(item)
+        table_name = 'Packet_Sniffing'
+        if is_table_empty(table_name):
+            file.write(f"Attack has yet to be completed.")
+        else:        
+            for data in data_list:
+                file.write("<button class='collapsible'><b>Interface: {}<br>Timeout: {}<br>Filter: {}</b></button>".format(data[0], data[1], data[2]))
+                file.write("<div class='content'><b><span style='background-color:#fffae6'><br>Packets Sniffed:<br></span></b>")
+                packets = cursor.execute(("SELECT Packet FROM Packet_Sniffing WHERE Interface='{}' AND Timeout={} AND Filter='{}'").format(data[0], 
+                data[1], data[2]))
+                for packet in packets:
+                    file.write(packet[0].replace('\n', '<br>'))
+                    file.write('<br>')
+                file.write("</div>")
+            
+        file.write("</div>")
+        
+        #Exploits - ARP Spoofing
+        file.write("<div class='arp'>")
+        file.write("\n<h2>ARP Spoofing</h2>")
+        table_name = 'ARP_Spoofing'
+        if is_table_empty(table_name):
+            file.write(f"Attack has yet to be completed.")
+        else:
+            arp = pd.read_sql_query("SELECT * FROM ARP_Spoofing", conn)
+            df_arp = pd.DataFrame(data=arp)
+            arp_table = '<div style="overflow-x:auto;">'
+            arp_html = df_arp.to_html(classes='my-table', index=False, justify='left')
+            arp_table += arp_html
+            arp_table += "</div>"
+            file.write(arp_table)
+        file.write("</div>")
+        #Exploits - DNS Spoofing
+        file.write("<div class='dns'>")
+        file.write("\n<h2>DNS Spoof</h2>")
+        table_name = 'DNS_Spoofing'
+        if is_table_empty(table_name):
+            file.write(f"Attack has yet to be completed.")
+        else:
+            dns = pd.read_sql_query("SELECT * FROM DNS_Spoofing", conn)
+            df_dns = pd.DataFrame(data=dns)
+            dns_table = '<div style="overflow-x:auto;">'
+            dns_html = df_dns.to_html(classes='my-table', index=False, justify='left')
+            dns_table += dns_html
+            dns_table += "</div>"
+            file.write(dns_table)
+        file.write("</div>")
+            
+        #Exploits - Reverse TCP
+        file.write("<div class='reverse_tcp'>")
+        tcp_name = "\n<h2>Reverse TCP</h2>"
+        file.write("<h2>Reverse TCP</h2>")
+
+
+            # Replace 'your_table_name' with the name of the table you want to check
+        file.write("\n<h3>VNC Exploit</h3>")
+        table_name = 'VNC'
+        if is_table_empty(table_name):
+            file.write(f"Attack has yet to be completed.")
+        else:
+            vnc = pd.read_sql_query("SELECT * FROM VNC", conn)
+            df_vnc = pd.DataFrame(data=vnc)
+            vnc_table = '<div style="overflow-x:auto;">'
+            vnc_html = df_vnc.to_html(classes='my-table', index=False, justify='left')
+            vnc_table += vnc_html
+            vnc_table += "</div>"
+            file.write("<p>A VNC Session was created using metasploits exploit/multi/handler with the following options: </p>")
+            file.write(vnc_table)
+            
+        file.write("\n<h3>Keyscan Exploit</h3>")
+        table_name = 'Keyscan'
+        if is_table_empty(table_name):
+            file.write(f"Attack has yet to be completed.")
+        else:
+            keyscan = pd.read_sql_query("SELECT * FROM Keyscan", conn)
+            df_keyscan = pd.DataFrame(data=keyscan)
+            keyscan_table = '<div style="overflow-x:auto;">'
+            keyscan_html = df_keyscan.to_html(classes='my-table', index=False, justify='left')
+            keyscan_table += keyscan_html
+            keyscan_table += "</div>"
+            file.write(keyscan_table)
+            
+        file.write("</div>")
+        
+      
+        
+        #Exploits - LLMNR / NBT-NS Poisoning
+        llmnr = cursor.execute("SELECT * FROM LLMNR")
+
+        file.write("<div class='llmnr'>")
+        llmnr_name = "\n<h2>LLMNR Poisoning</h2>"
+        file.write(llmnr_name)
+
+
+            # Replace 'your_table_name' with the name of the table you want to check
+        table_name = 'LLMNR'
+        if is_table_empty(table_name):
+            file.write(f"Attack has yet to be completed.")
+        else:
+            llmnr = pd.read_sql_query("SELECT * FROM LLMNR", conn)
+            df_llmnr = pd.DataFrame(data=llmnr)
+            llmnr_table = '<div style="overflow-x:auto;">'
+            llmnr_html = df_llmnr.to_html(classes='my-table', index=False, justify='left')
+            llmnr_table += llmnr_html
+            llmnr_table += "</div>"
+            file.write(llmnr_table)
+        file.write("</div>")
+            
+        #Exploits - WPA Cracking
+        wireless = cursor.execute("SELECT * FROM WPA")
+
+        file.write("<div class='wpa'>")
+        wpa_name = "\n<h2>WPA Crack</h2>"
+        file.write(wpa_name)
+
+
+            # Replace 'your_table_name' with the name of the table you want to check
+        table_name = 'WPA'
+        if is_table_empty(table_name):
+            file.write(f"Attack has yet to be completed.")
+        else:
+            wpa = pd.read_sql_query("SELECT * FROM WPA", conn)
+            df_wpa = pd.DataFrame(data=wpa)
+            wpa_table = '<div style="overflow-x:auto;">'
+            wpa_html = df_wpa.to_html(classes='my-table', index=False, justify='left')
+            wpa_table += wpa_html
+            wpa_table += "</div>"
+            file.write(wpa_table)
+        file.write("</div>")
+            
+
+
+            
+
+        file.write(javascript)
+        file.write(css_styles)
+    
+    con = sqlite3.connect("Exploitation.db")
+
+    css_styles = """
+    <style>
+    .my-table {
+        font-family: sans-serif;
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+    .my-table th, .my-table td {
+        border: 2px solid #547980;
+        padding: 8px;
+        text-align: left;
+        background-color: white;
+    }
+    .my-table th {
+        background-color: #45ADA8;
+    }
+    h1 {
+    text-align:center;
+    }
+    </style>
+    """
+
+    arp = pd.read_sql_query("SELECT * from ARP_Spoofing", con)
+    df_arp = pd.DataFrame(data=arp)
+    html = df_arp.to_html(classes='my-table', index=False, justify='left')
+    with open("ARP_Spoofing.html", "w") as file:
+        file.write("<h1>ARP Spoofing</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    dns = pd.read_sql_query("SELECT * from DNS_Spoofing", con)
+    df_dns = pd.DataFrame(data=dns)
+    html = df_dns.to_html(classes='my-table', index=False, justify='left')
+    with open("DNS_Spoofing.html", "w") as file:
+        file.write("<h1>DNS Spoofing</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    keyscan = pd.read_sql_query("SELECT * from Keyscan", con)
+    df_keyscan = pd.DataFrame(data=keyscan)
+    html = df_keyscan.to_html(classes='my-table', index=False, justify='left')
+    with open("keyscan.html", "w") as file:
+        file.write("<h1>Keyscan</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    LLMNR = pd.read_sql_query("SELECT * from LLMNR", con)
+    df_LLMNR = pd.DataFrame(data=LLMNR)
+    html = df_LLMNR.to_html(classes='my-table', index=False, justify='left')
+    with open("LLMNR.html", "w") as file:
+        file.write("<h1>LLMNR</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    Packet_Sniffing = pd.read_sql_query("SELECT * from Packet_Sniffing", con)
+    df_Packet_Sniffing = pd.DataFrame(data=Packet_Sniffing)
+    html = df_Packet_Sniffing.to_html(classes='my-table', index=False, justify='left')
+    with open("Packet_Sniffing.html", "w") as file:
+        file.write("<h1>Packet Sniffing</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    VNC = pd.read_sql_query("SELECT * from VNC", con)
+    df_VNC = pd.DataFrame(data=VNC)
+    html = df_VNC.to_html(classes='my-table', index=False, justify='left')
+    with open("VNC.html", "w") as file:
+        file.write("<h1><VNC/h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    WPA = pd.read_sql_query("SELECT * from WPA", con)
+    df_WPA = pd.DataFrame(data=WPA)
+    html = df_WPA.to_html(classes='my-table', index=False, justify='left')
+    with open("WPA.html", "w") as file:
+        file.write("<h1>WPA Crack</h1>")
+        file.write(html)
+        file.write(css_styles)
+    
+    re_con = sqlite3.connect("Reconnaissance.db")
+    
+    Allowed_Methods = pd.read_sql_query("SELECT * from Allowed_Methods", re_con)
+    df_Allowed_Methods = pd.DataFrame(data=Allowed_Methods)
+    html = df_Allowed_Methods.to_html(classes='my-table', index=False, justify='left')
+    with open("Allowed_Methods.html", "w") as file:
+        file.write("<h1>Allowed Methods</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    Built_With = pd.read_sql_query("SELECT * from Built_With", re_con)
+    df_Built_With = pd.DataFrame(data=Built_With)
+    html = df_Built_With.to_html(classes='my-table', index=False, justify='left')
+    with open("Built_With.html", "w") as file:
+        file.write("<h1>Built With Methods</h1>")
+        file.write(html)
+        file.write(css_styles)
+         
+    DNS_Enumeration = pd.read_sql_query("SELECT * from DNS_Enumeration", re_con)
+    df_DNS_Enumeration = pd.DataFrame(data=DNS_Enumeration)
+    html = df_DNS_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("DNS_Enumeration.html", "w") as file:
+        file.write("<h1>DNS Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    Google_Search = pd.read_sql_query("SELECT * from Google_Search", re_con)
+    df_Google_Search = pd.DataFrame(data=Google_Search)
+    html = df_Google_Search.to_html(classes='my-table', index=False, justify='left')
+    with open("Google_Search.html", "w") as file:
+        file.write("<h1>Google Search</h1>")
+        file.write(html)
+        file.write(css_styles)
+    
+    HostDiscovery = pd.read_sql_query("SELECT * from HostDiscovery", re_con)
+    df_HostDiscovery = pd.DataFrame(data=HostDiscovery)
+    html = df_HostDiscovery.to_html(classes='my-table', index=False, justify='left')
+    with open("HostDiscovery.html", "w") as file:
+        file.write("<h1>Host Discovery</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    LDAP_Brute_Enumeration = pd.read_sql_query("SELECT * from LDAP_Brute_Enumeration", re_con)
+    df_LDAP_Brute_Enumeration = pd.DataFrame(data=LDAP_Brute_Enumeration)
+    html = df_LDAP_Brute_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("LDAP_Brute_Enumeration.html", "w") as file:
+        file.write("<h1>LDAP Brute Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    LDAP_Information_Enumeration = pd.read_sql_query("SELECT * from LDAP_Information_Enumeration", re_con)
+    df_LDAP_Information_Enumeration = pd.DataFrame(data=LDAP_Information_Enumeration)
+    html = df_LDAP_Information_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("LDAP_Information_Enumeration.html", "w") as file:
+        file.write("<h1>LDAP Information Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+
+    LDAP_Users_Enumeration = pd.read_sql_query("SELECT * from LDAP_Users_Enumeration", re_con)
+    df_LDAP_Users_Enumeration = pd.DataFrame(data=LDAP_Users_Enumeration)
+    html = df_LDAP_Users_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("LDAP_Users_Enumeration.html", "w") as file:
+        file.write("<h1>LDAP Users Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+    
+    NFS_Share_Enumeration = pd.read_sql_query("SELECT * from NFS_Share_Enumeration", re_con)
+    df_NFS_Share_Enumeration = pd.DataFrame(data=NFS_Share_Enumeration)
+    html = df_NFS_Share_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("NFS_Share_Enumeration.html", "w") as file:
+        file.write("<h1>NFS Share Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    OSDiscovery = pd.read_sql_query("SELECT * from OSDiscovery", re_con)
+    df_OSDiscovery = pd.DataFrame(data=OSDiscovery)
+    html = df_OSDiscovery.to_html(classes='my-table', index=False, justify='left')
+    with open("OSDiscovery.html", "w") as file:
+        file.write("<h1>OS Discovery</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    PortDiscovery = pd.read_sql_query("SELECT * from PortDiscovery", re_con)
+    df_PortDiscovery = pd.DataFrame(data=PortDiscovery)
+    html = df_PortDiscovery.to_html(classes='my-table', index=False, justify='left')
+    with open("PortDiscovery.html", "w") as file:
+        file.write("<h1>Port Discovery</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    RPC = pd.read_sql_query("SELECT * from RPC", re_con)
+    df_RPC = pd.DataFrame(data=RPC)
+    html = df_RPC.to_html(classes='my-table', index=False, justify='left')
+    with open("RPC.html", "w") as file:
+        file.write("<h1>RPC Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+
+    SMTP_Users_Enumeration = pd.read_sql_query("SELECT * from SMTP_Users_Enumeration", re_con)
+    df_SMTP_Users_Enumeration = pd.DataFrame(data=SMTP_Users_Enumeration)
+    html = df_SMTP_Users_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("SMTP_Users_Enumeration.html", "w") as file:
+        file.write("<h1>SMTP Users Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+
+    SNMP_Interface_Enumeration = pd.read_sql_query("SELECT * from SNMP_Interface_Enumeration", re_con)
+    df_SNMP_Interface_Enumeration = pd.DataFrame(data=SNMP_Interface_Enumeration)
+    html = df_SNMP_Interface_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("SNMP_Interface_Enumeration.html", "w") as file:
+        file.write("<h1>SMTP Interface Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+
+    SNMP_OS_Enumeration = pd.read_sql_query("SELECT * from SNMP_OS_Enumeration", re_con)
+    df_SNMP_OS_Enumeration = pd.DataFrame(data=SNMP_OS_Enumeration)
+    html = df_SNMP_OS_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("SNMP_OS_Enumeration.html", "w") as file:
+        file.write("<h1>SNMP OS Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+
+    SNMP_Process_Enumeration = pd.read_sql_query("SELECT * from SNMP_Process_Enumeration", re_con)
+    df_SNMP_Process_Enumeration = pd.DataFrame(data=SNMP_Process_Enumeration)
+    html = df_SNMP_Process_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("SNMP_Process_Enumeration.html", "w") as file:
+        file.write("<h1>SNMP Process Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    SNMP_Software_Enumeration = pd.read_sql_query("SELECT * from SNMP_Software_Enumeration", re_con)
+    df_SNMP_Software_Enumeration = pd.DataFrame(data=SNMP_Software_Enumeration)
+    html = df_SNMP_Software_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("SNMP_Software_Enumeration.html", "w") as file:
+        file.write("<h1>SNMP Software Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    Whois_Enumeration = pd.read_sql_query("SELECT * from Whois_Enumeration", re_con)
+    df_Whois_Enumeration = pd.DataFrame(data=Whois_Enumeration)
+    html = df_Whois_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("Whois_Enumeration.html", "w") as file:
+        file.write("<h1>WHOIS Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+
+    NetBIOS_Enumeration = pd.read_sql_query("SELECT * from NetBIOS_Enumeration", re_con)
+    df_NetBIOS_Enumeration = pd.DataFrame(data=NetBIOS_Enumeration)
+    html = df_NetBIOS_Enumeration.to_html(classes='my-table', index=False, justify='left')
+    with open("NetBIOS_Enumeration.html", "w") as file:
+        file.write("<h1>NetBIOS Enumeration</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    vuln_con = sqlite3.connect("Vulnerability.db")
+        
+    OpenVAS = pd.read_sql_query("SELECT * from OpenVAS", vuln_con)
+    df_OpenVAS = pd.DataFrame(data=OpenVAS)
+    html = df_OpenVAS.to_html(classes='my-table', index=False, justify='left')
+    with open("OpenVAS.html", "w") as file:
+        file.write("<h1>OpenVAS Scan</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    Vulnerable_Ports = pd.read_sql_query("SELECT * from Vulnerable_Ports", vuln_con)
+    df_Vulnerable_Ports = pd.DataFrame(data=Vulnerable_Ports)
+    html = df_Vulnerable_Ports.to_html(classes='my-table', index=False, justify='left')
+    with open("Vulnerable_Ports.html", "w") as file:
+        file.write("<h1>Vulnerable Ports</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    Vulnerable_Ports_TCP = pd.read_sql_query("SELECT * from Vulnerable_Ports_TCP", vuln_con)
+    df_Vulnerable_Ports_TCP = pd.DataFrame(data=Vulnerable_Ports_TCP)
+    html = df_Vulnerable_Ports_TCP.to_html(classes='my-table', index=False, justify='left')
+    with open("Vulnerable_Ports_TCP.html", "w") as file:
+        file.write("<h1>Vulnerable TCP Ports</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+    Vulnerable_Ports_UDP = pd.read_sql_query("SELECT * from Vulnerable_Ports_UDP", vuln_con)
+    df_Vulnerable_Ports_UDP = pd.DataFrame(data=Vulnerable_Ports_UDP)
+    html = df_Vulnerable_Ports_UDP.to_html(classes='my-table', index=False, justify='left')
+    with open("Vulnerable_Ports_UDP.html", "w") as file:
+        file.write("<h1>Vulnerable UDP Ports</h1>")
+        file.write(html)
+        file.write(css_styles)
+        
+
+
+
+    # Close the database connection
+    cursor.close()
+    conn.close()
+    
 project_menu()
 
 
