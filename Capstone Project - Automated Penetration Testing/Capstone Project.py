@@ -269,8 +269,6 @@ def project_menu():
         elif menu_input == "4":
             database_menu()
         elif menu_input == "5":
-            ascii_enum = pyfiglet.figlet_format("Report Generation")
-            print(ascii_enum)
             report_generation()
             print("Executive Summary generated successfully!")
         elif menu_input == "6":
@@ -2053,6 +2051,8 @@ def email():
         smtp.sendmail(email_sender, email_receiver, em.as_string())
 
 def report_generation():
+    ascii_report = pyfiglet.figlet_format("Report Generation")
+    print(ascii_report)
     # Connect to the database
     conn = sqlite3.connect('Reconnaissance.db')
     cursor = conn.cursor()
@@ -2494,7 +2494,7 @@ def report_generation():
     arp = pd.read_sql_query("SELECT * from ARP_Spoofing", con)
     df_arp = pd.DataFrame(data=arp)
     html = df_arp.to_html(classes='my-table', index=False, justify='left')
-    with open("ARP_Spoofing.html", "w") as file:
+    with open("Reports/ARP_Spoofing.html", "w") as file:
         file.write("<h1>ARP Spoofing</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2502,7 +2502,7 @@ def report_generation():
     dns = pd.read_sql_query("SELECT * from DNS_Spoofing", con)
     df_dns = pd.DataFrame(data=dns)
     html = df_dns.to_html(classes='my-table', index=False, justify='left')
-    with open("DNS_Spoofing.html", "w") as file:
+    with open("Reports/DNS_Spoofing.html", "w") as file:
         file.write("<h1>DNS Spoofing</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2510,7 +2510,7 @@ def report_generation():
     keyscan = pd.read_sql_query("SELECT * from Keyscan", con)
     df_keyscan = pd.DataFrame(data=keyscan)
     html = df_keyscan.to_html(classes='my-table', index=False, justify='left')
-    with open("keyscan.html", "w") as file:
+    with open("Reports/keyscan.html", "w") as file:
         file.write("<h1>Keyscan</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2518,7 +2518,7 @@ def report_generation():
     LLMNR = pd.read_sql_query("SELECT * from LLMNR", con)
     df_LLMNR = pd.DataFrame(data=LLMNR)
     html = df_LLMNR.to_html(classes='my-table', index=False, justify='left')
-    with open("LLMNR.html", "w") as file:
+    with open("Reports/LLMNR.html", "w") as file:
         file.write("<h1>LLMNR</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2526,7 +2526,7 @@ def report_generation():
     Packet_Sniffing = pd.read_sql_query("SELECT * from Packet_Sniffing", con)
     df_Packet_Sniffing = pd.DataFrame(data=Packet_Sniffing)
     html = df_Packet_Sniffing.to_html(classes='my-table', index=False, justify='left')
-    with open("Packet_Sniffing.html", "w") as file:
+    with open("Reports/Packet_Sniffing.html", "w") as file:
         file.write("<h1>Packet Sniffing</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2534,7 +2534,7 @@ def report_generation():
     VNC = pd.read_sql_query("SELECT * from VNC", con)
     df_VNC = pd.DataFrame(data=VNC)
     html = df_VNC.to_html(classes='my-table', index=False, justify='left')
-    with open("VNC.html", "w") as file:
+    with open("Reports/VNC.html", "w") as file:
         file.write("<h1><VNC/h1>")
         file.write(html)
         file.write(css_styles)
@@ -2542,7 +2542,7 @@ def report_generation():
     WPA = pd.read_sql_query("SELECT * from WPA", con)
     df_WPA = pd.DataFrame(data=WPA)
     html = df_WPA.to_html(classes='my-table', index=False, justify='left')
-    with open("WPA.html", "w") as file:
+    with open("Reports/WPA.html", "w") as file:
         file.write("<h1>WPA Crack</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2552,7 +2552,7 @@ def report_generation():
     Allowed_Methods = pd.read_sql_query("SELECT * from Allowed_Methods", re_con)
     df_Allowed_Methods = pd.DataFrame(data=Allowed_Methods)
     html = df_Allowed_Methods.to_html(classes='my-table', index=False, justify='left')
-    with open("Allowed_Methods.html", "w") as file:
+    with open("Reports/Allowed_Methods.html", "w") as file:
         file.write("<h1>Allowed Methods</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2560,7 +2560,7 @@ def report_generation():
     Built_With = pd.read_sql_query("SELECT * from Built_With", re_con)
     df_Built_With = pd.DataFrame(data=Built_With)
     html = df_Built_With.to_html(classes='my-table', index=False, justify='left')
-    with open("Built_With.html", "w") as file:
+    with open("Reports/Built_With.html", "w") as file:
         file.write("<h1>Built With Methods</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2568,7 +2568,7 @@ def report_generation():
     DNS_Enumeration = pd.read_sql_query("SELECT * from DNS_Enumeration", re_con)
     df_DNS_Enumeration = pd.DataFrame(data=DNS_Enumeration)
     html = df_DNS_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("DNS_Enumeration.html", "w") as file:
+    with open("Reports/DNS_Enumeration.html", "w") as file:
         file.write("<h1>DNS Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2576,7 +2576,7 @@ def report_generation():
     Google_Search = pd.read_sql_query("SELECT * from Google_Search", re_con)
     df_Google_Search = pd.DataFrame(data=Google_Search)
     html = df_Google_Search.to_html(classes='my-table', index=False, justify='left')
-    with open("Google_Search.html", "w") as file:
+    with open("Reports/Google_Search.html", "w") as file:
         file.write("<h1>Google Search</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2584,7 +2584,7 @@ def report_generation():
     HostDiscovery = pd.read_sql_query("SELECT * from HostDiscovery", re_con)
     df_HostDiscovery = pd.DataFrame(data=HostDiscovery)
     html = df_HostDiscovery.to_html(classes='my-table', index=False, justify='left')
-    with open("HostDiscovery.html", "w") as file:
+    with open("Reports/HostDiscovery.html", "w") as file:
         file.write("<h1>Host Discovery</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2592,7 +2592,7 @@ def report_generation():
     LDAP_Brute_Enumeration = pd.read_sql_query("SELECT * from LDAP_Brute_Enumeration", re_con)
     df_LDAP_Brute_Enumeration = pd.DataFrame(data=LDAP_Brute_Enumeration)
     html = df_LDAP_Brute_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("LDAP_Brute_Enumeration.html", "w") as file:
+    with open("Reports/LDAP_Brute_Enumeration.html", "w") as file:
         file.write("<h1>LDAP Brute Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2600,7 +2600,7 @@ def report_generation():
     LDAP_Information_Enumeration = pd.read_sql_query("SELECT * from LDAP_Information_Enumeration", re_con)
     df_LDAP_Information_Enumeration = pd.DataFrame(data=LDAP_Information_Enumeration)
     html = df_LDAP_Information_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("LDAP_Information_Enumeration.html", "w") as file:
+    with open("Reports/LDAP_Information_Enumeration.html", "w") as file:
         file.write("<h1>LDAP Information Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2608,7 +2608,7 @@ def report_generation():
     LDAP_Users_Enumeration = pd.read_sql_query("SELECT * from LDAP_Users_Enumeration", re_con)
     df_LDAP_Users_Enumeration = pd.DataFrame(data=LDAP_Users_Enumeration)
     html = df_LDAP_Users_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("LDAP_Users_Enumeration.html", "w") as file:
+    with open("Reports/LDAP_Users_Enumeration.html", "w") as file:
         file.write("<h1>LDAP Users Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2616,7 +2616,7 @@ def report_generation():
     NFS_Share_Enumeration = pd.read_sql_query("SELECT * from NFS_Share_Enumeration", re_con)
     df_NFS_Share_Enumeration = pd.DataFrame(data=NFS_Share_Enumeration)
     html = df_NFS_Share_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("NFS_Share_Enumeration.html", "w") as file:
+    with open("Reports/NFS_Share_Enumeration.html", "w") as file:
         file.write("<h1>NFS Share Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2624,7 +2624,7 @@ def report_generation():
     OSDiscovery = pd.read_sql_query("SELECT * from OSDiscovery", re_con)
     df_OSDiscovery = pd.DataFrame(data=OSDiscovery)
     html = df_OSDiscovery.to_html(classes='my-table', index=False, justify='left')
-    with open("OSDiscovery.html", "w") as file:
+    with open("Reports/OSDiscovery.html", "w") as file:
         file.write("<h1>OS Discovery</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2632,7 +2632,7 @@ def report_generation():
     PortDiscovery = pd.read_sql_query("SELECT * from PortDiscovery", re_con)
     df_PortDiscovery = pd.DataFrame(data=PortDiscovery)
     html = df_PortDiscovery.to_html(classes='my-table', index=False, justify='left')
-    with open("PortDiscovery.html", "w") as file:
+    with open("Reports/PortDiscovery.html", "w") as file:
         file.write("<h1>Port Discovery</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2640,7 +2640,7 @@ def report_generation():
     RPC = pd.read_sql_query("SELECT * from RPC", re_con)
     df_RPC = pd.DataFrame(data=RPC)
     html = df_RPC.to_html(classes='my-table', index=False, justify='left')
-    with open("RPC.html", "w") as file:
+    with open("Reports/RPC.html", "w") as file:
         file.write("<h1>RPC Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2648,7 +2648,7 @@ def report_generation():
     SMTP_Users_Enumeration = pd.read_sql_query("SELECT * from SMTP_Users_Enumeration", re_con)
     df_SMTP_Users_Enumeration = pd.DataFrame(data=SMTP_Users_Enumeration)
     html = df_SMTP_Users_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("SMTP_Users_Enumeration.html", "w") as file:
+    with open("Reports/SMTP_Users_Enumeration.html", "w") as file:
         file.write("<h1>SMTP Users Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2656,7 +2656,7 @@ def report_generation():
     SNMP_Interface_Enumeration = pd.read_sql_query("SELECT * from SNMP_Interface_Enumeration", re_con)
     df_SNMP_Interface_Enumeration = pd.DataFrame(data=SNMP_Interface_Enumeration)
     html = df_SNMP_Interface_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("SNMP_Interface_Enumeration.html", "w") as file:
+    with open("Reports/SNMP_Interface_Enumeration.html", "w") as file:
         file.write("<h1>SMTP Interface Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2664,7 +2664,7 @@ def report_generation():
     SNMP_OS_Enumeration = pd.read_sql_query("SELECT * from SNMP_OS_Enumeration", re_con)
     df_SNMP_OS_Enumeration = pd.DataFrame(data=SNMP_OS_Enumeration)
     html = df_SNMP_OS_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("SNMP_OS_Enumeration.html", "w") as file:
+    with open("Reports/SNMP_OS_Enumeration.html", "w") as file:
         file.write("<h1>SNMP OS Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2672,7 +2672,7 @@ def report_generation():
     SNMP_Process_Enumeration = pd.read_sql_query("SELECT * from SNMP_Process_Enumeration", re_con)
     df_SNMP_Process_Enumeration = pd.DataFrame(data=SNMP_Process_Enumeration)
     html = df_SNMP_Process_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("SNMP_Process_Enumeration.html", "w") as file:
+    with open("Reports/SNMP_Process_Enumeration.html", "w") as file:
         file.write("<h1>SNMP Process Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2680,7 +2680,7 @@ def report_generation():
     SNMP_Software_Enumeration = pd.read_sql_query("SELECT * from SNMP_Software_Enumeration", re_con)
     df_SNMP_Software_Enumeration = pd.DataFrame(data=SNMP_Software_Enumeration)
     html = df_SNMP_Software_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("SNMP_Software_Enumeration.html", "w") as file:
+    with open("Reports/SNMP_Software_Enumeration.html", "w") as file:
         file.write("<h1>SNMP Software Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2688,7 +2688,7 @@ def report_generation():
     Whois_Enumeration = pd.read_sql_query("SELECT * from Whois_Enumeration", re_con)
     df_Whois_Enumeration = pd.DataFrame(data=Whois_Enumeration)
     html = df_Whois_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("Whois_Enumeration.html", "w") as file:
+    with open("Reports/Whois_Enumeration.html", "w") as file:
         file.write("<h1>WHOIS Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2696,7 +2696,7 @@ def report_generation():
     NetBIOS_Enumeration = pd.read_sql_query("SELECT * from NetBIOS_Enumeration", re_con)
     df_NetBIOS_Enumeration = pd.DataFrame(data=NetBIOS_Enumeration)
     html = df_NetBIOS_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("NetBIOS_Enumeration.html", "w") as file:
+    with open("Reports/NetBIOS_Enumeration.html", "w") as file:
         file.write("<h1>NetBIOS Enumeration</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2706,23 +2706,15 @@ def report_generation():
     OpenVAS = pd.read_sql_query("SELECT * from OpenVAS", vuln_con)
     df_OpenVAS = pd.DataFrame(data=OpenVAS)
     html = df_OpenVAS.to_html(classes='my-table', index=False, justify='left')
-    with open("OpenVAS.html", "w") as file:
+    with open("Reports/OpenVAS.html", "w") as file:
         file.write("<h1>OpenVAS Scan</h1>")
-        file.write(html)
-        file.write(css_styles)
-        
-    Vulnerable_Ports = pd.read_sql_query("SELECT * from Vulnerable_Ports", vuln_con)
-    df_Vulnerable_Ports = pd.DataFrame(data=Vulnerable_Ports)
-    html = df_Vulnerable_Ports.to_html(classes='my-table', index=False, justify='left')
-    with open("Vulnerable_Ports.html", "w") as file:
-        file.write("<h1>Vulnerable Ports</h1>")
         file.write(html)
         file.write(css_styles)
         
     Vulnerable_Ports_TCP = pd.read_sql_query("SELECT * from Vulnerable_Ports_TCP", vuln_con)
     df_Vulnerable_Ports_TCP = pd.DataFrame(data=Vulnerable_Ports_TCP)
     html = df_Vulnerable_Ports_TCP.to_html(classes='my-table', index=False, justify='left')
-    with open("Vulnerable_Ports_TCP.html", "w") as file:
+    with open("Reports/Vulnerable_Ports_TCP.html", "w") as file:
         file.write("<h1>Vulnerable TCP Ports</h1>")
         file.write(html)
         file.write(css_styles)
@@ -2730,7 +2722,7 @@ def report_generation():
     Vulnerable_Ports_UDP = pd.read_sql_query("SELECT * from Vulnerable_Ports_UDP", vuln_con)
     df_Vulnerable_Ports_UDP = pd.DataFrame(data=Vulnerable_Ports_UDP)
     html = df_Vulnerable_Ports_UDP.to_html(classes='my-table', index=False, justify='left')
-    with open("Vulnerable_Ports_UDP.html", "w") as file:
+    with open("Reports/Vulnerable_Ports_UDP.html", "w") as file:
         file.write("<h1>Vulnerable UDP Ports</h1>")
         file.write(html)
         file.write(css_styles)
