@@ -210,7 +210,7 @@ def createtablesE():
     (id integer primary key, Username TEXT, Password TEXT, Algorithm TEXT)''')
     conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS ExpDB.WPA 
-    (id integer primary key, Hash TEXT, Network TEXT, Password TEXT)''')
+    (id integer primary key, SSID TEXT, Password TEXT)''')
     conn.commit()
 def droptablesE():
     conn.execute('''DELETE FROM ExpDB.Packet_Sniffing''')
@@ -2006,9 +2006,9 @@ def crack_password():
     lines = file.readlines()
     for line in lines:
         temp_list = line.split(":")
-        line_list = [temp_list[0] + ':' + temp_list[1] + ':' + temp_list[2], temp_list[3], temp_list[4]]
+        line_list = [temp_list[0] + ':' + temp_list[1] + ':' + temp_list[2], temp_list[3]]
         cur.execute('''INSERT INTO ExpDB.WPA 
-        (id, Hash, Network, Password) 
+        (id, SSID, Password) 
         VALUES (NULL, ?, ?, ?)''', line_list)
         conn.commit()
 
