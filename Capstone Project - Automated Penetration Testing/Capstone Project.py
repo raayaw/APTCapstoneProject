@@ -2,12 +2,10 @@
 #Members: Aw Jin Le Ray, Kim Junghan, Lucas Sim
 import sys
 import nmap
-import shodan
 import sqlite3
 from sqlite3 import Error
 import pyfiglet #pip install pyfiglet
 import os
-import csv
 import zipfile
 #import scrapy #pip install scrapy
 #from scrapy.spiders import CrawlSpider, Rule
@@ -50,9 +48,6 @@ import smtplib
 subprocess.call("mkdir Payloads", shell=True)
 subprocess.call("mkdir Reports", shell=True)
 
-#Shodan API KEY
-Shodan_APIKEY = 'EBeU0lGqtIO6yCxVFCWC4nUVbvovtjo5'
-api = shodan.Shodan(Shodan_APIKEY)
 #Spidering Global Variables
 total_urls_visited = 0
 
