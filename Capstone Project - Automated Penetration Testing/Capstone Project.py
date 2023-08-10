@@ -2004,10 +2004,9 @@ def crack_password():
     result.close()
     file_name = input("Enter the name desired .cap file (eg. if the .cap file name is dump-01.cap, please enter dump-01) : ")
     digits = int(input("Enter the number of digits of the password: "))
-    digit = "?d"*digits
-    subprocess.call("hcxpcapngtool {}.cap -o {}.txt".format(file_name,file_name),shell=True)
-    subprocess.Popen(['gnome-terminal', '-e', 'bash -c "hashcat --potfile-disable -o result.txt -m 22000 -a3 {}.txt {}; exec bash"'.format(file_name,digit)])
-    input("Please press enter once hashcat displays 'status:cracked' ")
+    ssid = input("Enter the wifi networks name: ")
+    subprocess.Popen(['gnome-terminal', '-e', 'bash -c "crunch 8 {} 0123456789 | aircrack-ng -e "{}" -w- {}.cap -l result.txt; exec bash"'.format(digits,ssid,file_name)])
+    input("Please press enter once the password has been cracked ")
     file = open('result.txt', 'r')
     lines = file.readlines()
     for line in lines:
