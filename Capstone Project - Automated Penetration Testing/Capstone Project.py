@@ -1169,12 +1169,6 @@ def whois_enum():
             print("Invalid domain or unable to resolve domain name.")
             sys.exit(1)
 
-    def run_traceroute(ip_address):
-        try:
-            webb.traceroute("your-web-page-url")
-        except subprocess.CalledProcessError:
-            print("Failed to run traceroute.")
-
     def get_whois_info(domain):
         try:
             whois_info = whois.whois(domain)
