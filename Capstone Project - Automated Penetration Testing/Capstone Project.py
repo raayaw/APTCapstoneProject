@@ -7,23 +7,17 @@ from sqlite3 import Error
 import pyfiglet #pip install pyfiglet
 import os
 import zipfile
-#import scrapy #pip install scrapy
-#from scrapy.spiders import CrawlSpider, Rule
-#from scrapy.linkextractors import LinkExtractor
 from googlesearch import search #pip install beautifulsoup4 and google
 import requests #pip install requests
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup #pip install bs4
 import colorama #pip install colorama
 import dns.resolver
-import whois
-import webb #pip install webb
 import builtwith #pip install builtwith
 from scapy.all import *
 import ldap3
 import pandas as pd
 from zapv2 import ZAPv2 #pip install python-owasp-zap-v2.4
-import time
 import subprocess
 
 #FOR OPENVAS
