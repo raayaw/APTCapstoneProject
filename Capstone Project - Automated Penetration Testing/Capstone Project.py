@@ -1204,17 +1204,29 @@ def whois_enum():
         main()
 
 def rpc_info():
+
     target = input("Enter IP address: ")
-    nm = nmap.PortScanner()
-    nm.scan(target, arguments='-p 111 --script rpcinfo')
-    rpc_info = nm[target]['tcp'][111]['script']['rpcinfo']
-    # Process the RPC information as needed
-    print(rpc_info)
-    rpcList = [str(target), str(rpc_info)]
-    cur.execute('''INSERT INTO RecDB.RPC 
-    (id, Host, RPC_Info) 
-    VALUES (NULL, ?,?)''', rpcList)
-    conn.commit()
+    scanner = nmap.PortScanner()
+    scanner.scan(target, arguments='-sV -p 111')
+    for host in scanner.all_hosts():
+        print(host)
+        for proto in scanner[host].all_protocols():
+            print('----------')
+            print('Protocol : %s' % proto)
+
+            lport = scanner[host][proto].keys()
+            for port in lport:
+                if scanner[host][proto][port]['state'] == "open":
+                    print ('port : %s\tstate : %s'
+                            % (port, scanner[host][proto][port]['state']))
+                    rpc = nmap.PortScanner()
+                    rpc.scan(host, arguments='-sV -p 111 --script rpcinfo')
+                    print(rpc[host][proto][port]['script']['rpcinfo'])
+                    rpcList = [str(target), str(rpc_info)]
+                    cur.execute('''INSERT INTO RecDB.RPC 
+                    (id, Host, RPC_Info) 
+                    VALUES (NULL, ?,?)''', rpcList)
+                    conn.commit()
 
 def packet_sniffer():
     def packet_callback(packet):
