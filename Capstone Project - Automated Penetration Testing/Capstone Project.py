@@ -760,13 +760,7 @@ def netbios():
                     for items in net[host]['hostscript']:
                         for key, value in items.items():
                             print(key + ':', value)
-                    pos = 0
-                    list = []
-                    for i in net[host]['hostscript']:
-                        pos += 1
-                        if i == ":":
-                            list.append(pos+1)
-                            continue
+
                     NetBIOSlist = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                                  str(net[host]['hostscript'])]
                     cur.execute('''INSERT INTO RecDB.NetBIOS_Enumeration 
