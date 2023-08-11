@@ -7,9 +7,6 @@ from sqlite3 import Error
 import pyfiglet #pip install pyfiglet
 import os
 import zipfile
-#import scrapy #pip install scrapy
-#from scrapy.spiders import CrawlSpider, Rule
-#from scrapy.linkextractors import LinkExtractor
 from googlesearch import search #pip install beautifulsoup4 and google
 import requests #pip install requests
 from urllib.parse import urlparse, urljoin
