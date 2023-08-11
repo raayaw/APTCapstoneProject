@@ -828,16 +828,6 @@ def snmp_processes():
                     snmp = nmap.PortScanner()
                     snmp.scan(host, arguments='-sU -p 161 --script snmp-processes')
                     print(snmp[host][proto][port]['script']['snmp-processes'])
-                    # pos = 0
-                    # list = []
-                    # for i in snmp[host][proto][port]['script']['snmp-processes']:
-                    #     pos += 1
-                    #     if i == ":":
-                    #         list.append(pos+1)
-                    #         continue
-                    # snmpProcessesList.append(snmp[host][proto][port]['script']['snmp-processes'][list[0]:list[1]-12])
-                    # snmpProcessesList.append(snmp[host][proto][port]['script']['snmp-processes'][list[1]:list[2]-15])
-                    # snmpProcessesList.append(snmp[host][proto][port]['script']['snmp-processes'][list[2]:])
                     snmpProcessesList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
                                          str(snmp[host][proto][port]['script']['snmp-processes'])]
                     cur.execute('''INSERT INTO RecDB.SNMP_Process_Enumeration 
