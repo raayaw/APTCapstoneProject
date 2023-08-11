@@ -984,6 +984,8 @@ def ldap_users():
     scanner = nmap.PortScanner()
     target = input("Enter IP Address: ")
     scanner.scan(target, arguments='-sU -p 389')
+    dn = input("Enter Domain Name: ")
+    tld = input("Enter Top Level Domain(eg. com, org): ")
     for host in scanner.all_hosts():
         print(host)
         for proto in scanner[host].all_protocols():
@@ -998,7 +1000,7 @@ def ldap_users():
                     server = ldap3.Server(target, get_info=ldap3.ALL, port=389)
                     connection = ldap3.Connection(server)
                     connection.bind()
-                    connection.search(search_base='DC=CEH,DC=com', 
+                    connection.search(search_base='DC='+dn + ',DC='+ tld, 
                                       search_filter='(&(objectclass=person))')
                     print(connection.entries)
                     ldapUsersList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
