@@ -1403,12 +1403,12 @@ def dns_enum():
     # Set the target domain and record type
     target = input("Enter domain name: ")
     record_types = ["A", "AAAA", "CNAME", "MX", "NS", "SOA", "TXT"]
-    # Create a DNS resolver
-    dnsResolver = dns.resolver.Resolver()
+
+    dns_resolver = dns.resolver.Resolver()
     for record in record_types:
         # Perform DNS lookup for the specified domain and record type
         try:
-            answers = dnsResolver.resolve(target, record)
+            answers = dns_resolver.resolve(target, record)
         except dns.resolver.NoAnswer:
             continue
         # Print the answers
