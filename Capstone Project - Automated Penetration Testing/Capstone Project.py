@@ -1431,7 +1431,7 @@ def dns_enum():
 
 
 def built_with():
-    target = input("Enter target website: ")#https://juice-shop.herokuapp.com/#/
+    target = input("Enter target website: ")
     website = builtwith.parse(target)
     for name in website:
         print(name + ":" , website[name])
@@ -1443,7 +1443,7 @@ def built_with():
 
 
 def allowed_methods():
-    target = input("Enter target website: ") #https://juice-shop.herokuapp.com/#/
+    target = input("Enter target website: ")
     requestResponse = requests.options(target)
     for item in requestResponse.headers:
         print(item + ": " + requestResponse.headers[item])
