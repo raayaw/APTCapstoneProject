@@ -19,7 +19,6 @@ from scapy.all import *
 import ldap3
 import pandas as pd
 from zapv2 import ZAPv2 #pip install python-owasp-zap-v2.4
-import subprocess
 
 #FOR OPENVAS
 import subprocess
