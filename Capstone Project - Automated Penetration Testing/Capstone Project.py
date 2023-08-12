@@ -109,9 +109,6 @@ def createtablesR():
     conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.LDAP_Users_Enumeration
     (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, Connection_Entries TEXT)''')
     conn.commit()
-    conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.LDAP_Brute_Enumeration
-    (id integer primary key, Host TEXT, Protocol TEXT, Port_Number TEXT, Port_Status TEXT, ldap_brute TEXT)''')
-    conn.commit()
     conn.execute('''CREATE TABLE IF NOT EXISTS RecDB.RPC
     (id integer primary key, Host TEXT, RPC_Info TEXT)''')
     conn.commit()
@@ -150,8 +147,6 @@ def droptablesR():
     conn.execute('''DELETE FROM RecDB.LDAP_Information_Enumeration''')
     conn.commit()
     conn.execute('''DELETE FROM RecDB.LDAP_Users_Enumeration''')
-    conn.commit()
-    conn.execute('''DELETE FROM RecDB.LDAP_Brute_Enumeration''')
     conn.commit()
     conn.execute('''DELETE FROM RecDB.RPC''')
     conn.commit()
@@ -370,13 +365,12 @@ def enum_menu():
         print("7. NFS Share Enumeration")
         print("8. LDAP Information Enumeration")
         print("9. LDAP Users Enumeration")
-        print("10. LDAP Username Enumeration using LDAP Brute")
-        print("11. RPC Information Enumeration")
-        print("12. DNS Enumeration")
-        print("13. Website Allowed Methods")
-        print("14. Website Built With")
-        print("15. Spidering")
-        print("16. Exit")
+        print("10. RPC Information Enumeration")
+        print("11. DNS Enumeration")
+        print("12. Website Allowed Methods")
+        print("13. Website Built With")
+        print("14. Spidering")
+        print("15. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("NetBIOS Enumeration")
@@ -415,30 +409,26 @@ def enum_menu():
             print(ascii_9)
             ldap_users()
         elif menu_input == "10":
-            ascii_10 = pyfiglet.figlet_format("LDAP Username Enumeration using LDAP Brute")
+            ascii_10 = pyfiglet.figlet_format("RPC Information Enumeration")
             print(ascii_10)
-            ldap_brute()
-        elif menu_input == "11":
-            ascii_11 = pyfiglet.figlet_format("RPC Information Enumeration")
-            print(ascii_11)
             rpc_info()
-        elif menu_input == "12":
-            ascii_12 = pyfiglet.figlet_format("DNS Enumeration")
-            print(ascii_12)
+        elif menu_input == "11":
+            ascii_11 = pyfiglet.figlet_format("DNS Enumeration")
+            print(ascii_11)
             dns_enum()
-        elif menu_input == "13":
-            ascii_13 = pyfiglet.figlet_format("Website Allowed Methods")
-            print(ascii_13)
+        elif menu_input == "12":
+            ascii_12 = pyfiglet.figlet_format("Website Allowed Methods")
+            print(ascii_12)
             allowed_methods()
-        elif menu_input == "14":
-            ascii_14 = pyfiglet.figlet_format("Website Built With")
-            print(ascii_14)
+        elif menu_input == "13":
+            ascii_13 = pyfiglet.figlet_format("Website Built With")
+            print(ascii_13)
             built_with()
-        elif menu_input == "15":
-            ascii_15 = pyfiglet.figlet_format("Spidering")
-            print(ascii_15)
+        elif menu_input == "14":
+            ascii_14 = pyfiglet.figlet_format("Spidering")
+            print(ascii_14)
             spidering()
-        elif menu_input == "16":
+        elif menu_input == "15":
             enum_loop = False
         else:
                 print("Invalid Input!\nPlease Try Again!")
@@ -1006,40 +996,7 @@ def ldap_users():
                 else:
                     print("Port 389 (LDAP) not opened, can't perform LDAP Enumeration")
 
-#LDAP Username Enumeration using LDAP Brute
-def ldap_brute():
-    scanner = nmap.PortScanner()
-    target = input("Enter IP Address: ")
-    scanner.scan(target, arguments='-p 389')
-    dn = input("Enter Domain Name: ")
-    tld = input("Enter Top Level Domain(eg. com, org): ")
-    for host in scanner.all_hosts():
-        print(host)
-        for proto in scanner[host].all_protocols():
-            print('----------')
-            print('Protocol : %s' % proto)
-     
-            lport = scanner[host][proto].keys()
-            for port in lport:
-                if scanner[host][proto][port]['state'] == "open":
-                    print ('port : %s\tstate : %s'
-                            % (port, scanner[host][proto][port]['state']))
-                    ldap = nmap.PortScanner()
-                    ldapBase = 'cn=users, dc=' + dn + ', dc=' + tld
-                    print(ldapBase)
 
-                    arguments = "-p 389 --script ldap-brute --script-args ldap.base=\'\"" + ldapBase +"\"\'"
-                    ldap.scan(host, arguments=arguments)
-                    ldap.scan("10.10.1.22", arguments='-p 389 --script ldap-brute --script-args ldap.base=\'"cn=users, dc=CEH, dc=com"\'')
-                    print(ldap[host][proto][port]['script']['ldap-brute'])
-                    ldapBruteList = [str(host), str(proto), str(port), str(scanner[host][proto][port]['state']),
-                    str(ldap[host][proto][port]['script']['ldap-brute'])]
-                    cur.execute('''INSERT INTO RecDB.LDAP_Brute_Enumeration 
-                    (id, Host, Protocol, Port_Number, Port_Status, ldap_brute) 
-                    VALUES (NULL, ?, ?, ?, ?, ?)''', ldapBruteList)
-                    conn.commit()
-                else:
-                    print("Port 389 (LDAP) not opened, can't perform LDAP Enumeration")
 
 
 def googleSearch():
@@ -2569,13 +2526,6 @@ def report_generation():
         file.write(html)
         file.write(css_styles)
         
-    LDAP_Brute_Enumeration = pd.read_sql_query("SELECT * from LDAP_Brute_Enumeration", re_con)
-    df_LDAP_Brute_Enumeration = pd.DataFrame(data=LDAP_Brute_Enumeration)
-    html = df_LDAP_Brute_Enumeration.to_html(classes='my-table', index=False, justify='left')
-    with open("Reports/LDAP_Brute_Enumeration.html", "w") as file:
-        file.write("<h1>LDAP Brute Enumeration</h1>")
-        file.write(html)
-        file.write(css_styles)
         
     LDAP_Information_Enumeration = pd.read_sql_query("SELECT * from LDAP_Information_Enumeration", re_con)
     df_LDAP_Information_Enumeration = pd.DataFrame(data=LDAP_Information_Enumeration)
