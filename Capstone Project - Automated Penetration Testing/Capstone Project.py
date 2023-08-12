@@ -8,6 +8,7 @@ import pyfiglet #pip install pyfiglet
 import os
 import zipfile
 from googlesearch import search #pip install beautifulsoup4 and google
+import whois
 import requests #pip install requests
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup #pip install bs4
