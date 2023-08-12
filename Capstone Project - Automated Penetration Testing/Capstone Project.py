@@ -1072,22 +1072,21 @@ def spidering():
                 break
             crawl(link, max_urls=max_urls)
 
-    if __name__ == "__main__":
-        crawl(url,max_urls)
-        while len(in_list) > len(ex_list):
-            ex_list.append("NULL")
-            continue
-        pos = 0
-        for i in in_list:
-            Spiderman = [in_list[pos], ex_list[pos]]
-            cur.execute('''INSERT INTO SpiDB.Spider 
-            (id, Internal_Links, External_Links) 
-            VALUES (NULL, ?, ?)''', Spiderman)
-            conn.commit()
-            pos += 1
-        print("[+] Total Internal links:", len(internal_urls))
-        print("[+] Total External links:", len(external_urls))
-        print("[+] Total URLs:", len(external_urls) + len(internal_urls))
+    crawl(url,max_urls)
+    while len(in_list) > len(ex_list):
+        ex_list.append("NULL")
+        continue
+    pos = 0
+    for i in in_list:
+        Spiderman = [in_list[pos], ex_list[pos]]
+        cur.execute('''INSERT INTO SpiDB.Spider 
+        (id, Internal_Links, External_Links) 
+        VALUES (NULL, ?, ?)''', Spiderman)
+        conn.commit()
+        pos += 1
+    print("[+] Total Internal links:", len(internal_urls))
+    print("[+] Total External links:", len(external_urls))
+    print("[+] Total URLs:", len(external_urls) + len(internal_urls))
 
 def whois_enum():
     import whois

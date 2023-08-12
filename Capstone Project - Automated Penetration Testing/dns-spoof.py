@@ -49,7 +49,7 @@ def process_packet(packet):
     
 QUEUE_NUM = 0
 subprocess.call("iptables -I FORWARD -j NFQUEUE --queue-num {}".format(QUEUE_NUM), shell=True)
-subprocess.call("iptables -A FORWARD -p UDP --dport 53 -j DROP", shell=True)
+
 queue = NetfilterQueue()
     
 print(dns_hosts)
