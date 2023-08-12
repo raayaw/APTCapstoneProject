@@ -1451,7 +1451,6 @@ def start_openvas():
 def start_openvas_scan():
     config = {
         'PORT_LIST_ID': '33d0cd82-57c6-11e1-8ed1-406186ea4fc5',
-        'REPORT_FORMAT_ID': 'a994b278-1f62-11e1-96ac-406186ea4fc5',
         'SCAN_CONFIG_ID': 'daba56c8-73ec-11df-a475-002264764cea',
         'SCANNER_ID': '08b69003-5fc2-4037-a479-93b440211c73'
     }
@@ -1462,6 +1461,7 @@ def start_openvas_scan():
     gmp = Gmp(connection, transform=transform)
 
     try:
+        # To change to correct OpenVAS username and password
         gmp.authenticate('admin', 'password')
     except:
         print("Not able to connect to OPENVAS")
@@ -1480,7 +1480,7 @@ def start_openvas_scan():
     
     scan_config_id = config['SCAN_CONFIG_ID']
     scanner_id = config['SCANNER_ID']
-    report_format_id = config['REPORT_FORMAT_ID']
+
 
     task_response = gmp.create_task(name=scan_name, config_id=scan_config_id, target_id=target_id, scanner_id=scanner_id)
     task_id = task_response.get('id')
@@ -1513,6 +1513,7 @@ def get_openvas_report():
     gmp = Gmp(connection, transform=transform)
 
     try:
+        # To change to correct OpenVAS username and password
         gmp.authenticate('admin', 'password')
     except:
         print("Not able to connect to OPENVAS")
