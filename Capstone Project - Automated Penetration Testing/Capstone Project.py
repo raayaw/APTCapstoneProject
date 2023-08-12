@@ -1085,13 +1085,6 @@ def spidering():
             VALUES (NULL, ?, ?)''', Spiderman)
             conn.commit()
             pos += 1
-        # with open('Spider.csv', 'w', newline='') as f:
-        #     writer = csv.writer(f)
-        #     writer.writerow(['Internal_URLS', 'External_URLs'])
-        #     for i in in_list:
-        #         Spiderman = [in_list[pos], ex_list[pos]]
-        #         writer.writerow(Spiderman)
-        #         pos += 1
         print("[+] Total Internal links:", len(internal_urls))
         print("[+] Total External links:", len(external_urls))
         print("[+] Total URLs:", len(external_urls) + len(internal_urls))
