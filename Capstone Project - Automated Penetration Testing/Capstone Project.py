@@ -1097,7 +1097,6 @@ def whois_enum():
             return ip_address
         except socket.gaierror:
             print("Invalid domain or unable to resolve domain name.")
-            sys.exit(1)
 
     def get_whois_info(domain):
         try:
@@ -1107,11 +1106,12 @@ def whois_enum():
             print("Failed to retrieve WHOIS information.")
 
     def main():
-        domain = input("Enter the domain name: ")
-
-        # Get IP address
-        ip_address = get_ip_address(domain)
-        print("IP address: " + ip_address)
+        while True:
+            domain = input("Enter the domain name: ")
+            # Get IP address
+            ip_address = get_ip_address(domain)
+            if ip_address:
+                break
 
 
         # Get WHOIS information
@@ -1123,10 +1123,9 @@ def whois_enum():
         (id, Host, Domain) 
         VALUES (NULL, ?, ?)''', whoisEnumList)
         conn.commit()
-
-    if __name__ == "__main__":
-        main()
-
+    
+    #Call function
+    main()
 def rpc_info():
 
     target = input("Enter IP address: ")
