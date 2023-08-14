@@ -1149,6 +1149,8 @@ def rpc_info():
                     (id, Host, RPC_Info) 
                     VALUES (NULL, ?,?)''', rpcList)
                     conn.commit()
+                else:
+                    print("Port 111 (RPC) not opened, can't perform RPC Enumeration")
 
 def packet_sniffer():
     def packet_callback(packet):
