@@ -1553,9 +1553,7 @@ def get_openvas_report():
             report_results = [report_results]
         for vuln in report_results:
             name = vuln.get('name')
-            #print('name: ', name)
             if scan_results.get(name):
-                #print('--- Duplicate name: ', name)
                 continue
             nvt = vuln.get('nvt', {})
             scan_result = {}
