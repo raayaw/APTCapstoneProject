@@ -252,9 +252,9 @@ def project_menu():
             exploit_menu()
         elif menu_input == "4":
             report_generation()
-        elif menu_input == "5":
-            database_menu()
             print("Executive Summary generated successfully!")
+        elif menu_input == "5":
+            database_menu() 
         elif menu_input == "6":
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
             print(ascii_bye)
