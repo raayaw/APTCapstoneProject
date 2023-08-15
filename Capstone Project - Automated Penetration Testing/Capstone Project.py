@@ -2033,7 +2033,7 @@ def report_generation():
         return not cursor.fetchone()[0]
 
     with open('executive_report.html', 'w') as file:
-        file.write("<html><title>Executive Report</html>")
+        file.write("<html><title>Executive Report</title>")
         file.write("<h1>Executive Report</h1>")
         
         #Port Scanning Section
