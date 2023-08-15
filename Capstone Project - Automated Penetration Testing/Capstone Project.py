@@ -1912,8 +1912,6 @@ def report_generation():
     css_styles = """
     <style>
 
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap');
     .my-table {
         font-family: sans-serif;
         border-collapse: collapse;
@@ -1932,6 +1930,7 @@ def report_generation():
 
     html {
       background-color: #ECF7F7;
+      font-family: sans-serif;
     }
 
     .collapsible {
@@ -1980,17 +1979,10 @@ def report_generation():
       text-align:center;
     }
 
-    h1 {
-      font-family: 'Calibri', sans-serif;
-    }
 
         
     </style>
     """
-
-    #html_content = """
-    #    <
-    #"""
 
     javascript = """
     <script>
