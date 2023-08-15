@@ -1905,7 +1905,6 @@ def report_generation():
     conn = sqlite3.connect('Reconnaissance.db')
     cursor = conn.cursor()
 
-    # Retrieve the value from the table
 
     css_styles = """
     <style>
