@@ -1831,6 +1831,10 @@ def zap_scan():
     subprocess.Popen(['gnome-terminal','-e',run_zap])
 
 def capture_handshake():
+    print("Restarting network devices...")
+    subprocess.call("airmon-ng check kill", shell=True)
+    subprocess.call("systemctl restart NetworkManager", shell=True)
+    print("Restart complete!")
     interface = input("Please enter your wifi interface name: (it can be found by using ifconfig) ")
     adapter_down = "ifconfig {} down".format(interface)
     subprocess.call(adapter_down,shell=True)
