@@ -2083,12 +2083,6 @@ def report_generation():
                 task_name = "\n<p><b>Task: {}</b></p>".format(name)
                 
                 file.write(task_name)
-                #html = "<div class ='content'><button type='button' class='collapsible'>urmom</button></div>"
-                #p = "<div class=''><p> TEST </p></div><br>"
-                #html_button += html
-                #html_button += p
-
-                
                 vuln_query = "SELECT Vulnerability, Risk, Severity, CVE_ID, Description, Solution FROM OpenVas WHERE Task_Name = '{}'".format(name)
                 vulns = cursor.execute(vuln_query)
                 for vuln in vulns:
