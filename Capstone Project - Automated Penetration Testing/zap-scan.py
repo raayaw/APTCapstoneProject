@@ -35,14 +35,16 @@ while int(zap.ascan.status()) < 100:
     time.sleep(5)
 
 # Generate the report
+report_name = input("What name would you like to save the report as? ")
 print('Generating report...')
+time.sleep(10)
 report_html = zap.core.htmlreport()
-report_xml = zap.core.xmlreport()
 
 # Save the report to a file
-with open('report.html', 'w') as f:
+with open(report_name + ".html", 'w') as f:
     f.write(report_html)
 
-with open('report.xml', 'w') as f:
-    f.write(report_xml)
-    
+print("Report saved as {}.html".format(report_name))
+time.sleep(5)
+
+
