@@ -2222,7 +2222,7 @@ def report_generation():
         file.write("<h2>Reverse TCP</h2>")
 
 
-            # Replace 'your_table_name' with the name of the table you want to check
+
         file.write("\n<h3>VNC Exploit</h3>")
         table_name = 'VNC'
         if is_table_empty(table_name):
@@ -2262,7 +2262,7 @@ def report_generation():
         file.write(llmnr_name)
 
 
-            # Replace 'your_table_name' with the name of the table you want to check
+
         table_name = 'LLMNR'
         if is_table_empty(table_name):
             file.write(f"Attack has yet to be completed.")
@@ -2284,7 +2284,7 @@ def report_generation():
         file.write(wpa_name)
 
 
-            # Replace 'your_table_name' with the name of the table you want to check
+
         table_name = 'WPA'
         if is_table_empty(table_name):
             file.write(f"Attack has yet to be completed.")
