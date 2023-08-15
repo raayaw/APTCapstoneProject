@@ -611,7 +611,7 @@ def llmnr_nbtns_menu():
     while llmnr_nbtns_loop == True:
         print("\nPlease Select an Option Below.")
         print("1. Start Listener")
-        print("2. Crack Hash Generated")
+        print("2. Crack Hash Captured")
         print("3. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
@@ -619,9 +619,9 @@ def llmnr_nbtns_menu():
             print(ascii_1)
             start_listener()
         elif menu_input == "2":
-            ascii_2 = pyfiglet.figlet_format("Crack Hash Generated")
+            ascii_2 = pyfiglet.figlet_format("Crack Hash Captured")
             print(ascii_2)
-            crack_hash_generated()
+            crack_hash_captured()
         elif menu_input == "3":
             llmnr_nbtns_loop = False
         else:
@@ -1786,7 +1786,7 @@ def start_listener():
     interface_name = input("Enter interface: ")
     start_listener = subprocess.Popen(['gnome-terminal', '-e', 'bash -c "python2 Responder/Responder.py -I {}; exec bash"'.format(interface_name)])
 
-def crack_hash_generated():
+def crack_hash_captured():
     hash_file = input("Input name of hash file inside Responder/logs folder: ")
     remove_pot_file = subprocess.call("rm /root/.john/john.pot", shell = True)
     crack_hash = subprocess.check_output("john Responder/logs/{}".format(hash_file), shell=True)
