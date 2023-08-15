@@ -240,8 +240,8 @@ def project_menu():
         print("1. Reconnaissance")
         print("2. Vulnerability Scanning")
         print("3. Exploitation & Post Exploitation")
-        print("4. Database Services")
-        print("5. Generate Report")
+        print("4. Generate Report")
+        print("5. Database Services")
         print("6. End Session")
         menu_input = (input("Select option: "))
         if menu_input == "1":
@@ -251,9 +251,9 @@ def project_menu():
         elif menu_input == "3":
             exploit_menu()
         elif menu_input == "4":
-            database_menu()
-        elif menu_input == "5":
             report_generation()
+        elif menu_input == "5":
+            database_menu()
             print("Executive Summary generated successfully!")
         elif menu_input == "6":
             ascii_bye = pyfiglet.figlet_format("Goodbye!")
