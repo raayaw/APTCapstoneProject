@@ -1053,11 +1053,11 @@ def spidering():
             if domain_name not in href:
                 if href not in external_urls:
                     ex_list.append(href)
-                    print(f"{GRAY}[!] External link: {href}{RESET}")
+                    print(f"{GRAY}[!] External Path: {href}{RESET}")
                     external_urls.add(href)
                 continue
             in_list.append(href)
-            print(f"{GREEN}[*] Internal link: {href}{RESET}")
+            print(f"{GREEN}[*] Internal Path: {href}{RESET}")
             urls.add(href)
             internal_urls.add(href)
         return urls
@@ -1065,7 +1065,7 @@ def spidering():
     def crawl(url, max_urls):
         global total_urls_visited
         total_urls_visited += 1
-        print(f"{YELLOW}[*] Crawling: {url}{RESET}")
+        print(f"{YELLOW}[*] Website: {url}{RESET}")
         links = get_all_website_links(url)
         for link in links:
             if total_urls_visited > max_urls:
