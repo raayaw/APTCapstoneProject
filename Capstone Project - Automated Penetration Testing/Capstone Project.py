@@ -1766,8 +1766,6 @@ def keyscan_exploit():
     with open("keyscan.txt", "r") as file:
         content = file.read()
         
-    #ip_address = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', content).group()
-    #print("\nTarget Machine: ", ip_address)
 
     # Remove color codes using regular expressions
     clean_content = re.sub(r'\\[\d+m', '', content)
