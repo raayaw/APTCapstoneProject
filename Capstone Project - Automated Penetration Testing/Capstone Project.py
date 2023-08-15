@@ -1906,8 +1906,6 @@ def report_generation():
     cursor = conn.cursor()
 
     # Retrieve the value from the table
-    html_content = f"<title> Executive Summary </title> \n\
-    <p> Port Discovery </p>\n"
 
     css_styles = """
     <style>
@@ -2035,8 +2033,8 @@ def report_generation():
         return not cursor.fetchone()[0]
 
     with open('executive_report.html', 'w') as file:
-        file.write("<link href='https://fonts.googleapis.com/css?family=PT Sans' rel='stylesheet'>")
-        file.write("<h1>Executive Summary</h1>")
+        file.write("<html><title>Executive Report</html>")
+        file.write("<h1>Executive Report</h1>")
         
         #Port Scanning Section
         file.write("<div class='port_scanning'>")
@@ -2299,13 +2297,10 @@ def report_generation():
             wpa_table += "</div>"
             file.write(wpa_table)
         file.write("</div>")
-            
-
-
-            
 
         file.write(javascript)
         file.write(css_styles)
+        file.write("</html>")
     
     con = sqlite3.connect("Exploitation.db")
 
