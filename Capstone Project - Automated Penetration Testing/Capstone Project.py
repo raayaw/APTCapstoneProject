@@ -1185,7 +1185,7 @@ def packet_sniffer():
         try:
             toFilter = input("What do you want to filter? (eg. dst port ftp / icmp, or enter nothing for no filter): ")
             plist.append(toFilter)
-            plist.append('test')
+            plist.append('placeholder')
             capture = sniff(iface = interface, timeout = 0, filter = toFilter)
             break
         except:
@@ -1193,7 +1193,7 @@ def packet_sniffer():
 
 
     
-    if filter == "":
+    if toFilter == "":
         capture = sniff(iface = interface, prn=packet_callback, timeout = timeout)
     else: 
         capture = sniff(iface = interface, prn=packet_callback, timeout = timeout, filter = toFilter)
