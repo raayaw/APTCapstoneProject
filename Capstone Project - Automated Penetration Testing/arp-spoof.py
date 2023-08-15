@@ -1,7 +1,6 @@
 from scapy.all import Ether, ARP, srp, send
 import time
 import os
-import sys
 import sqlite3
 
 conn = sqlite3.connect("Exploitation.db")
