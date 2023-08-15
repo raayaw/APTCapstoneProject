@@ -2052,11 +2052,11 @@ def report_generation():
                 file.write("<br><h3>Host: {}</h3>".format(host))
                 ports = pd.read_sql_query(("SELECT Protocol, Port_Number, Port_Status, Reason, Name, Product, Version, Extra_Info FROM PortDiscovery WHERE Host = '{}'").format(host), conn)
                 df_ports = pd.DataFrame(data=ports)
-                test = '<div style="overflow-x:auto;">'
+                port_table = '<div style="overflow-x:auto;">'
                 html = df_ports.to_html(classes='my-table', index=False, justify='left')
-                test += html
-                test += "</div>"
-                file.write(test)    
+                port_table += html
+                port_table += "</div>"
+                file.write(port_table)    
         file.write("</div>")
 
         #OpenVAS Section
