@@ -1829,7 +1829,7 @@ def crack_hash_generated():
     conn.commit()
 
 def zap_scan():
-    run_zap = "python3 zap.py"
+    run_zap = "python3 zap-scan.py"
     subprocess.Popen(['gnome-terminal','-e',run_zap])
 
 def capture_handshake():
