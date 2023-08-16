@@ -1857,10 +1857,10 @@ def crack_password():
     input("Please press enter once the password has been cracked ")
     file = open('result.txt', 'r')
     password = file.readlines()
-    wpa_list = [ssid, password]
+    wpa_list = [str(ssid), str(password)]
     cur.execute('''INSERT INTO ExpDB.WPA 
     (id, SSID, Password) 
-    VALUES (NULL, ?, ?)''', line_list)
+    VALUES (NULL, ?, ?)''', wpa_list)
     conn.commit()
 
 def email():
