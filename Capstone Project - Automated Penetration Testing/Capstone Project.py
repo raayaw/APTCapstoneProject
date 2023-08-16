@@ -581,7 +581,7 @@ def reverse_tcp_menu():
             vnc_exploit()
         elif menu_input == "3":
             ascii_3 = pyfiglet.figlet_format("Run Keyscan Exploit")
-            print(ascii_2)
+            print(ascii_3)
             keyscan_exploit()
         elif menu_input == "4":
             reverse_tcp_loop = False
