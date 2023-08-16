@@ -439,6 +439,8 @@ def enum_menu():
 def vulnscanning_menu():
     vulnscanning_loop = True
     while vulnscanning_loop == True:
+        ascii_vuln = pyfiglet.figlet_format("Vulnerability Scanning")
+        print(ascii_vuln)
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. OpenVAS")
