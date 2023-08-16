@@ -1866,7 +1866,7 @@ def crack_password():
         conn.commit()
 
 def email():
-    my_zip = zipfile.ZipFile('payload.zip', 'w')
+    my_zip = zipfile.ZipFile('Payloads/payload.zip', 'w')
 
     my_zip.write('Payloads/malicious_payload.exe')
 
