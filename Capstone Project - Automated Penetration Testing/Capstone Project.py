@@ -232,7 +232,6 @@ def droptables():
     droptablesE()
 
 createtables()
-loop = True
 def project_menu():
     loop = True
     while loop == True:
