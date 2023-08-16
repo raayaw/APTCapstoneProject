@@ -132,6 +132,8 @@ def droptablesR():
     conn.commit()
     conn.execute('''DELETE FROM RecDB.OSDiscovery''')
     conn.commit()
+    conn.execute('''DELETE FROM RecDB.NetBIOS_Enumeration''')
+    conn.commit()
     conn.execute('''DELETE FROM RecDB.SNMP_OS_Enumeration''')
     conn.commit()
     conn.execute('''DELETE FROM RecDB.SNMP_Process_Enumeration''')
@@ -528,17 +530,7 @@ def database_menu():
         menu_input = (input("Select option: "))
         if menu_input == "1":
             droptables()
-            conn.execute('''DELETE FROM Spider''')
-            conn.commit()
             print("Database successfully cleared!")
-        # elif menu_input == "2":
-        #     DBname = str(input('Enter new Database name here: '))
-        #     newDBname = DBname + ".db"
-        #     conn = sqlite3.connect(newDBname)
-        #     conn.execute('ATTACH DATABASE newDBname as "newDB"')
-        #     conn.execute('ATTACH DATABASE "APTdatabase.db" as "oldDB"')
-        #     newdatabase(conn)
-        #     print("Database " + "APTdatabase.db" + "successfully copied as " + newDBname)
         elif menu_input == "2":
             database_loop = False
         else:
@@ -2563,29 +2555,3 @@ def report_generation():
     conn.close()
     
 project_menu()
-
-
-#MENU TEMPLATE FOR REPORT
-
-#def vulnscanning_menu():
-#    vulnscanning_loop = True
-#    while vulnscanning_loop == True:
-#        #Input Scanning Options
-#        print("\nPlease Select an Option Below.")
-#        print("1. Option 1")
-#        print("2. Option 2")
-#        print("3. Exit")
-#        menu_input = (input("Select option: "))
-#        if menu_input == "1":
-#            ascii_1 = pyfiglet.figlet_format("Option 1")
-#            print(ascii_1)
-#            hostDiscovery()
-#        elif menu_input == "2":
-#            ascii_2 = pyfiglet.figlet_format("Option 2")
-#            print(ascii_2)
-#            portDiscovery()
-#        elif menu_input == "3":
-#            vulnscanning_loop = False
-#        else:
-#            print("Invalid Input!\nPlease Try Again!")
-#            continue
