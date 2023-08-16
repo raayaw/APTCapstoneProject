@@ -474,6 +474,8 @@ def vulnscanning_menu():
 def exploit_menu():
     exploit_loop = True
     while exploit_loop == True:
+        ascii_exploit = pyfiglet.figlet_format("Exploitations & Post Exploitations")
+        print(ascii_exploit)
         #Input Scanning Options
         print("\nPlease Select an Option Below.")
         print("1. Packet Sniffer")
