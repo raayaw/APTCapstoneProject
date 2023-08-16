@@ -1852,7 +1852,7 @@ def crack_password():
     result.close()
     file_name = input("Enter the name desired .cap file (eg. if the .cap file name is dump-01.cap, please enter dump-01) : ")
     digits = int(input("Enter the number of digits of the password: "))
-    ssid = input("Enter the wifi networks name: ")
+    ssid = input("Enter the wifi network name: ")
     subprocess.Popen(['gnome-terminal', '-e', 'bash -c "crunch 8 {} 0123456789 | aircrack-ng -e "{}" -w- {}.cap -l result.txt; exec bash"'.format(digits,ssid,file_name)])
     input("Please press enter once the password has been cracked ")
     file = open('result.txt', 'r')
